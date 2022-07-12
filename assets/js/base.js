@@ -464,7 +464,7 @@ class Foods extends PIZZLE {
         this.sort_by = document.getElementById('sort-by')
         this.input_search = document.getElementById('input-search')
         this.count_results = document.getElementById('count-results')
-        this.sort_by_event()
+        this.set_event_input_sortby()
         this.get_categories()
         this.get_and_create_meals()
         this.get_meals_popular()
@@ -495,7 +495,7 @@ class Foods extends PIZZLE {
 
     }
 
-    sort_by_event = function() {
+    set_event_input_sortby = function() {
         let This = this
         this.sort_by.addEventListener('change', function(e) {
             let category = This.url_params.get('category') || 'all'
@@ -505,32 +505,130 @@ class Foods extends PIZZLE {
         })
     }
 
+    pagination_meals = function(pagination) {
+        let page_active = document.getElementById('page-active')
+        let all_pages = document.getElementById('all-pages')
+        let container_pagination = document.getElementById('container-pagination')
+        let pages_num = parseInt(pagination.pages)
+        let page_active_num = parseInt(pagination.page_active)
+        all_pages.innerText = pages_num
+        page_active.innerText = page_active_num
+
+
+        function create_node_page() {
+
+            let node_results = ''
+
+            function create(page_num) {
+                let active_page = page_active_num == page_num ? "class='active'" : ''
+                return `
+                <li ${active_page}>
+                    <button onclick="FOODS_OBJECT.go_to_page(${page_num})">
+                        ${page_num}
+                    </button>
+                </li>
+                `
+            }
+
+            if (pagination.has_previous) {
+                if (page_active_num - 2 > 1) {
+                    node_results += create(pagination.page_previous - 1)
+                }
+                node_results += create(pagination.page_previous)
+            }
+
+            node_results += create(page_active_num)
+
+
+            if (pagination.has_next) {
+
+                node_results += create(pagination.page_next)
+                if (page_active_num + 2 < pagination.last_page) {
+                    node_results += create(pagination.page_next + 1)
+                }
+            }
+
+
+            return node_results
+        }
+
+        let node_pages = create_node_page()
+
+
+        let base_node = `
+            <li>
+                <button onclick="FOODS_OBJECT.go_to_page(${pagination.first_page})">
+                    <i class="fa fa-angle-double-left"></i>
+                </button>
+            </li>
+            <li>...</li>
+                ${node_pages}
+            <li>...</li>
+            <li>
+            <button onclick="FOODS_OBJECT.go_to_page(${pagination.last_page})">
+                    <i class="fa fa-angle-double-right"></i>
+                </button>
+            </li>
+        `
+        container_pagination.innerHTML += base_node
+
+
+    }
+
+    show_not_found_meal(container) {
+        let node = `
+            <div class="meals-not-found">
+                <div class="text-right">
+                    <img src="assets/img/icon04.png">
+                </div>
+                <div>
+                    <p class="text-center">not found foods</p>
+                </div>
+                <div class="text-left">
+                    <img src="assets/img/icon01.png">
+                </div>
+            </div>
+        `
+        container.innerHTML += node
+    }
+
+    go_to_page = function(page_num) {
+        let url_search = new URLSearchParams(window.location.search)
+        url_search.set('page', page_num)
+        window.location.search = url_search
+    }
 
 
     get_and_create_meals = function() {
         let category = this.url_params.get('category')
         let sort_by = this.url_params.get('sort-by')
+        let page = this.url_params.get('page')
         let search = this.url_params.get('search')
-        let meals = []
+        let details
         if (search) {
             this.get_meals_by_search(search)
         } else {
             if (category) {
-                let details = this.GET_ALL_MEALS({
+                details = this.GET_ALL_MEALS({
                     'category_slug': category,
-                    'sort_by': sort_by
+                    'sort_by': sort_by,
+                    'page': page
                 })
-                meals = details.data.meals
             } else {
-                let details = this.GET_ALL_MEALS({
-                    'sort_by': sort_by
+                details = this.GET_ALL_MEALS({
+                    'sort_by': sort_by,
+                    'page': page
                 })
-                meals = details.data.meals
             }
+            let meals = details.data.meals
             for (let meal of meals) {
                 this.CREATE_ELEMENT_MEAL(meal)
             }
+            this.pagination_meals(details.data.pagination)
             this.count_results.innerHTML = meals.length
+            if (meals.length < 1) {
+                this.show_not_found_meal(this.container_meals)
+            }
         }
 
     }
@@ -547,15 +645,23 @@ class Foods extends PIZZLE {
 
     get_meals_by_search = function(search_value) {
         this.input_search.value = search_value
+        let page = this.url_params.get('page')
+        let sort_by = this.url_params.get('sort-by')
         let url = this.URL('food/get-meals-by-search')
         let details = this.SEND_AJAX(url, {
-            'search_value': search_value
+            'search_value': search_value,
+            'sort_by': sort_by,
+            'page': page
         })
         let meals = details.data.meals
         for (let meal of meals) {
             this.CREATE_ELEMENT_MEAL(meal)
         }
+        this.pagination_meals(details.data.pagination)
         this.count_results.innerHTML = meals.length
+        if (meals.length < 1) {
+            this.show_not_found_meal(this.container_meals)
+        }
 
     }
 

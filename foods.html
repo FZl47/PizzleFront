@@ -176,6 +176,7 @@
                                 <select name="sort-by" class="orderby" id="sort-by" aria-label="Shop order">
                                  <option value="most-visited" selecteds="selected">Sort by most visited</option>
                               <option value="popularity">Sort by popularity</option>
+                              <option value="discount">Sort by discount</option>
                               <option value="latest" >Sort by latest</option>
                               <option value="price-asc">Sort by price: low to high</option>
                               <option value="price-desc">Sort by price: high to low</option>
@@ -346,14 +347,15 @@
                         </div>
                     </div>
                     <div class="pagination-box-row">
-                        <p>Page 1 of 6</p>
-                        <ul class="pagination">
+                        <p>Page <span id="page-active">1</span> of <span id="all-pages">-</span></p>
+                        <ul class="pagination" id="container-pagination">
+                            <!-- <li><a href="#"><i class="fa fa-angle-double-left"></i></a></li>
+                            <li>...</li>
                             <li><a href="#">1</a></li>
                             <li class="active"><a href="#">2</a></li>
                             <li><a href="#">3</a></li>
                             <li>...</li>
-                            <li><a href="#">6</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right"></i></a></li>
+                            <li><a href="#"><i class="fa fa-angle-double-right"></i></a></li> -->
                         </ul>
                     </div>
                 </div>
