@@ -451,13 +451,87 @@ class ResetPassword extends PIZZLE {
     }
 }
 
+class Food extends PIZZLE {
+    constructor() {
+        super()
+        this.url_params = new URLSearchParams(window.location.search)
+        this.MEAL = null
+        let data = this.get_info()
+        this.set_info(data)
+    }
 
+    get_info = function() {
+        let slug = this.url_params.get('slug')
+        if (!slug) {
+            this.VIEW_ERROR_404()
+        }
+        let url = this.URL('food/get-meal')
+        let details = this.SEND_AJAX(url, {
+            'slug': slug
+        })
+        return details.data
+    }
+
+    set_info(data) {
+
+        // Elements
+        let title_el = document.getElementById('title')
+        let category_el = document.getElementById('category')
+        let rating_val_el = document.getElementById('rating-val')
+        let price_el = document.getElementById('price')
+        let description_el = document.getElementById('description')
+        let quantity_el = document.getElementById('quantity')
+
+
+
+        // Data 
+        title_el.innerText = data.title
+        category_el.innerText = data.category.title
+        category_el.href = this.URL_TEMPLATE(PAGE_MEALS, ['category', data.category.slug])
+        rating_val_el.style.width = (parseInt(data.rate) * 20) + '%'
+        description_el.innerText = data.description
+        quantity_el.max = data.stock
+
+
+        // Data Node
+        let price_discount_node = ``
+        if (data.discount) {
+            price_discount_node = `
+                <del><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price_base}</del>
+                <ins><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price}</ins>
+                <div class="discount-info">
+          
+                    <p>${data.discount_title}</p>
+                    <div>
+                        <span>${data.discount_percentage}%</span>
+                        <div class="d-inline-block" TimerCounterDown ToDateTimer="${data.discount_timeend}">
+                            <span data-content="Second"></span> :
+                            <span data-content="Minute"></span> :
+                            <span data-content="Hour"></span> :
+                            <span data-content="Day"></span>
+                        </div>
+                    </div>
+                  
+                </div>
+            `
+        } else {
+            price_discount_node = `
+                <ins><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price}</ins>
+            `
+        }
+        price.innerHTML = price_discount_node
+        RunAllCounterTimers()
+
+    }
+
+
+}
 
 
 class Foods extends PIZZLE {
     constructor() {
         super()
-        this.url_params = new URLSearchParams(window.location.search);
+        this.url_params = new URLSearchParams(window.location.search)
         this.container_meals = document.getElementById('container-meals')
         this.container_categories = document.getElementById('container-categories')
         this.container_meals_popular = document.getElementById('container-meals-popular')
@@ -1932,14 +2006,24 @@ function UnlockAllElements() {
 
 /////////////////////// Timer Counter Down
 
+function RunAllCounterTimers() {
+    let TagsWithTimer = document.querySelectorAll('[TimerCounterDown]')
+    for (let T of TagsWithTimer) {
+        let ToDate = T.getAttribute('ToDateTimer')
+
+        TimerCountDown(T, ToDate)
+    }
+}
+
 let TagsWithTimer = document.querySelectorAll('[TimerCounterDown]')
 for (let T of TagsWithTimer) {
     let ToDate = T.getAttribute('ToDateTimer')
+
     TimerCountDown(T, ToDate)
 }
 
 function TimerCountDown(Element, ToDate) {
-    let CountDownDate = new Date(ToDate);
+    let CountDownDate = new Date(ToDate)
     let El_Second = Element.querySelector('[data-content=Second]')
     let El_Minute = Element.querySelector('[data-content=Minute]')
     let El_Hour = Element.querySelector('[data-content=Hour]')

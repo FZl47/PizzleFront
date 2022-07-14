@@ -161,6 +161,17 @@ li {
     border-radius: 40px;
 }
 
+.cta_btn_outline {
+    display: inline-block;
+    padding: 13px 30px;
+    color: #f7b035;
+    font-weight: 500;
+    text-transform: uppercase;
+    overflow: hidden;
+    background: #fff;
+    border-radius: 40px;
+}
+
 .cta_btn i {
     margin-right: 5px
 }
@@ -2816,7 +2827,7 @@ section {
 }
 
 .product-details-text .price ins {
-    font-size: 30px;
+    font-size: 42px;
     text-decoration: none;
     font-weight: 700;
     color: #f7b035;
@@ -2826,6 +2837,44 @@ section {
 .product-details-text .price del {
     color: #787878;
     font-size: 20px;
+}
+
+.discount-info {
+    margin-top: 10px;
+}
+
+.discount-info>div>span {
+    font-family: 25px;
+    font-weight: bold;
+    background: #f7b035;
+    color: #fff;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.discount-info p {
+    display: inline-block;
+    margin-bottom: -10px;
+}
+
+.discount-info div[TimerCounterDown] {
+    text-align: center;
+    direction: rtl;
+    margin: 10px auto;
+    width: 200px;
+    padding: 5px 0;
+    border-radius: 10px;
+    background: #fff8e4;
+}
+
+.discount-info>div>div span {
+    padding: 5px 7px;
+    width: 35px;
+    display: inline-block;
 }
 
 .pro_details_meta p {
@@ -2963,6 +3012,16 @@ section {
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
+}
+
+.single-shop-page-btn button {
+    border: none;
+    outline: none;
+    transition: all .2s;
+}
+
+.single-shop-page-btn button:hover {
+    color: #111;
 }
 
 .single-shop-page-btn ul {
@@ -3724,4 +3783,18 @@ section {
 
 .text-left {
     text-align: left;
+}
+
+.d-inline-block {
+    display: inline-block;
+}
+
+.d-block {
+    display: block;
+}
+
+#category {
+    color: #777;
+    font-size: 110%;
+    margin-left: 10px;
 }

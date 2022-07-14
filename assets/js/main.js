@@ -191,6 +191,8 @@ JS INDEX
             }
 
             $input.change();
+            event_input_quantity($input)
+
             return false;
         });
 
