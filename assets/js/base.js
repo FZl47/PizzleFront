@@ -4,7 +4,7 @@ const PAGE_LOGIN = 'login.html'
 const PAGE_HOME = 'index.html'
 const PAGE_SIGNUP = 'signup.html'
 const PAGE_RESETPASSWORD = 'reset-password.html'
-const PAGE_ERROR_500 = '404.html'
+const PAGE_ERROR_500 = '500.html'
 const PAGE_ERROR_404 = '404.html'
 const PAGE_MEAL_DETAIL = 'food.html'
 const PAGE_MEALS = 'foods.html'
@@ -14,11 +14,25 @@ const SYMBOL_CURRENCY = '$'
 
 class PIZZLE {
 
-    constructor() {
+    constructor(get_user = false) {
+        let This = this
         this._details_func = {}
         this.COUNTER_TRY_GET_TOKENS = 3
         this.COUNTER_TRY_ADD_TO_CART = 1
+        this.USER = null
+        if (get_user) {
+            setTimeout(function() { This.GET_USER() }, 20)
+        }
 
+    }
+
+    GET_USER = function() {
+        let url = this.URL('user/get-user')
+        let details = this.SEND_AJAX(url, {}, false, true, false, false)
+        let status = details.status
+        if (status == 200) {
+            this.USER = details.data.user
+        }
     }
 
     // SET_DETAILS = function(status, message, data = {}) {
@@ -121,7 +135,7 @@ class PIZZLE {
     }
 
 
-    SEND_AJAX = function(url, data, error_message = true, auth = false, error_redirect = true, success, failed, method = 'POST') {
+    SEND_AJAX = function(url, data, error_message = true, auth = false, error_redirect = true, login_redirect = false, success, failed, method = 'POST') {
         let This = this
         let details = {}
 
@@ -147,14 +161,14 @@ class PIZZLE {
                 // Failed
                 let status = response.status
                 response = response.responseJSON
-                if (status == 401 && auth) {
+                if (status == 401 && auth && This._GET_REFRESH_TOKEN()) {
                     This.COUNTER_TRY_GET_TOKENS -= 1
                     if (This.COUNTER_TRY_GET_TOKENS > 0) {
                         let state_update_token = This.UPDATE_TOKEN_USER(This._GET_REFRESH_TOKEN())
                         if (state_update_token) {
                             This.COUNTER_TRY_GET_TOKENS = 3
                         } else {
-                            This.VIEW_ERROR_500()
+                            // This.VIEW_ERROR_500()
                         }
                     }
                 }
@@ -169,8 +183,7 @@ class PIZZLE {
                 if (status == 0) {
                     ShowNotificationMessage('Please Check your connection', 'Error')
                 }
-
-                SET_DETAILS(parseInt(response.status_code), response.error, response.data)
+                SET_DETAILS(parseInt(status), response.error, response.data)
 
                 if (failed) {
                     failed(response)
@@ -179,7 +192,7 @@ class PIZZLE {
                     let error_text = response.error
                     ShowNotificationMessage(error_text, 'Error')
                 }
-            }, false, auth
+            }, false, auth, login_redirect
         )
 
         return details
@@ -453,12 +466,15 @@ class ResetPassword extends PIZZLE {
 
 class Food extends PIZZLE {
     constructor() {
-        super()
+        super(true)
         this.url_params = new URLSearchParams(window.location.search)
         this.MEAL = null
         let data = this.get_info()
         this.set_info(data)
     }
+
+
+
 
     get_info = function() {
         let slug = this.url_params.get('slug')
@@ -468,11 +484,19 @@ class Food extends PIZZLE {
         let url = this.URL('food/get-meal')
         let details = this.SEND_AJAX(url, {
             'slug': slug
-        })
+        }, false, true)
+        let status = details.status
+        if (status == 404) {
+            this.VIEW_ERROR_404()
+        }
         return details.data
     }
 
     set_info(data) {
+        let This = this
+        this.MEAL = data
+        let is_available = data.is_available
+
 
         // Elements
         let title_el = document.getElementById('title')
@@ -481,8 +505,9 @@ class Food extends PIZZLE {
         let price_el = document.getElementById('price')
         let description_el = document.getElementById('description')
         let quantity_el = document.getElementById('quantity')
-
-
+        let container_quantity_el = document.getElementById('container-quantity')
+        let btn_add_to_cart_el = document.getElementById('btn-add-to-cart')
+        let btn_let_me_know = document.getElementById('btn-let-me-know')
 
         // Data 
         title_el.innerText = data.title
@@ -492,38 +517,57 @@ class Food extends PIZZLE {
         description_el.innerText = data.description
         quantity_el.max = data.stock
 
+        // Event
+        if (is_available) {
+            btn_add_to_cart_el.addEventListener('click', function() {
+                This.ADD_TO_CART(This.MEAL.slug)
+            })
+            btn_add_to_cart_el.classList.remove('d-none')
+        } else {
+            btn_let_me_know.classList.remove('d-none')
+        }
 
         // Data Node
         let price_discount_node = ``
-        if (data.discount) {
-            price_discount_node = `
-                <del><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price_base}</del>
-                <ins><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price}</ins>
-                <div class="discount-info">
-          
-                    <p>${data.discount_title}</p>
-                    <div>
-                        <span>${data.discount_percentage}%</span>
-                        <div class="d-inline-block" TimerCounterDown ToDateTimer="${data.discount_timeend}">
-                            <span data-content="Second"></span> :
-                            <span data-content="Minute"></span> :
-                            <span data-content="Hour"></span> :
-                            <span data-content="Day"></span>
+        if (is_available) {
+            if (data.discount) {
+                price_discount_node = `
+                    <del><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price_base}</del>
+                    <ins><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price}</ins>
+                    <div class="discount-info">
+              
+                        <p>${data.discount_title}</p>
+                        <div>
+                            <span>${data.discount_percentage}%</span>
+                            <div class="d-inline-block" TimerCounterDown ToDateTimer="${data.discount_timeend}">
+                                <span data-content="Second"></span> :
+                                <span data-content="Minute"></span> :
+                                <span data-content="Hour"></span> :
+                                <span data-content="Day"></span>
+                            </div>
                         </div>
+                      
                     </div>
-                  
-                </div>
-            `
+                `
+            } else {
+
+                price_discount_node = `
+                    <ins><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price}</ins>
+                `
+            }
+            price.innerHTML = price_discount_node
+            RunAllCounterTimers()
         } else {
-            price_discount_node = `
-                <ins><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price}</ins>
+            price.innerHTML = `
+                <p class="meal-is-unavailable">
+                    The meal is unavailable
+                </p>
             `
+            container_quantity_el.classList.add('d-none')
         }
-        price.innerHTML = price_discount_node
-        RunAllCounterTimers()
+
 
     }
-
 
 }
 
@@ -1761,7 +1805,7 @@ function GetKeyByValue(Obj, Val) {
 
 
 
-function SendAjax(Url, Data = {}, Method = 'POST', Success, Failed, async_req = true, auth) {
+function SendAjax(Url, Data = {}, Method = 'POST', Success, Failed, async_req = true, auth, login_redirect = true) {
     function __Redirect__(response) {
         if (response.__Redirect__ == 'True') {
             setTimeout(function() {
@@ -1816,8 +1860,14 @@ function SendAjax(Url, Data = {}, Method = 'POST', Success, Failed, async_req = 
     }
 
     if (auth) {
+
         let pizzle = PIZZLE_OBJECT
-        headers['Authorization'] = `Bearer ${pizzle.GET_USER_TOKEN().access}`
+        let access_token = ''
+        let tokens = pizzle.GET_USER_TOKEN(login_redirect)
+        if (tokens) {
+            access_token = tokens.access
+        }
+        headers['Authorization'] = `Bearer ${access_token}`
     }
 
     Loading('Show')

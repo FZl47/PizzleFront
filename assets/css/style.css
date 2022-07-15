@@ -2866,9 +2866,10 @@ section {
     direction: rtl;
     margin: 10px auto;
     width: 200px;
-    padding: 5px 0;
+    padding: 3px 0;
     border-radius: 10px;
     background: #fff8e4;
+    box-shadow: 0 2px 3px #ffd399d7;
 }
 
 .discount-info>div>div span {
@@ -3797,4 +3798,10 @@ section {
     color: #777;
     font-size: 110%;
     margin-left: 10px;
+}
+
+.meal-is-unavailable {
+    font-size: 110%;
+    text-align: center;
+    color: #888;
 }
