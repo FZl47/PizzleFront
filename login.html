@@ -161,8 +161,9 @@
                     LOGIN._SET_ACCESS_TOKEN(details.data.access_token)
                     LOGIN._SET_REFRESH_TOKEN(details.data.refresh_token, remember_me.checked)
                     setTimeout(function() {
-                        window.location.href = PAGE_HOME
-                    }, 1000)
+                        history.back();
+                        // window.location.href = PAGE_HOME
+                    }, 500)
                 } else {
                     text_message_form.setAttribute('message-type', 'alert-text')
                     text_message_form.innerText = details.message

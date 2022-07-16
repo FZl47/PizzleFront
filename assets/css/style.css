@@ -64,6 +64,10 @@ body {
     color: #616161;
 }
 
+body.is-loading {
+    overflow: hidden!important;
+}
+
 html,
 body {
     height: 100%;
@@ -163,13 +167,61 @@ li {
 
 .cta_btn_outline {
     display: inline-block;
-    padding: 13px 30px;
+    padding: 13px 20px;
+    max-width: 350px;
+    width: 100%;
+    margin: 20px auto;
     color: #f7b035;
+    border: 1px solid #f7b035!important;
     font-weight: 500;
     text-transform: uppercase;
     overflow: hidden;
     background: #fff;
     border-radius: 40px;
+}
+
+
+/* .btn-notify-me[notify-me='disabled'] {
+} */
+
+.btn-notify-me {
+    color: #ffbb47;
+    border: 1px solid #eee!important;
+}
+
+.btn-notify-me i {
+    font-size: 120%;
+    margin-right: 5px;
+}
+
+.btn-notify-me:hover i {
+    animation: AnimationIconNotifyMe .5s forwards;
+}
+
+.btn-notify-me[notify-me='active'] {
+    color: #f7b035;
+    border: 1px solid #f7b035!important;
+}
+
+.btn-notify-me[notify-me='active'] i {
+    animation: none;
+}
+
+@keyframes AnimationIconNotifyMe {
+    30% {
+        transform: rotateZ(22.5deg);
+    }
+    60% {
+        transform: rotateZ(-22.5deg);
+    }
+}
+
+@media screen and (max-width:450px) {
+    .cta_btn_outline {
+        width: 100%;
+        padding: 13px 16px;
+        font-size: 90%;
+    }
 }
 
 .cta_btn i {
@@ -2840,7 +2892,7 @@ section {
 }
 
 .discount-info {
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 .discount-info>div>span {
@@ -2858,7 +2910,8 @@ section {
 
 .discount-info p {
     display: inline-block;
-    margin-bottom: -10px;
+    margin: 0;
+    margin-bottom: 10px;
 }
 
 .discount-info div[TimerCounterDown] {
@@ -3804,4 +3857,51 @@ section {
     font-size: 110%;
     text-align: center;
     color: #888;
+}
+
+#description {
+    text-align: justify;
+    line-height: 35px;
+}
+
+.prev_image {
+    position: absolute;
+    top: 45%;
+    left: -20px;
+    font-size: 200%;
+    cursor: pointer;
+    color: #bbb;
+}
+
+.next_image {
+    position: absolute;
+    top: 45%;
+    right: -20px;
+    font-size: 200%;
+    cursor: pointer;
+    color: #bbb;
+}
+
+.btn-back-home {
+    border-radius: 40px;
+    padding: 15px 30px;
+    font-size: 120%;
+    text-transform: uppercase;
+    font-family: 'Rubik', sans-serif;
+    background: #f7a43b;
+    opacity: 1;
+    position: relative;
+    color: #fff;
+    display: inline-block;
+    transition: all .2s;
+}
+
+.btn-back-home i {
+    margin-right: 7px;
+}
+
+@media screen and (min-width:700px) {
+    .text-md-left {
+        text-align: left!important;
+    }
 }

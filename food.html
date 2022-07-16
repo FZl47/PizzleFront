@@ -29,6 +29,7 @@
     <!-- Custome Added -->
     <link rel="stylesheet" href="assets/css/base.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
 </head>
 
 <body>
@@ -140,10 +141,21 @@
     <section class="product_area">
         <div class="container">
             <div class="row justify-content-between">
-                <div class="col-lg-6">
-                    <div class="product-details-image">
-                        <img src="assets/img/p-6.png" alt="product" />
+                <div class="col-lg-5 position-relative">
+                    <div class="owl-carousel" id="container-images">
+                        <!-- <div class="product-details-image">
+                            <img src="assets/img/p-6.png" alt="product" />
+                        </div> -->
                     </div>
+                    <div class="pizza_nav">
+                        <span class="prev_image">
+                            <i class="fas fa-angle-left"></i> 
+                        </span>
+                        <span class="next_image">
+                            <i class="fas fa-angle-right"></i> 
+                        </span>
+                    </div>
+
                 </div>
                 <div class="col-lg-6">
                     <div class="product-details-text">
@@ -153,10 +165,10 @@
                                 <div class="ratings">
                                     <div class="ratings-val" id="rating-val" style="width: 0%"></div>
                                 </div>
-                                <a href="#comments" class="p-2">(<span id="count-comments">2</span> comments)</a>
+                                <a href="#comments" class="p-2">(<span id="count-comments">0</span> comments)</a>
                             </div>
                         </div>
-                        <div class="price" id="price">
+                        <div class="price my-5 text-center text-md-left" id="price">
                             <!-- <del><span class="Price-currencySymbol">$</span>00</del>
                             <ins><span class="Price-currencySymbol">$</span>00</ins> -->
                         </div>
@@ -183,7 +195,9 @@
                         </div>
                         <div class="single-shop-page-btn d-block d-md-flex justify-content-between text-center">
                             <button id="btn-add-to-cart" class="cta_btn d-none" style="width:270px" class="cta_btn my-2 text-center"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                            <button id="btn-let-me-know" class="cta_btn_outline d-none" style="width:270px" class="cta_btn_outline my-2 text-center"><i class="fas fa-bell"></i> Notify me when available</button>
+                            <button id="btn-let-me-know" class="cta_btn_outline btn-notify-me d-none" notify-me="active" class="cta_btn_outline text-center">
+                                <!-- <i class="fas fa-bell"></i> Cancel Notify me when available -->
+                            </button>
                             <ul>
                                 <li>
                                     <a href="javascript:;" id="share-facebook">

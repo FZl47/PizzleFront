@@ -161,6 +161,16 @@ class PIZZLE {
                 // Failed
                 let status = response.status
                 response = response.responseJSON
+
+                if (status != 200 && error_redirect) {
+                    if (status == 500) {
+                        This.VIEW_ERROR_500()
+                    }
+                    if (status == 404) {
+                        This.VIEW_ERROR_404()
+                    }
+                }
+
                 if (status == 401 && auth && This._GET_REFRESH_TOKEN()) {
                     This.COUNTER_TRY_GET_TOKENS -= 1
                     if (This.COUNTER_TRY_GET_TOKENS > 0) {
@@ -172,14 +182,7 @@ class PIZZLE {
                         }
                     }
                 }
-                if (status != 200 && error_redirect) {
-                    if (status == 500) {
-                        This.VIEW_ERROR_500()
-                    }
-                    if (status == 404) {
-                        This.VIEW_ERROR_404()
-                    }
-                }
+
                 if (status == 0) {
                     ShowNotificationMessage('Please Check your connection', 'Error')
                 }
@@ -198,6 +201,14 @@ class PIZZLE {
         return details
     }
 
+
+    NOTIFY_ME = function(slug) {
+        let url = this.URL('food/notify-me')
+        let details = this.SEND_AJAX(url, {
+            'slug': slug
+        }, false, true, true, true)
+        return details
+    }
 
 
     GET_ALL_MEALS = function(data = {}) {
@@ -230,17 +241,18 @@ class PIZZLE {
         this.ADD_TO_CART(slug)
     }
 
-    ADD_TO_CART(slug) {
+    ADD_TO_CART(slug, count = 1) {
         let url = this.URL('user/cart/add')
         let data = {
-            'slug': slug
+            'slug': slug,
+            'count': count
         }
-        let details = this.SEND_AJAX(url, data, false, true, false)
+        let details = this.SEND_AJAX(url, data, false, true, false, true)
         let status = details.status
         if (status == 401) {
             if (this.COUNTER_TRY_ADD_TO_CART > 0) {
                 this.COUNTER_TRY_ADD_TO_CART -= 1
-                this.ADD_TO_CART(slug)
+                this.ADD_TO_CART(slug, count)
             }
         }
         if (status == 200) {
@@ -406,7 +418,7 @@ class Login extends PIZZLE {
         let details = this.SEND_AJAX(url, {
             'email': username,
             'password': password
-        }, false)
+        }, false, false, false, false)
         return details
     }
 
@@ -423,7 +435,7 @@ class SignUp extends PIZZLE {
             'email': username,
             'password': password,
             'password2': password2,
-        }, false)
+        }, false, false, false, false)
         return details
     }
 }
@@ -437,7 +449,7 @@ class ResetPassword extends PIZZLE {
         let url = this.URL('user/reset-password/get-code')
         let details = this.SEND_AJAX(url, {
             'email': email
-        }, false)
+        }, false, false, false, false)
         this.EMAIL = email
         return details
     }
@@ -447,7 +459,7 @@ class ResetPassword extends PIZZLE {
         let details = this.SEND_AJAX(url, {
             'email': this.EMAIL,
             'code': code
-        }, false)
+        }, false, false, false, false)
         this.CODE = code
         return details
     }
@@ -459,7 +471,7 @@ class ResetPassword extends PIZZLE {
             'code': this.CODE,
             'password': password,
             'password2': password2
-        }, false)
+        }, false, false, false, false)
         return details
     }
 }
@@ -470,7 +482,9 @@ class Food extends PIZZLE {
         this.url_params = new URLSearchParams(window.location.search)
         this.MEAL = null
         let data = this.get_info()
+
         this.set_info(data)
+
     }
 
 
@@ -502,12 +516,14 @@ class Food extends PIZZLE {
         let title_el = document.getElementById('title')
         let category_el = document.getElementById('category')
         let rating_val_el = document.getElementById('rating-val')
+        let comments_count = document.getElementById('count-comments')
         let price_el = document.getElementById('price')
         let description_el = document.getElementById('description')
         let quantity_el = document.getElementById('quantity')
         let container_quantity_el = document.getElementById('container-quantity')
         let btn_add_to_cart_el = document.getElementById('btn-add-to-cart')
         let btn_let_me_know = document.getElementById('btn-let-me-know')
+        let container_images = document.getElementById('container-images')
 
         // Data 
         title_el.innerText = data.title
@@ -517,10 +533,12 @@ class Food extends PIZZLE {
         description_el.innerText = data.description
         quantity_el.max = data.stock
 
+
+
         // Event
         if (is_available) {
             btn_add_to_cart_el.addEventListener('click', function() {
-                This.ADD_TO_CART(This.MEAL.slug)
+                This.ADD_TO_CART(This.MEAL.slug, $('#quantity').val())
             })
             btn_add_to_cart_el.classList.remove('d-none')
         } else {
@@ -531,6 +549,7 @@ class Food extends PIZZLE {
         let price_discount_node = ``
         if (is_available) {
             if (data.discount) {
+                // Price & Discount
                 price_discount_node = `
                     <del><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price_base}</del>
                     <ins><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price}</ins>
@@ -550,13 +569,15 @@ class Food extends PIZZLE {
                     </div>
                 `
             } else {
-
+                // Price & Discount
                 price_discount_node = `
                     <ins><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price}</ins>
                 `
             }
             price.innerHTML = price_discount_node
             RunAllCounterTimers()
+
+
         } else {
             price.innerHTML = `
                 <p class="meal-is-unavailable">
@@ -564,12 +585,96 @@ class Food extends PIZZLE {
                 </p>
             `
             container_quantity_el.classList.add('d-none')
+
+
+            // Notify Me
+            let node_notifyme = ``
+
+            function toggleContentNotify(btn, is_active) {
+                if (is_active) {
+                    node_notifyme = `<i class="fas fa-check"></i> Will Notified`
+                    btn.setAttribute('notify-me', 'active')
+                } else {
+                    node_notifyme = ` <i class="fas fa-bell"></i> Notify me when available`
+                    btn.setAttribute('notify-me', 'disabled')
+                }
+                btn.innerHTML = node_notifyme
+            }
+            toggleContentNotify(btn_let_me_know, data.notify_is_active)
+
+            btn_let_me_know.addEventListener('click', function() {
+                let details = This.NOTIFY_ME(This.MEAL.slug)
+                let status = details.status
+                if (status == 200) {
+                    let is_active = details.data.notify_is_active
+                    toggleContentNotify(btn_let_me_know, is_active)
+                }
+            })
+
+        }
+
+        // Images
+        for (let image of data.images) {
+            let node = `
+                <div class="product-details-image">
+                    <img src="${image.url}" alt="${data.title}" />
+                </div>
+            `
+            container_images.innerHTML += node
+        }
+
+
+
+        RunOwlCarousel()
+
+
+        function RunOwlCarousel() {
+            $("#container-images").owlCarousel({
+                autoplay: true,
+                loop: true,
+                margin: 30,
+                touchDrag: true,
+                mouseDrag: true,
+                nav: false,
+                dots: false,
+                autoplayTimeout: 6000,
+                autoplaySpeed: 1200,
+                responsive: {
+                    0: {
+                        items: 1
+                    },
+                    480: {
+                        items: 1
+                    },
+                    600: {
+                        items: 1
+                    },
+                    1000: {
+                        items: 1
+                    },
+                    1200: {
+                        items: 1
+                    }
+                }
+            });
+
+            var selector = $('#container-images');
+
+            $('.next_image').click(function() {
+                selector.trigger('next.owl.carousel');
+            });
+
+            $('.prev_image').click(function() {
+                selector.trigger('prev.owl.carousel');
+            });
         }
 
 
     }
 
 }
+
+
 
 
 class Foods extends PIZZLE {
@@ -1824,16 +1929,18 @@ function SendAjax(Url, Data = {}, Method = 'POST', Success, Failed, async_req = 
                 let CircleLoading = document.createElement('div')
                 ContainerLoading.id = 'ContainerLoadingAJAX'
                 ContainerLoading.classList.add('ContainerLoadingAJAX')
-                    // ContainerLoading.innerHTML = `
-                    //     <div class="LoadingCircle"><span></span></div>
-                    // `
+                ContainerLoading.innerHTML = `
+                    <div class="LoadingCircle"><span></span></div>
+                `
                 ContainerLoading.innerHTML = `
                     <img src="assets/img/login.png" alt="logo">
                 `
+                document.body.classList.add('is-loading')
                 document.body.appendChild(ContainerLoading)
-            }, 500)
+            }, 300)
 
         } else {
+            document.body.classList.remove('is-loading')
             try {
                 UnlockAllElements()
                 document.getElementById('ContainerLoadingAJAX').remove()
@@ -1860,14 +1967,15 @@ function SendAjax(Url, Data = {}, Method = 'POST', Success, Failed, async_req = 
     }
 
     if (auth) {
-
         let pizzle = PIZZLE_OBJECT
         let access_token = ''
         let tokens = pizzle.GET_USER_TOKEN(login_redirect)
         if (tokens) {
             access_token = tokens.access
         }
-        headers['Authorization'] = `Bearer ${access_token}`
+        if (access_token) {
+            headers['Authorization'] = `Bearer ${access_token}`
+        }
     }
 
     Loading('Show')
