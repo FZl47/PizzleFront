@@ -217,6 +217,12 @@ class PIZZLE {
         return details
     }
 
+    GET_MEALS_BY_CATEGORY = function(data = {}) {
+        let url = this.URL('food/get-meals-by-category')
+        let details = this.SEND_AJAX(url, data, false, false, true, false)
+        return details
+    }
+
     GET_ONLY_FOODS = function() {
 
     }
@@ -480,13 +486,26 @@ class Food extends PIZZLE {
     constructor() {
         super(true)
         this.url_params = new URLSearchParams(window.location.search)
+        this.container_related = document.getElementById('container-related-foods')
         this.MEAL = null
         let data = this.get_info()
-
         this.set_info(data)
-
+        this.related_meals()
     }
 
+    related_meals = function() {
+        let data = {
+            'category_slug': this.MEAL.category.slug,
+            'slug': this.MEAL.slug
+        }
+        let details = this.GET_MEALS_BY_CATEGORY(data)
+        if (details.status == 200) {
+            let meals = details.data.meals
+            for (let meal of meals) {
+                this.CREATE_ELEMENT_MEAL(meal, this.container_related)
+            }
+        }
+    }
 
 
 
@@ -574,12 +593,12 @@ class Food extends PIZZLE {
                     <ins><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price}</ins>
                 `
             }
-            price.innerHTML = price_discount_node
+            price_el.innerHTML = price_discount_node
             RunAllCounterTimers()
 
 
         } else {
-            price.innerHTML = `
+            price_el.innerHTML = `
                 <p class="meal-is-unavailable">
                     The meal is unavailable
                 </p>

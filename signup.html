@@ -135,6 +135,7 @@
         let password2 = document.getElementById('password2')
         let btn_register = document.getElementById('btn-register')
         let text_message_form = document.getElementById('text-message-form')
+        let remember_me = document.getElementById('terms')
 
         btn_register.addEventListener('click', function() {
             let state_valid = true
@@ -166,7 +167,7 @@
                     SIGNUP._SET_REFRESH_TOKEN(details.data.refresh_token, remember_me.checked)
                     setTimeout(function() {
                         window.location.href = PAGE_HOME
-                    }, 1000)
+                    }, 500)
                 } else {
                     text_message_form.setAttribute('message-type', 'alert-text')
                     text_message_form.innerText = details.message
