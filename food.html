@@ -141,7 +141,7 @@
     <section class="product_area">
         <div class="container">
             <div class="row justify-content-between">
-                <div class="col-lg-5 position-relative">
+                <div class="col-lg-5 position-relative h-100">
                     <div class="owl-carousel" id="container-images">
                         <!-- <div class="product-details-image">
                             <img src="assets/img/p-6.png" alt="product" />
@@ -165,10 +165,10 @@
                                 <div class="ratings">
                                     <div class="ratings-val" id="rating-val" style="width: 0%"></div>
                                 </div>
-                                <a href="#comments" class="p-2">(<span id="count-comments">0</span> comments)</a>
+                                <a href="#comments" class="p-2">(<span id="comments-count-rating">0</span> comments)</a>
                             </div>
                         </div>
-                        <div class="price my-5 text-center text-md-left" id="price">
+                        <div class="price my-3 text-center text-md-left" id="price">
                             <!-- <del><span class="Price-currencySymbol">$</span>00</del>
                             <ins><span class="Price-currencySymbol">$</span>00</ins> -->
                         </div>
@@ -181,8 +181,9 @@
                                 Cursus mal suada faci lisis. Lorem ips um dolor.ipsum dolor sit amet, cons ectetur elit. Ves tibulum nec odios Suspe ndisse cursus mal suada faci lis is. Lorem ipsum dolor.ipsum dolor sit amet,.Lorem ipsum dolor.
                             </p>
                         </div>
+                        <div class="meals-group" id="meals-group">
 
-
+                        </div>
                         <div class="quantity" id="container-quantity">
                             <p>Quantity: </p>
                             <div class="num-block skin-2">
@@ -223,6 +224,78 @@
     </section>
     <!-- Product Area End -->
 
+    <div class="container position-relative-920">
+        <img class="promo_shape_food" src="assets/img/promo_leaf_bg.png" alt="img">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="order_promo_box_food">
+                    <img src="assets/img/promo_order_1.jpg" alt="img">
+                    <div class="promo_order_text">
+                        <h2>Best Food for Best</h2>
+                        <a href="foods.html" class="cta_btn small_btn"><i class="fas fa-shopping-cart"></i> Order Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mx-auto px-3">
+        <!-- /end comment list -->
+        <div class="col-12 col-md-8 mx-auto mb-2 text-right">
+            <img src="assets/img/shape_14.png" alt="drink">
+        </div>
+        <div class="leave-comment col-12 col-md-5 col-lg-6 mx-auto" id="leave-commet">
+            <h3>Leave a Comment</h3>
+            <p class="message-form" id="message-form"></p>
+            <p class="must-login d-none" id="must-login">
+                You must be <a href="login.html">login</a> in to post a comment
+            </p>
+            <form id="form-comment">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="comment-field d-flex justify-content-between mb-2">
+                            <div>
+                                <div class="ratings-container ratings-container-input">
+                                    <div class="ratings" id="rating-input">
+                                        <div class="ratings-val" id="rating-val-input" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="rate-state-input" class="icon-state-rate">
+                                <i></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="comment-field">
+                            <textarea class="comment" placeholder="Comment..." name="comment"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="comment-field">
+                            <button type="button" id="btn-submit-comment" class="cta_btn">post comment <span></span></button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!--/.end blog item-->
+        <div class="comment-list col-12 col-md-5 col-lg-6 mx-auto">
+            <div class="comment-group-title">
+                <h3>Comments <span id="comments-count">0</span></h3>
+            </div>
+            <div class="single-comment-item" id="comments">
+            </div>
+        </div>
+        <div class="col-12 col-md-8 mx-auto my-4">
+            <img src="assets/img/shape_12.png" alt="pizza ">
+        </div>
+
+    </div>
 
     <!-- Pizza Slider Start -->
     <section class="pizza_slider_area pt-0">
@@ -459,7 +532,6 @@
     </footer>
     <!-- Footer Area End -->
 
-
     <!-- Jquery -->
     <script src="assets/js/jquery.min.js"></script>
     <!-- Bootstrap -->
@@ -480,6 +552,7 @@
     <!-- Custome Added -->
     <script src="assets/js/base.js"></script>
     <script>
+        let rate_comment = null
         const PIZZLE_OBJECT = new PIZZLE()
         const FOOD_OBJECT = new Food()
 
@@ -490,6 +563,44 @@
             if (value > max) {
                 input.val(max)
             }
+        }
+
+        function roundHalf(num) {
+            return Math.round(num * 2) / 2;
+        }
+
+
+        let raing_input = document.getElementById('rating-input')
+        let raing_input_val = document.getElementById('rating-val-input')
+        let rate_state_input = document.getElementById('rate-state-input').querySelector('i')
+        raing_input.addEventListener('click', function(e) {
+            rate_comment = convert_rate(e)
+            if (rate_comment > 2.5) {
+                rate_state_input.className = 'fa fa-plus'
+            } else if (rate_comment < 2.5) {
+                rate_state_input.className = 'fa fa-minus'
+            } else {
+                rate_state_input.className = 'fa fa-equals'
+            }
+            let percentage_rate = rate_comment * 20
+            raing_input_val.style.width = percentage_rate + '%'
+        })
+
+        raing_input.addEventListener('mousemove', function(e) {
+            if (rate_comment == null) {
+                let rate = convert_rate(e)
+                let percentage_rate = rate * 20
+                raing_input_val.style.width = percentage_rate + '%'
+            }
+        })
+
+        function convert_rate(event) {
+            let left = event.offsetX
+            let width_parent = event.target.parentNode.getBoundingClientRect().width
+            let percentage = (left / width_parent) * 100
+            let result = (percentage / 20)
+            result = roundHalf(result)
+            return result
         }
     </script>
 </body>

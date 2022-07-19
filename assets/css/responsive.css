@@ -1,14 +1,11 @@
 @media(max-width: 991px) {
-
     html,
     body {
         overflow-x: hidden
     }
-
     .header_social {
         display: none
     }
-
     .spinner-master * {
         -webkit-transition: all 0.3s;
         -o-transition: all 0.3s;
@@ -16,7 +13,6 @@
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
     }
-
     .spinner-master {
         position: relative;
         height: auto;
@@ -24,39 +20,32 @@
         margin-left: 22px;
         margin-top: 5px;
     }
-
     .spinner-master .spinner {
         height: 2px;
         width: 100%;
     }
-
     .spinner-master .horizontal {
         margin-top: 6px;
         width: 70%;
     }
-
     .spinner-master .diagonal.part-2 {
         margin-top: 6px;
     }
-
-    .spinner-spin.active > .horizontal {
+    .spinner-spin.active>.horizontal {
         opacity: 0;
     }
-
-    .spinner-spin.active > .diagonal.part-1 {
+    .spinner-spin.active>.diagonal.part-1 {
         -ms-transform: rotate(135deg);
         transform: rotate(135deg);
         -webkit-transform: rotate(135deg);
         margin-top: 10px;
     }
-
-    .spinner-spin.active > .diagonal.part-2 {
+    .spinner-spin.active>.diagonal.part-2 {
         -ms-transform: rotate(-135deg);
         transform: rotate(-135deg);
         -webkit-transform: rotate(-135deg);
         margin-top: -10px;
     }
-
     nav#menu {
         position: absolute;
         top: 100%;
@@ -65,13 +54,11 @@
         display: block;
         z-index: 99;
     }
-
     .mainmenu ul {
         text-align: left;
     }
-
     nav#menu,
-    nav#menu > ul ul {
+    nav#menu>ul ul {
         overflow: hidden;
         max-height: 0;
         background-color: #fff;
@@ -79,19 +66,16 @@
         -o-transition: all 0.4s ease 0s;
         transition: all 0.4s ease 0s;
     }
-
     nav#menu.active,
-    nav#menu > ul ul.active {
+    nav#menu>ul ul.active {
         max-height: 55em;
         overflow: auto;
         padding: 10px 20px;
     }
-
-    nav#menu > ul > li {
+    nav#menu>ul>li {
         display: block !important;
         margin: 0 !important;
     }
-
     nav#menu ul ul,
     nav#menu ul ul ul {
         display: inherit;
@@ -100,26 +84,22 @@
         top: auto;
         padding: 0
     }
-
     nav#menu ul ul.sub-menu.active {
         visibility: visible;
         opacity: 1;
         max-height: 55em;
     }
-
-    nav#menu > ul > li > a {
+    nav#menu>ul>li>a {
         display: block;
         position: relative;
         padding: 10px 0;
         color: #000;
         border-bottom: 1px solid rgba(131, 131, 131, 0.19);
     }
-
-    .mainmenu ul li > ul {
+    .mainmenu ul li>ul {
         border: none
     }
-
-    nav#menu li.has-submenu > a:before {
+    nav#menu li.has-submenu>a:before {
         content: '+';
         position: absolute;
         right: 15px;
@@ -129,314 +109,245 @@
         bottom: auto;
         height: auto
     }
-
     .sub-menu::before {
         height: 90% !important;
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
     }
-
     .sub-menu::after {
         display: none
     }
-
-    nav#menu li.has-submenu > a.active:before {
+    nav#menu li.has-submenu>a.active:before {
         content: "-";
     }
-
-    nav#menu ul li.hover > a {
+    nav#menu ul li.hover>a {
         color: #f7b035;
     }
-
     .mainmenu ul li a:after,
     .header_tools li a:after {
         display: none !important
     }
-
-    nav#menu ul ul > li a {
+    nav#menu ul ul>li a {
         padding: 10px 20px;
         line-height: normal
     }
-
     ul.sub-menu {
         padding-left: 20px;
         box-shadow: none !important
     }
-
     .header_tools {
         padding-left: 20px;
         display: flex;
         align-items: center;
     }
-
     .header_social li a,
     .header_tools li a {
         font-size: 16px;
         padding: 0;
     }
-
     .header_tools img {
         width: 20px;
     }
-
     .hero_title {
         font-size: 55px;
         line-height: 65px
     }
-
     .header_tools li:nth-child(2) {
         position: relative;
         top: 4px
     }
-
     .header_tools li {
         display: inline-block;
         padding-left: 18px;
     }
-
     .hero_area {
         padding: 150px 0 100px
     }
-
     .hero_area .shape_1 {
         z-index: -1;
         top: -50px;
     }
-
     .hero_area .shape_2 {
         left: 66%;
         top: -84%;
     }
-
     .hero_img {
         margin-top: 50px
     }
-
     .promo_order_text {
         width: 60%
     }
-
     .pizza_nav .next_slide,
     .pizza_nav .prev_slide {
         z-index: 9;
     }
-
     .fun_shape_7,
     .fun_shape_2 {
         display: none
     }
-
     .best_pizza_area {
         padding-top: 70px
     }
-
     .about_right {
         margin-top: 100px
     }
-
     .choose_pizza {
         display: none
     }
-
     .choose_text p br {
         display: none
     }
-
     .cart-table-left table td p {
         line-height: 22px
     }
-
     .cart-table-left h3,
     .order-summury-box h3 {
         font-size: 22px
     }
-
     .order-summury-box {
         margin-top: 50px
     }
-
     .product_sidebar .sidebar-widget {
         margin-top: 0 !important
     }
-
 }
 
 @media(max-width: 767px) {
-
     html,
     body {
         overflow-x: hidden
     }
-
     .scroll_pizza_2 {
         bottom: 70px;
         left: 30px;
         width: 45%;
     }
-
     .scroll_pizza_1 {
         top: 77px;
         left: 34px;
         width: 48%;
     }
-
     .hero_area .shape_2 {
         display: none
     }
-
     .best_pizza_left h2 {
         font-size: 95px;
         line-height: 95px
     }
-
     .menu_pizza {
         display: none
     }
-
     .food_menu_box {
         margin-top: 0
     }
-
     .food_menu_info h3 {
         font-size: 22px
     }
-
     .food_menu_info h2 {
         font-size: 50px;
         line-height: 50px
     }
-
     .food_menu_info h2 span {
         font-size: 85px;
         line-height: 85px
     }
-
     .food_menu_info {
         margin: 50px 0
     }
-
     .hero_text {
         text-align: center
     }
-
     .best_pizza_right .shape_17 {
         display: none
     }
-
     .best_pizza_left .section_devider {
         left: auto;
         margin: 0 auto 50px;
     }
-
     .best_pizza_left {
         text-align: center
     }
-
     .section_title {
         font-size: 38px
     }
-
     .double_fun_inn h3 {
         font-size: 22px
     }
-
     .double_fun_pizza {
         width: 70%;
     }
-
     .site_heading {
         text-align: center !important
     }
-
     .delivery_right {
         margin-top: 30px
     }
-
     .delivery_right,
     .site_heading {
         text-align: center !important
     }
-
     .order_box {
         display: flex !important;
         justify-content: center
     }
-
     .footer_top .col-md-6.col-lg-3 .footer_widget,
     .footer_top .col-md-6.col-lg-3:last-child .footer_widget {
         border: none
     }
-
     .footer_top .footer_widget {
         padding: 20px 0
     }
-
     .subscribe_box {
         width: 100%
     }
-
     .subscribe_box form button {
         width: 40%
     }
-
     .error_bg {
         font-size: 100px;
         line-height: 100px
     }
-
     .error-page-box p {
         width: 100%
     }
-
     .error-page-box h4 {
         font-size: 22px
     }
-
     .error-page-area {
         display: block;
         min-height: 80vh;
         padding-top: 18%;
         padding-bottom: 14%;
     }
-
     .breadcrumb_area {
         padding-top: 150px;
         padding-bottom: 50px;
     }
-
     .breadcrumb_title {
         font-size: 34px;
         line-height: 36px;
     }
-
     .about_right {
         margin-top: 100px;
     }
-
     .choose_text p {
         font-size: 14px
     }
-
     .choose_text h3 {
         font-size: 20px
     }
-
     .testimonial-pos h3 {
         letter-spacing: 5px
     }
-
     .checkout-left-box:first-child .row .col-md-6:last-child {
         margin-top: 20px
     }
-
     .site_logo img {
         width: 110px
     }
-
     .tab-to-dropdown {
         position: relative;
     }
-
     .converted-tab {
         position: absolute;
         z-index: 10;
@@ -445,78 +356,63 @@
         width: 100%;
         background: #fff;
     }
-
     .menu_page_inn .nav-tabs {
         display: block;
         border-radius: 0;
         text-align: left
     }
-
     .menu_page_inn .nav-tabs li a {
         border-radius: 0
     }
-
     .menu_page_table .menu-item_content h4 {
         font-size: 16px;
     }
-
     .menu_page_table p {
         line-height: 20px;
         margin-top: 10px;
     }
-
     .food_item_thumb {
         max-width: 65px;
         margin-right: 15px;
     }
-
     .error-page-logo img {
         width: 110px
     }
-
     .sidebar-widget {
         margin-top: 50px
     }
-
     .news_page_area .pagination {
         margin-top: 10px
     }
-
     .product_list_inn {
         margin-top: 50px
     }
-
     .product_list_result form {
-        width: 135px
+        width: 185px
     }
-
     .product_list_result p {
         margin: 0;
         font-size: 16px
     }
-
     .product_list_inn .pizza_slide_text h3 a {
         font-size: 19px
     }
-
     .destination-desc-img {
         margin: 15px 0
     }
-
     .single-comment-box.comment_reply {
         padding-left: 20px;
     }
-
     .leave-comment {
         width: 100%
     }
-    .product-details-text h3{
+    .product-details-text h3 {
         font-size: 24px
     }
     .product-details-image {
         padding: 0 50px 50px 50px;
     }
-    .choose_option label{
+    .choose_option label {
         padding: 8px 10px
     }
 }
@@ -527,90 +423,71 @@
         left: 12px;
         width: 51%;
     }
-
     .scroll_pizza_1 {
         top: 50px;
         left: 18px;
         width: 50%;
     }
-
     .promo_order_text h2 {
         font-size: 24px
     }
-
     .best_pizza_left {
         margin-top: 30px;
     }
-
     .section_title br {
         display: none
     }
-
     .section_title {
         font-size: 28px;
         line-height: 36px
     }
-
     .sub_title {
         font-size: 18px
     }
-
     .double_fun_inn h3 {
         font-size: 18px
     }
-
     .order-img img {
         width: 60px
     }
-
     .order-content {
         margin-right: 0;
         padding: 15px 0
     }
-
     .blog_text h3 a {
         font-size: 28px;
         line-height: 36px
     }
-
     .order_box {
         display: block !important;
     }
-
     .error-page-logo-right {
         display: none
     }
-
     .error-page-logo {
         text-align: center;
         margin-bottom: 30px;
     }
-
     .error_bg {
         font-size: 70px;
     }
-
     .error-page-box h4 {
         font-size: 24px;
     }
-
     .error-page-box p {
         width: 100%
     }
-
     .error-page-area {
         display: flex;
         min-height: 100vh;
         padding-top: 0;
         padding-bottom: 0;
     }
-
     .choose_text h3 {
         font-size: 22px
     }
-
-    .socials-wrapper > p:after,
-    .socials-wrapper > p:before {
+    .socials-wrapper>p:after,
+    .socials-wrapper>p:before {
         display: none
     }
     .choose_option {
@@ -620,61 +497,47 @@
     .choice_meta_box {
         flex-wrap: wrap;
     }
-    .choose_option label{
+    .choose_option label {
         display: block;
         padding: 8px 10px
     }
-    .single-shop-page-btn{
+    .single-shop-page-btn {
         display: block
     }
-    .single-shop-page-btn ul{
+    .single-shop-page-btn ul {
         margin-left: 0;
         margin-top: 20px
     }
-    
-
-
 }
-
 
 @media(max-width: 420px) {
     .blog_text h3 a {
         font-size: 24px
     }
-
     .footer_title {
         font-size: 22px;
         margin-bottom: 15px
     }
-
     .choose_list {
         display: block
     }
-
     .testimonial-pos h3 {
         font-size: 50px;
         letter-spacing: 6px;
     }
-
     .testimonial-slider {
         width: 80%
     }
-
     .pagination-box-row p {
         display: none
     }
-
     .login_icon {
         display: none
     }
-
     .blog-meta p {
         margin-right: 0
     }
-
 }
-
-
 
 @media (min-width: 768px) and (max-width: 991px) {
     .scroll_pizza_2 {
@@ -682,136 +545,106 @@
         left: 55px;
         width: 48%;
     }
-
     .scroll_pizza_1 {
         top: 52px;
         left: 22px;
         width: 44%;
     }
-
-    .best_pizza_right > img.shape_17 {
+    .best_pizza_right>img.shape_17 {
         display: none
     }
-
     .best_pizza_left {
         text-align: center
     }
-
     .best_pizza_left h2 {
         font-size: 110px;
         line-height: 130px
     }
-
     .best_pizza_left .section_devider {
         margin: 0 auto 30px;
         left: auto;
     }
-
     .menu_pizza {
         display: none
     }
-
     .food_menu_box {
         margin-top: 0
     }
-
     .food_menu_info {
         margin: 50px 0
     }
-
     .food_menu_info h3 {
         font-size: 26px
     }
-
     .food_menu_info h2 {
         font-size: 55px
     }
-
     .food_menu_info h2 span {
         font-size: 85px;
         line-height: 65px;
     }
-
     .double_fun_inn h3 {
         font-size: 20px
     }
-
     .double_fun_pizza {
         width: 65%
     }
-
     .section_title {
         font-size: 36px;
         line-height: 48px
     }
-
     .order_box {
         text-align: center
     }
-
     .order-img img {
         width: 60px
     }
-
     .order-content {
         margin-right: 0;
         margin-top: 10px;
         margin-bottom: 10px
     }
-
     .subscribe_box {
         width: 100%
     }
-
     .footer_top .col-md-6.col-lg-3 .footer_widget,
     .footer_top .col-md-6.col-lg-3:last-child .footer_widget {
         border: none
     }
-
     .error-page-box p {
         width: 70%
     }
-
     .error_bg {
         font-size: 135px
     }
-
     .breadcrumb_area {
         padding-top: 150px;
         padding-bottom: 50px;
     }
-
     .menu_page_inn .nav-tabs li a {
         padding: 15px
     }
-
     .menu_page_table .menu-item_content h4 {
         font-size: 18px
     }
-
     .food_item_thumb {
         max-width: 70px;
         margin-right: 10px;
     }
-
     .blog_item {
         width: 75%;
         margin: 30px auto 0;
     }
-
     .sidebar-widget {
         width: 75%;
         margin: 50px auto 0;
     }
-
     .post_date {
         width: 14%
     }
-
     .product_list_inn {
         margin-top: 50px
     }
-
     .single_news_post .blog_item {
         margin: 0 auto;
     }
@@ -819,7 +652,7 @@
         width: 75%;
         margin: 50px auto 0
     }
-    .leave-comment{
+    .leave-comment {
         margin: 50px auto 0
     }
     .product-details-image {
@@ -827,12 +660,11 @@
         width: 75%;
         margin: auto;
     }
-    .product-details-text{
+    .product-details-text {
         width: 75%;
         margin: auto
     }
 }
-
 
 @media (min-width: 800px) and (max-width: 850px) and (max-height: 500px) {
     .scroll_pizza_2 {
@@ -840,250 +672,196 @@
         left: 0px;
         width: 57%;
     }
-
     .scroll_pizza_1 {
         top: 45px;
         left: 28px;
         width: 58%;
     }
-
     .best_pizza_left h2 {
         font-size: 90px;
         line-height: 100px
     }
-
     .menu_pizza {
         display: none
     }
-
     .food_menu_box {
         margin: 0
     }
-
     .food_menu_info {
         margin: 50px 0
     }
-
     .double_fun_pizza {
         width: 65%
     }
-
     .section_title {
         font-size: 36px;
         line-height: 46px
     }
-
     .order-content {
         margin-right: 5px;
     }
-
     .order_box a {
         padding: 14px 20px;
         border-radius: 40px;
         font-size: 14px;
     }
-
     .order-content span {
         font-size: 17px
     }
-
     .order-img {
         display: none
     }
-
     .order_box {
         display: flex !important
     }
-
     .subscribe_box {
         width: 100%
     }
-
     .footer_top .col-md-6.col-lg-3 .footer_widget,
     .footer_top .col-md-6.col-lg-3:last-child .footer_widget {
         border: none
     }
-
     .error_bg {
         font-size: 130px;
         line-height: 130px
     }
-
     .error-page-box p {
         width: 100%
     }
-
     .error-page-box h4 {
         font-size: 24px
     }
-
     .error-page-area {
         display: block;
         min-height: 80vh;
         padding-top: 18%;
         padding-bottom: 14%;
     }
-
     .about_right {
         margin-top: 100px;
     }
-
     .breadcrumb_area {
         padding-top: 150px;
         padding-bottom: 50px;
     }
-
     .breadcrumb_title {
         font-size: 34px;
         line-height: 36px;
     }
-
     .menu_page_inn .nav-tabs li a {
         padding: 15px 20px;
         text-transform: capitalize;
         font-size: 14px;
     }
-
     .menu_page_table .menu-item_content h4 {
         color: #000;
         font-size: 18px;
     }
-
     .food_item_thumb {
         max-width: 70px;
         margin-right: 10px;
     }
-
     .menu_page_table p {
         line-height: 24px;
         margin-top: 10px;
     }
-
     .post_date {
         width: 10%;
         font-size: 20px
     }
-
-
     .news_page_area .pagination {
         margin-top: 10px
     }
-
     .blog_item {
         width: 75%;
         margin: 30px auto 0;
     }
-
     .sidebar-widget {
         width: 75%;
         margin: 50px auto 0;
     }
-
     .product_list_inn {
         margin-top: 50px
     }
-
     .single_news_post .blog_item {
         margin: 0 auto;
     }
-
     .comment-list {
         width: 75%;
         margin: 50px auto 0
     }
-    .leave-comment{
+    .leave-comment {
         margin: 50px auto 0
     }
 }
 
 @media (width: 1024px) {
-
     html,
     body {
         overflow-x: hidden
     }
-
     .header_social li {
         padding-left: 5px;
     }
-
     .mainmenu {
         margin-left: 40px;
     }
-
     .mainmenu ul li {
         padding: 0 8px
     }
-
     .header_tools {
         padding-left: 30px;
     }
-
     .hero_title {
         line-height: 75px;
         font-size: 70px;
     }
-
     .scroll_pizza_2 {
         bottom: 60px;
         left: 28px;
         width: 44%;
     }
-
     .scroll_pizza_1 {
         top: 75px;
         left: 33px;
         width: 46%;
     }
-
     .promo_order_text h2 {
         font-size: 26px
     }
-
     .menu_pizza {
         width: 325px
     }
-
     .double_fun_pizza {
         width: 65%
     }
-
     .subscribe_box form button {
         width: 30%
     }
-
     .order-content {
         margin-right: 10px;
     }
-
     .order-content span {
         font-size: 25px
     }
-
     .open_hours {
         padding: 0px 10px;
     }
-
     .error-page-box p {
         width: 70%
     }
-
     .error_bg {
         font-size: 135px
     }
-
     .choose_pizza {
         left: -40%
     }
-
     .choose_text p br {
         display: none
     }
-
     .pizza_item {
         padding: 15px
     }
-
     .product_list_inn .pizza_slide_text h3 a {
         font-size: 19px
     }
@@ -1091,5 +869,4 @@
         padding: 5px 10px;
         font-size: 14px;
     }
-
 }

@@ -12,6 +12,61 @@ const PAGE_MEALS = 'foods.html'
 const SYMBOL_CURRENCY = '$'
 
 
+
+function Loading(State) {
+    if (State == 'Show') {
+        LockAllElements()
+        timer_loading = setTimeout(function() {
+            Loading('Hide')
+            let ContainerLoading = document.createElement('div')
+            let CircleLoading = document.createElement('div')
+            ContainerLoading.id = 'ContainerLoadingAJAX'
+            ContainerLoading.classList.add('ContainerLoadingAJAX')
+            ContainerLoading.innerHTML = `
+                <div class="LoadingCircle"><span></span></div>
+            `
+            ContainerLoading.innerHTML = `
+                <img src="assets/img/login.png" alt="logo">
+            `
+            document.body.classList.add('is-loading')
+            document.body.appendChild(ContainerLoading)
+        }, 300)
+
+    } else {
+        document.body.classList.remove('is-loading')
+        try {
+            UnlockAllElements()
+            document.getElementById('ContainerLoadingAJAX').remove()
+        } catch (e) {}
+        try {
+            clearTimeout(timer_loading)
+        } catch (e) {}
+    }
+}
+
+function GET_USER_TOKEN(go_to_login = true) {
+
+    let refresh = GetCookieByName('refresh-user')
+    let access = GetCookieByName('access-user')
+
+    function view_login() {
+        if (go_to_login) {
+            window.location.href = PAGE_LOGIN
+        } else {
+            return null
+        }
+    }
+
+    if (refresh) {
+        return {
+            'refresh': refresh,
+            'access': access
+        }
+    } else {
+        view_login()
+    }
+}
+
 class PIZZLE {
 
     constructor(get_user = false) {
@@ -19,9 +74,10 @@ class PIZZLE {
         this._details_func = {}
         this.COUNTER_TRY_GET_TOKENS = 3
         this.COUNTER_TRY_ADD_TO_CART = 1
+        this.COUNTER_TRY_GET_USER = 2
         this.USER = null
         if (get_user) {
-            setTimeout(function() { This.GET_USER() }, 20)
+            This.GET_USER()
         }
 
     }
@@ -32,21 +88,13 @@ class PIZZLE {
         let status = details.status
         if (status == 200) {
             this.USER = details.data.user
+        } else if (status == 401) {
+            if (this.COUNTER_TRY_GET_USER > 0) {
+                this.COUNTER_TRY_GET_USER -= 1
+                this.GET_USER()
+            }
         }
     }
-
-    // SET_DETAILS = function(status, message, data = {}) {
-    //     this._details_func = {
-    //         'status': status,
-    //         'message': message,
-    //         'data': data
-    //     }
-    //     return this._details_func
-    // }
-
-    // GET_DETAILS = function() {
-    //     return this._details_func
-    // }
 
     URL = function(url, slash = false, arg = null) {
         if (slash) {
@@ -201,6 +249,69 @@ class PIZZLE {
         return details
     }
 
+    GET_HTML_ELEMENT_COMMENT = function(comment) {
+        let comment_state_rate = ''
+        let rate = parseFloat(comment.rate)
+        if (rate > 2.5) {
+            comment_state_rate = `
+               <i class="fas fa-plus"></i>
+            `
+        } else if (rate < 2.5) {
+            comment_state_rate = `
+                <i class="fas fa-minus"></i>
+            `
+        } else {
+            comment_state_rate = `
+                <i class="fas fa-equals"></i>
+            `
+        }
+
+        return `
+            <div class="single-comment-box">
+                <div class="main-comment">
+                <div class="author-image">
+                    <img src="${comment.user.image}" alt="${comment.user.name}">
+                </div>
+                <div class="comment-text">
+                    <div class="comment-info">
+                        <div>
+                            <h4>${comment.user.name}</h4>
+                            <div class="ratings-container d-inline-block text-center mx-2 w-auto">
+                                <div class="ratings">
+                                    <div class="ratings-val" id="rating-val" style="width: ${rate * 20}%"></div>
+                                </div>
+                            </div>
+                            <p>${comment.time_send}</p>
+                        </div>
+                        <div class="icon-state-rate">
+                            ${comment_state_rate}
+                        </div>
+                    </div>
+                    <div class="comment-text-inner">
+                        <p>${comment.text}</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+        `
+    }
+
+    CREATE_ELEMENT_COMMENT = function(container, node_comment, insert_before = false) {
+        if (insert_before) {
+            container.insertAdjacentHTML('beforeend', node_comment)
+        } else {
+            container.innerHTML += node_comment
+        }
+    }
+
+    SHOW_NOT_FOUND_COMMENT = function(container) {
+        container.innerHTML = `
+            <div class="not-found-comment">
+                <p>no comment</p>
+            </div>
+        `
+    }
+
 
     NOTIFY_ME = function(slug) {
         let url = this.URL('food/notify-me')
@@ -221,14 +332,6 @@ class PIZZLE {
         let url = this.URL('food/get-meals-by-category')
         let details = this.SEND_AJAX(url, data, false, false, true, false)
         return details
-    }
-
-    GET_ONLY_FOODS = function() {
-
-    }
-
-    GET_ONLY_DRINKS = function() {
-
     }
 
     GET_MEALS_WITH_DISCOUNT() {
@@ -284,11 +387,11 @@ class PIZZLE {
             `
         }
 
-        let rate_percentage = parseInt(meal.rate) * 20
+        let rate_percentage = parseFloat(meal.rate) * 20
         let element_rate = `
                 <div class="ratings-container">
                     <div class="ratings">
-                        <div class="ratings-val" style="width: ${rate_percentage}%;"></div>
+                        <div class="ratings-val" style="width: ${rate_percentage}%"></div>
                     </div>
                 </div>
         `
@@ -337,9 +440,42 @@ class PIZZLE {
         return node
     }
 
+
+    GET_HTML_ELEMENT_MEAL_SMALL = function(meal) {
+        let This = this
+
+        let discount = meal.discount
+
+        let element_discount = ''
+        if (discount) {
+            element_discount = `
+                <div class="pizza_discount">
+                    <p class="pizza_discount_percentage">${meal.discount_percentage}%</p>
+                </div>
+            `
+        }
+
+        let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL, ['slug', meal.slug])
+
+        let node = `
+            <div class="pizza_item_small">
+                <div class="pizza_slide_header">
+                    ${element_discount}
+                </div>
+                <div class="pizza_slide_img">
+                    <img src="${meal.cover_image}" alt="${meal.title}" />
+                </div>
+                <div class="pizza_slide_text">
+                    <h3><a href="${slug}">${meal.title_short}</a></h3>
+                </div>
+            </div> 
+        `
+        return node
+    }
+
     GET_HTML_ELEMENT_MEAL_POPULAR = function(meal) {
         let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL, ['slug', meal.slug])
-        let rate_percentage = parseInt(meal.rate) * 20
+        let rate_percentage = parseFloat(meal.rate) * 20
         let node = `
             <li>
                 <div class="recent-img">
@@ -491,6 +627,53 @@ class Food extends PIZZLE {
         let data = this.get_info()
         this.set_info(data)
         this.related_meals()
+        this.comment_init()
+    }
+
+
+    comment_init = function() {
+        let This = this
+        let message_form = document.getElementById('message-form')
+        let must_login = document.getElementById('must-login')
+        let form_comment = document.getElementById('form-comment')
+        let btn_submit_comment = document.getElementById('btn-submit-comment')
+        let input_comment = form_comment.querySelector('textarea')
+        if (this.USER) {
+            btn_submit_comment.addEventListener('click', function() {
+                if (rate_comment && input_comment.value) {
+                    message_form.innerText = ''
+                    post_comment(input_comment.value, rate_comment)
+                } else {
+                    message_form.innerText = 'Please enter the fields correctly'
+                    message_form.setAttribute('message-type', 'alert-text')
+                }
+            })
+        } else {
+            must_login.classList.remove('d-none')
+            form_comment.classList.add('d-none')
+        }
+
+        function post_comment(comment, rate) {
+            let url = This.URL('food/submit-comment')
+            let details = This.SEND_AJAX(url, {
+                'comment': comment,
+                'rate': rate,
+                'slug': This.MEAL.slug
+            }, true, true, true, true)
+            if (details.status == 200) {
+                document.getElementById('leave-commet').innerHTML = `
+                    <div class="submited-checkmark">
+                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                        </svg>
+                        <p>
+                            ${details.message}
+                        </p>
+                    </div>
+                `
+            }
+        }
     }
 
     related_meals = function() {
@@ -506,7 +689,6 @@ class Food extends PIZZLE {
             }
         }
     }
-
 
 
     get_info = function() {
@@ -535,7 +717,8 @@ class Food extends PIZZLE {
         let title_el = document.getElementById('title')
         let category_el = document.getElementById('category')
         let rating_val_el = document.getElementById('rating-val')
-        let comments_count = document.getElementById('count-comments')
+        let comments_count_rating = document.getElementById('comments-count-rating')
+        let comments_count = document.getElementById('comments-count')
         let price_el = document.getElementById('price')
         let description_el = document.getElementById('description')
         let quantity_el = document.getElementById('quantity')
@@ -543,15 +726,16 @@ class Food extends PIZZLE {
         let btn_add_to_cart_el = document.getElementById('btn-add-to-cart')
         let btn_let_me_know = document.getElementById('btn-let-me-know')
         let container_images = document.getElementById('container-images')
+        let container_comments = document.getElementById('comments')
+        let container_meals_group = document.getElementById('meals-group')
 
         // Data 
         title_el.innerText = data.title
         category_el.innerText = data.category.title
         category_el.href = this.URL_TEMPLATE(PAGE_MEALS, ['category', data.category.slug])
-        rating_val_el.style.width = (parseInt(data.rate) * 20) + '%'
+        rating_val_el.style.width = (parseFloat(data.rate) * 20) + '%'
         description_el.innerText = data.description
         quantity_el.max = data.stock
-
 
 
         // Event
@@ -643,9 +827,41 @@ class Food extends PIZZLE {
         }
 
 
+        // Comments 
+        for (let comment of data.comments) {
+            this.CREATE_ELEMENT_COMMENT(container_comments, this.GET_HTML_ELEMENT_COMMENT(comment))
+        }
+
+        if (data.comments.length == 0) {
+            this.SHOW_NOT_FOUND_COMMENT(container_comments)
+        }
+
+        comments_count.innerText = data.comments.length
+        comments_count_rating.innerText = data.comments.length
+
+
+
+        if (data.type == 'group') {
+            // Meals Group
+
+            // ---Foods
+            for (let food of data.foods) {
+                let node = this.GET_HTML_ELEMENT_MEAL_SMALL(food)
+                container_meals_group.innerHTML += node
+            }
+
+            // ---Drinks
+            for (let drink of data.drinks) {
+                let node = this.GET_HTML_ELEMENT_MEAL_SMALL(drink)
+                container_meals_group.innerHTML += node
+            }
+        } else {
+            container_meals_group.classList.add('d-none')
+        }
+
+
 
         RunOwlCarousel()
-
 
         function RunOwlCarousel() {
             $("#container-images").owlCarousel({
@@ -1940,34 +2156,34 @@ function SendAjax(Url, Data = {}, Method = 'POST', Success, Failed, async_req = 
     let timer_loading
 
     function Loading(State) {
-        if (State == 'Show') {
-            LockAllElements()
-            timer_loading = setTimeout(function() {
-                Loading('Hide')
-                let ContainerLoading = document.createElement('div')
-                let CircleLoading = document.createElement('div')
-                ContainerLoading.id = 'ContainerLoadingAJAX'
-                ContainerLoading.classList.add('ContainerLoadingAJAX')
-                ContainerLoading.innerHTML = `
-                    <div class="LoadingCircle"><span></span></div>
-                `
-                ContainerLoading.innerHTML = `
-                    <img src="assets/img/login.png" alt="logo">
-                `
-                document.body.classList.add('is-loading')
-                document.body.appendChild(ContainerLoading)
-            }, 300)
+        // if (State == 'Show') {
+        //     LockAllElements()
+        //     timer_loading = setTimeout(function() {
+        //         Loading('Hide')
+        //         let ContainerLoading = document.createElement('div')
+        //         let CircleLoading = document.createElement('div')
+        //         ContainerLoading.id = 'ContainerLoadingAJAX'
+        //         ContainerLoading.classList.add('ContainerLoadingAJAX')
+        //         ContainerLoading.innerHTML = `
+        //             <div class="LoadingCircle"><span></span></div>
+        //         `
+        //         ContainerLoading.innerHTML = `
+        //             <img src="assets/img/login.png" alt="logo">
+        //         `
+        //         document.body.classList.add('is-loading')
+        //         document.body.appendChild(ContainerLoading)
+        //     }, 300)
 
-        } else {
-            document.body.classList.remove('is-loading')
-            try {
-                UnlockAllElements()
-                document.getElementById('ContainerLoadingAJAX').remove()
-            } catch (e) {}
-            try {
-                clearTimeout(timer_loading)
-            } catch (e) {}
-        }
+        // } else {
+        //     document.body.classList.remove('is-loading')
+        //     try {
+        //         UnlockAllElements()
+        //         document.getElementById('ContainerLoadingAJAX').remove()
+        //     } catch (e) {}
+        //     try {
+        //         clearTimeout(timer_loading)
+        //     } catch (e) {}
+        // }
     }
 
     if (Success == undefined) {
@@ -1986,9 +2202,8 @@ function SendAjax(Url, Data = {}, Method = 'POST', Success, Failed, async_req = 
     }
 
     if (auth) {
-        let pizzle = PIZZLE_OBJECT
         let access_token = ''
-        let tokens = pizzle.GET_USER_TOKEN(login_redirect)
+        let tokens = GET_USER_TOKEN(login_redirect)
         if (tokens) {
             access_token = tokens.access
         }

@@ -71,6 +71,7 @@ body.is-loading {
 html,
 body {
     height: 100%;
+    scroll-behavior: smooth;
 }
 
 body {
@@ -700,6 +701,7 @@ section {
 .hero_area .shape_2,
 .hero_area .shape_4,
 .promo_shape,
+.promo_shape_food,
 .best_pizza_right>img.shape_17,
 .fun_shape_7,
 .fun_shape_4,
@@ -825,6 +827,15 @@ section {
     border-radius: 15px
 }
 
+.order_promo_box_food {
+    position: relative;
+    margin-top: 0;
+}
+
+.order_promo_box_food img {
+    border-radius: 15px
+}
+
 .promo_order_text {
     position: absolute;
     top: 50%;
@@ -837,9 +848,9 @@ section {
 .promo_order_text h2 {
     color: #fff;
     font-weight: 700;
-    font-size: 36px;
+    font-size: 37px;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     font-family: 'Delius Unicase', cursive;
 }
 
@@ -852,6 +863,13 @@ section {
     bottom: -94px;
     width: 300px;
     right: -140px;
+}
+
+.promo_shape_food {
+    position: absolute;
+    bottom: -94px;
+    width: 300px;
+    left: -140px;
 }
 
 .order_promo_box img {
@@ -3245,12 +3263,13 @@ section {
 .checkout-action a.cta_btn {
     color: #fff;
     margin: 0;
-    background: transparent
+    background: #ff9721;
+    cursor: pointer!important;
 }
 
 .checkout-action a.cta_btn:hover {
     color: #fff;
-    background: #ff7a21 none repeat scroll 0 0
+    background: #ff8a1c none repeat scroll 0 0
 }
 
 .cart_box,
@@ -3484,8 +3503,12 @@ section {
     margin-bottom: 15px;
     font-family: 'Delius Unicase', cursive;
     position: relative;
-    margin-bottom: 35px;
+    margin-bottom: 45px;
     display: inline-block
+}
+
+.comment-group-title h3 {
+    margin-bottom: 60px;
 }
 
 .comment-group-title h3:before,
@@ -3548,6 +3571,32 @@ section {
     position: relative;
 }
 
+.comment-info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.icon-state-rate {
+    margin-right: 10px;
+    font-size: 85%;
+}
+
+.icon-state-rate i[class*="fa-plus"] {
+    color: rgb(0, 218, 65);
+}
+
+.icon-state-rate i[class*="fa-minus"] {
+    color: rgb(218, 0, 91);
+}
+
+.icon-state-rate i[class*="fa-equals"] {
+    color: rgb(148, 148, 148);
+}
+
+#rate-state-input {
+    font-size: 120%;
+}
+
 .comment-info ul {
     display: inline-block;
     margin: 0 10px;
@@ -3589,7 +3638,6 @@ section {
 
 .leave-comment {
     margin-top: 50px;
-    width: 75%
 }
 
 .leave-comment input,
@@ -3609,7 +3657,7 @@ section {
 }
 
 .comment-field {
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 .leave-comment button {
@@ -3898,6 +3946,88 @@ section {
 
 .btn-back-home i {
     margin-right: 7px;
+}
+
+.product_area {
+    margin-bottom: 0px!important;
+}
+
+.pizza_slider_area {
+    margin-top: 100px!important;
+}
+
+.not-found-comment {
+    text-align: center;
+    font-size: 160%;
+}
+
+.not-found-comment p {
+    color: #666;
+}
+
+.ratings-container-input .ratings {
+    font-size: 180%;
+    cursor: pointer;
+}
+
+.ratings-container-input .ratings #rating-val-input {
+    font-size: inherit;
+}
+
+.must-login {
+    text-align: center;
+    font-size: 110%;
+    color: rgb(255, 45, 98);
+}
+
+.must-login a {
+    font-size: inherit;
+}
+
+.meals-group {
+    overflow-x: auto;
+    width: 100%;
+    margin: 15px auto;
+    margin-bottom: 40px;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.pizza_item_small {
+    height: 320px;
+    width: 230px;
+    display: inline-block;
+    margin: 7px;
+    padding: 12px;
+    background: #fffbf1;
+    vertical-align: middle;
+    border-radius: 10px;
+    position: relative;
+    border: 2px solid #fffbee;
+}
+
+.pizza_item_small .pizza_slide_text {
+    padding: 0;
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+    left: 0;
+    text-align: center;
+}
+
+.pizza_item_small .pizza_slide_text a {
+    color: #444;
+}
+
+.pizza_item_small img {
+    width: 180px;
+    height: 180px;
+}
+
+@media screen and (max-width:920px) {
+    .position-relative-920 {
+        position: relative!important;
+    }
 }
 
 @media screen and (min-width:700px) {
