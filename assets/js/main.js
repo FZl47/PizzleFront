@@ -108,21 +108,27 @@ JS INDEX
         =================================================================	
         */
 
-        $(".gallery-lightbox").magnificPopup({
-            type: 'image',
-            gallery: {
-                enabled: true
-            },
-            zoom: {
-                enabled: true,
-                duration: 300,
-                easing: 'ease-in-out',
-                opener: function(openerElement) {
 
-                    return openerElement.is('img') ? openerElement : openerElement.find('img');
+        function set_gallery_conf() {
+            $(".gallery-lightbox").magnificPopup({
+                type: 'image',
+                gallery: {
+                    enabled: true
+                },
+                zoom: {
+                    enabled: true,
+                    duration: 300,
+                    easing: 'ease-in-out',
+                    opener: function(openerElement) {
+
+                        return openerElement.is('img') ? openerElement : openerElement.find('img');
+                    }
                 }
-            }
-        });
+            });
+        }
+
+        set_gallery_conf()
+
 
         /* 
         =================================================================

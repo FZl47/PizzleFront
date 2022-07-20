@@ -374,21 +374,22 @@ class PIZZLE {
     }
 
     GET_HTML_ELEMENT_MEAL(meal) {
-        let This = this
+            let This = this
+            let is_available = meal.is_available
 
-        let discount = meal.discount
+            let discount = meal.discount
 
-        let element_discount = ''
-        if (discount) {
-            element_discount = `
+            let element_discount = ''
+            if (discount && is_available) {
+                element_discount = `
                 <div class="pizza_discount">
                     <p class="pizza_discount_percentage">${meal.discount_percentage}%</p>
                 </div>
             `
-        }
+            }
 
-        let rate_percentage = parseFloat(meal.rate) * 20
-        let element_rate = `
+            let rate_percentage = parseFloat(meal.rate) * 20
+            let element_rate = `
                 <div class="ratings-container">
                     <div class="ratings">
                         <div class="ratings-val" style="width: ${rate_percentage}%"></div>
@@ -397,10 +398,10 @@ class PIZZLE {
         `
 
 
-        let element_info = ''
-        if (meal.type == 'group') {
-            element_info =
-                `
+            let element_info = ''
+            if (meal.type == 'group') {
+                element_info =
+                    `
                 <div class="pizza_slide_info">
                     <div>
                         <i class="fas fa-wine-bottle"></i>
@@ -413,12 +414,12 @@ class PIZZLE {
                 </div>
             
             `
-        }
+            }
 
-        let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL, ['slug', meal.slug])
-        let slug_add_to_cart = meal.slug
+            let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL, ['slug', meal.slug])
+            let slug_add_to_cart = meal.slug
 
-        let node = `
+            let node = `
             <div class="pizza_item">
                 <div class="pizza_slide_header">
                     ${element_discount}${element_rate}
@@ -426,14 +427,18 @@ class PIZZLE {
                 <div class="pizza_slide_img">
                     <img src="${meal.cover_image}" alt="${meal.title}" />
                     <div class="pizza_slide_action">
-                        <button onclick="PIZZLE_OBJECT.ADD_TO_CART_BTN('${slug_add_to_cart}',this)" btn-add-to-cart="${slug_add_to_cart}" ><i class="fas fa-shopping-cart"></i> Add to cart</button>
+                        ${
+                            is_available == true ? ` <button onclick="PIZZLE_OBJECT.ADD_TO_CART_BTN('${slug_add_to_cart}',this)" btn-add-to-cart="${slug_add_to_cart}" ><i class="fas fa-shopping-cart"></i> Add to cart</button>` : ''
+                        }
                     </div>
                 </div>
                 ${element_info}
                 <div class="pizza_slide_text">
                     <h3><a href="${slug}">${meal.title_short}</a></h3>
                     <p>${meal.description_short}</p>
-                    <h3 class="pizza_slide_price"><span class="currencySymbol">${SYMBOL_CURRENCY}</span>${meal.price}</h3>
+                    ${
+                        is_available == true ? `<h3 class="pizza_slide_price"><span class="currencySymbol">${SYMBOL_CURRENCY}</span>${meal.price}</h3>` : `<h6>unavailable</h6>`
+                    }
                 </div>
             </div> 
         `
@@ -441,17 +446,35 @@ class PIZZLE {
     }
 
 
-    GET_HTML_ELEMENT_MEAL_SMALL = function(meal) {
+    GET_HTML_ELEMENT_SUBMEAL = function(stock_meal) {
         let This = this
+        let meal = stock_meal.meal
+        let count = stock_meal.count
 
-        let discount = meal.discount
+        // let discount = meal.discount
 
-        let element_discount = ''
-        if (discount) {
-            element_discount = `
-                <div class="pizza_discount">
-                    <p class="pizza_discount_percentage">${meal.discount_percentage}%</p>
+        // let element_discount = ''
+        // if (discount) {
+        //     element_discount = `
+        //         <div class="pizza_discount">
+        //             <p class="pizza_discount_percentage">${meal.discount_percentage}%</p>
+        //         </div>
+        //     `
+        // }
+
+        let rate_percentage = parseFloat(meal.rate) * 20
+        let element_rate = `
+                <div class="ratings-container">
+                    <div class="ratings">
+                        <div class="ratings-val" style="width: ${rate_percentage}%"></div>
+                    </div>
                 </div>
+        `
+
+        let element_count = ``
+        if (count > 1) {
+            element_count = `
+                <p>${count}x</p>
             `
         }
 
@@ -460,7 +483,7 @@ class PIZZLE {
         let node = `
             <div class="pizza_item_small">
                 <div class="pizza_slide_header">
-                    ${element_discount}
+                    ${element_count}${element_rate}
                 </div>
                 <div class="pizza_slide_img">
                     <img src="${meal.cover_image}" alt="${meal.title}" />
@@ -524,6 +547,10 @@ class Home extends PIZZLE {
         let meals_discount = this.GET_MEALS_WITH_DISCOUNT()
         for (let meal of meals_discount) {
             this.CREATE_ELEMENT_MEAL(meal, this.container_meals_discount)
+        }
+
+        if (meals_discount.length == 0) {
+            document.getElementById('pizza_slider_area_discount').classList.add('d-none')
         }
 
         let meals_popular = this.GET_MEALS_POPULAR()
@@ -845,14 +872,14 @@ class Food extends PIZZLE {
             // Meals Group
 
             // ---Foods
-            for (let food of data.foods) {
-                let node = this.GET_HTML_ELEMENT_MEAL_SMALL(food)
+            for (let food_stock of data.foods) {
+                let node = this.GET_HTML_ELEMENT_SUBMEAL(food_stock)
                 container_meals_group.innerHTML += node
             }
 
             // ---Drinks
-            for (let drink of data.drinks) {
-                let node = this.GET_HTML_ELEMENT_MEAL_SMALL(drink)
+            for (let drink_stock of data.drinks) {
+                let node = this.GET_HTML_ELEMENT_SUBMEAL(drink_stock)
                 container_meals_group.innerHTML += node
             }
         } else {
@@ -1153,16 +1180,36 @@ class Foods extends PIZZLE {
 
     }
 
-
-
 }
 
 
 
 
 
+class Gallery extends PIZZLE {
+    constructor() {
+        super()
+        this.set_info()
+        this.page = 1
+    }
 
+    get_info = function() {
+        let url = this.URL('food/gallery/get')
+        let details = this.SEND_AJAX(url,{
+            'page':this.page
+        },true,false,true,false)
+        console.log(details);
+    }
 
+    plus_counter_page = function(){
+        this.page += 1
+    }
+
+    set_info = function() {
+        this.get_info()
+    }
+
+}
 
 
 
