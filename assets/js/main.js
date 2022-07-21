@@ -21,6 +21,7 @@ JS INDEX
 08 - Back To Top
 
 -------------------------------------------------------------------------------------*/
+let set_gallery_conf = undefined;
 
 (function($) {
     "use strict";
@@ -109,7 +110,7 @@ JS INDEX
         */
 
 
-        function set_gallery_conf() {
+        set_gallery_conf = function() {
             $(".gallery-lightbox").magnificPopup({
                 type: 'image',
                 gallery: {
@@ -127,7 +128,7 @@ JS INDEX
             });
         }
 
-        set_gallery_conf()
+
 
 
         /* 

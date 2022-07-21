@@ -84,7 +84,7 @@ class PIZZLE {
 
     GET_USER = function() {
         let url = this.URL('user/get-user')
-        let details = this.SEND_AJAX(url, {}, false, true, false, false)
+        let details = this.SEND_AJAX_SYNC(url, {}, false, true, false, false)
         let status = details.status
         if (status == 200) {
             this.USER = details.data.user
@@ -182,8 +182,7 @@ class PIZZLE {
         window.location.href = PAGE_ERROR_404
     }
 
-
-    SEND_AJAX = function(url, data, error_message = true, auth = false, error_redirect = true, login_redirect = false, success, failed, method = 'POST') {
+    SEND_AJAX_SYNC = function(url, data, error_message = true, auth = false, error_redirect = true, login_redirect = false, success, failed, method = 'POST') {
         let This = this
         let details = {}
 
@@ -194,7 +193,6 @@ class PIZZLE {
                 'data': data
             }
         }
-
 
 
         SendAjax(url, data, method,
@@ -243,7 +241,69 @@ class PIZZLE {
                     let error_text = response.error
                     ShowNotificationMessage(error_text, 'Error')
                 }
-            }, false, auth, login_redirect
+            }, false, auth, login_redirect)
+    }
+
+    SEND_AJAX = function(url, data, error_message = true, auth = false, error_redirect = true, login_redirect = false, success, failed, method = 'POST') {
+        let This = this
+        let details = {}
+
+        function SET_DETAILS(status, message, data) {
+            details = {
+                'status': status,
+                'message': message,
+                'data': data
+            }
+        }
+
+
+        SendAjax(url, data, method,
+            function(response) {
+                // Success
+                SET_DETAILS(response.status_code, response.message, response.data)
+                if (success) {
+                    success(response)
+                }
+            },
+            function(response) {
+                // Failed
+                let status = response.status
+                response = response.responseJSON
+
+                if (status != 200 && error_redirect) {
+                    if (status == 500) {
+                        This.VIEW_ERROR_500()
+                    }
+                    if (status == 404) {
+                        This.VIEW_ERROR_404()
+                    }
+                }
+
+                if (status == 401 && auth && This._GET_REFRESH_TOKEN()) {
+                    This.COUNTER_TRY_GET_TOKENS -= 1
+                    if (This.COUNTER_TRY_GET_TOKENS > 0) {
+                        let state_update_token = This.UPDATE_TOKEN_USER(This._GET_REFRESH_TOKEN())
+                        if (state_update_token) {
+                            This.COUNTER_TRY_GET_TOKENS = 3
+                        } else {
+                            // This.VIEW_ERROR_500()
+                        }
+                    }
+                }
+
+                if (status == 0) {
+                    ShowNotificationMessage('Please Check your connection', 'Error')
+                }
+                SET_DETAILS(parseInt(status), response.error, response.data)
+
+                if (failed) {
+                    failed(response)
+                }
+                if (error_message) {
+                    let error_text = response.error
+                    ShowNotificationMessage(error_text, 'Error')
+                }
+            }, true, auth, login_redirect
         )
 
         return details
@@ -562,7 +622,7 @@ class Home extends PIZZLE {
     }
 
     get_info = function() {
-        let url = this.URL('public/')
+        let url = this.URL('')
         let details = this.SEND_AJAX(url, {}, false)
         if (details.status == 401) {
             if (this.COUNTER_TRY_GET_INFO > 0) {
@@ -755,6 +815,7 @@ class Food extends PIZZLE {
         let container_images = document.getElementById('container-images')
         let container_comments = document.getElementById('comments')
         let container_meals_group = document.getElementById('meals-group')
+        let breadcrumb_title_el = document.getElementById('breadcrumb-title')
 
         // Data 
         title_el.innerText = data.title
@@ -763,6 +824,7 @@ class Food extends PIZZLE {
         rating_val_el.style.width = (parseFloat(data.rate) * 20) + '%'
         description_el.innerText = data.description
         quantity_el.max = data.stock
+        breadcrumb_title_el.innerText = data.title_short
 
 
         // Event
@@ -1189,30 +1251,110 @@ class Foods extends PIZZLE {
 class Gallery extends PIZZLE {
     constructor() {
         super()
-        this.set_info()
+        let This = this
+        this.get_info()
         this.page = 1
+        this.is_loading_more = false
+        this.btn_load_more =  document.getElementById('btn-load-more')
+        this.btn_load_more.addEventListener('click',function(){
+            This.load_more_image()
+        })
     }
 
     get_info = function() {
-        let url = this.URL('food/gallery/get')
-        let details = this.SEND_AJAX(url,{
-            'page':this.page
-        },true,false,true,false)
-        console.log(details);
+        let This = this
+        let url = this.URL('gallery/get')
+        this.SEND_AJAX(url,{
+            'page': this.page
+        },true,false,true,false,function(response){
+            console.log(response);
+            This.set_info(response.data.images)
+            This.plus_counter_page()
+            This.load_more_end()
+        })
+
+        
     }
 
     plus_counter_page = function(){
         this.page += 1
     }
 
-    set_info = function() {
-        this.get_info()
+    get_node_element_image = function(image){
+        let node = `    
+            <div class="col-lg-4 col-sm-6 d-inline-block mx-3">
+                <a href="${image.url}" class="gallery-lightbox">
+                    <div class="gallery_item">
+                        <img src="${image.url}" alt="gallery" />
+                        <div class="gallery_icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-maximize">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                    </svg>
+                        </div>
+                        <div class="gallery_info">
+                            <h3>${image.title}</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        `
+        return node
+    }
+
+    set_gallery_conf = function(){
+        $(".gallery-lightbox").magnificPopup({
+            type: 'image',
+            gallery: {
+                enabled: true
+            },
+            zoom: {
+                enabled: true,
+                duration: 300,
+                easing: 'ease-in-out',
+                opener: function(openerElement) {
+
+                    return openerElement.is('img') ? openerElement : openerElement.find('img');
+                }
+            }
+        });
+    }
+
+    set_info = function(images) {
+        let container = document.getElementById('gallery')
+        for (let image of images){
+            container.innerHTML += this.get_node_element_image(image)
+        }
+        this.set_gallery_conf()
+        if (images.length == 0){
+            container.innerHTML = `
+                <div class="not-found">
+                    <p>not found image</p>
+                </div>
+                <a href="index.html" class="cta_btn d-block col-8 col-md-4 col-lg-2 mx-auto">Home</a>
+            `
+           document.getElementById('btn-load-more').classList.add('d-none')
+        }
+    }
+
+    load_more_image = function(){
+        let btn_load = this.btn_load_more
+        if (this.is_loading_more == false){
+            this.load_more_start()
+            this.get_info()
+        }
+    }
+
+    load_more_start = function(){
+        this.is_loading_more = true
+        this.btn_load_more.setAttribute('loading','true')
+    }
+
+    load_more_end = function(){
+        this.is_loading_more = false
+        this.btn_load_more.setAttribute('loading','false')
     }
 
 }
-
-
-
 
 
 
@@ -2203,34 +2345,34 @@ function SendAjax(Url, Data = {}, Method = 'POST', Success, Failed, async_req = 
     let timer_loading
 
     function Loading(State) {
-        // if (State == 'Show') {
-        //     LockAllElements()
-        //     timer_loading = setTimeout(function() {
-        //         Loading('Hide')
-        //         let ContainerLoading = document.createElement('div')
-        //         let CircleLoading = document.createElement('div')
-        //         ContainerLoading.id = 'ContainerLoadingAJAX'
-        //         ContainerLoading.classList.add('ContainerLoadingAJAX')
-        //         ContainerLoading.innerHTML = `
-        //             <div class="LoadingCircle"><span></span></div>
-        //         `
-        //         ContainerLoading.innerHTML = `
-        //             <img src="assets/img/login.png" alt="logo">
-        //         `
-        //         document.body.classList.add('is-loading')
-        //         document.body.appendChild(ContainerLoading)
-        //     }, 300)
+        if (State == 'Show') {
+            LockAllElements()
+            timer_loading = setTimeout(function() {
+                Loading('Hide')
+                let ContainerLoading = document.createElement('div')
+                let CircleLoading = document.createElement('div')
+                ContainerLoading.id = 'ContainerLoadingAJAX'
+                ContainerLoading.classList.add('ContainerLoadingAJAX')
+                ContainerLoading.innerHTML = `
+                    <div class="LoadingCircle"><span></span></div>
+                `
+                ContainerLoading.innerHTML = `
+                    <img src="assets/img/logo.png" alt="logo">
+                `
+                document.body.classList.add('is-loading')
+                document.body.appendChild(ContainerLoading)
+            }, 300)
 
-        // } else {
-        //     document.body.classList.remove('is-loading')
-        //     try {
-        //         UnlockAllElements()
-        //         document.getElementById('ContainerLoadingAJAX').remove()
-        //     } catch (e) {}
-        //     try {
-        //         clearTimeout(timer_loading)
-        //     } catch (e) {}
-        // }
+        } else {
+            document.body.classList.remove('is-loading')
+            try {
+                UnlockAllElements()
+                document.getElementById('ContainerLoadingAJAX').remove()
+            } catch (e) {}
+            try {
+                clearTimeout(timer_loading)
+            } catch (e) {}
+        }
     }
 
     if (Success == undefined) {

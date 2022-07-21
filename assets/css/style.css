@@ -4024,6 +4024,68 @@ section {
     height: 180px;
 }
 
+#gallery {
+    text-align: center!important;
+}
+
+.btn-load-more {
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    text-align: center;
+    margin: auto;
+    background: rgb(250, 250, 250);
+    color: #444;
+    display: block;
+    width: 120px;
+    height: 50px;
+    border-radius: 100px;
+    position: relative;
+}
+
+.btn-load-more p {
+    display: inline-block;
+}
+
+.btn-load-more i {
+    margin: 0 4px;
+    color: rgb(9, 221, 80);
+}
+
+.btn-load-more[loading="true"] {
+    cursor: default;
+}
+
+.btn-load-more[loading="true"] * {
+    display: none;
+}
+
+.btn-load-more[loading="true"]::after {
+    content: " ";
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    left: 42.5px;
+    top: 7.5px;
+    border: 4px solid rgb(221, 221, 221);
+    border-top: 4px solid #ff9a16;
+    border-radius: 50%;
+    animation: AnimationLoadCircleSimple .6s linear infinite;
+}
+
+@keyframes AnimationLoadCircleSimple {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.not-found {
+    text-align: center;
+    font-size: 160%;
+    color: rgb(255, 54, 28);
+    margin: 50px auto;
+}
+
 @media screen and (max-width:920px) {
     .position-relative-920 {
         position: relative!important;
