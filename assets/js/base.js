@@ -12,38 +12,6 @@ const PAGE_MEALS = 'foods.html'
 const SYMBOL_CURRENCY = '$'
 
 
-
-function Loading(State) {
-    if (State == 'Show') {
-        LockAllElements()
-        timer_loading = setTimeout(function() {
-            Loading('Hide')
-            let ContainerLoading = document.createElement('div')
-            let CircleLoading = document.createElement('div')
-            ContainerLoading.id = 'ContainerLoadingAJAX'
-            ContainerLoading.classList.add('ContainerLoadingAJAX')
-            ContainerLoading.innerHTML = `
-                <div class="LoadingCircle"><span></span></div>
-            `
-            ContainerLoading.innerHTML = `
-                <img src="assets/img/login.png" alt="logo">
-            `
-            document.body.classList.add('is-loading')
-            document.body.appendChild(ContainerLoading)
-        }, 300)
-
-    } else {
-        document.body.classList.remove('is-loading')
-        try {
-            UnlockAllElements()
-            document.getElementById('ContainerLoadingAJAX').remove()
-        } catch (e) {}
-        try {
-            clearTimeout(timer_loading)
-        } catch (e) {}
-    }
-}
-
 function GET_USER_TOKEN(go_to_login = true) {
 
     let refresh = GetCookieByName('refresh-user')
@@ -82,7 +50,48 @@ class PIZZLE {
 
     }
 
-    GET_USER = function() {
+    SET_CONF_OWL = function () {
+        $(".pizza_slide").owlCarousel({
+            autoplay: true,
+            loop: true,
+            margin: 30,
+            touchDrag: true,
+            mouseDrag: true,
+            nav: false,
+            dots: false,
+            autoplayTimeout: 6000,
+            autoplaySpeed: 1200,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                480: {
+                    items: 1
+                },
+                600: {
+                    items: 2
+                },
+                1000: {
+                    items: 3
+                },
+                1200: {
+                    items: 3
+                }
+            }
+        });
+
+        var selector = $('.pizza_slide');
+
+        $('.next_slide').click(function () {
+            selector.trigger('next.owl.carousel');
+        });
+
+        $('.prev_slide').click(function () {
+            selector.trigger('prev.owl.carousel');
+        });
+    }
+
+    GET_USER = function () {
         let url = this.URL('user/get-user')
         let details = this.SEND_AJAX_SYNC(url, {}, false, true, false, false)
         let status = details.status
@@ -96,7 +105,7 @@ class PIZZLE {
         }
     }
 
-    URL = function(url, slash = false, arg = null) {
+    URL = function (url, slash = false, arg = null) {
         if (slash) {
             slash = '/'
         } else {
@@ -110,7 +119,7 @@ class PIZZLE {
     }
 
 
-    URL_TEMPLATE = function(name_template, arg = null) {
+    URL_TEMPLATE = function (name_template, arg = null) {
         if (!arg) {
             return `${name_template}`
         } else {
@@ -118,9 +127,9 @@ class PIZZLE {
         }
     }
 
-    UPDATE_TOKEN_USER = function(refresh) {
+    UPDATE_TOKEN_USER = function (refresh) {
         let url = this.URL('user/token/get-access-token')
-        let details = this.SEND_AJAX(url, {
+        let details = this.SEND_AJAX_SYNC(url, {
             'refresh': refresh
         }, false)
         if (details.status == 200) {
@@ -131,27 +140,27 @@ class PIZZLE {
         }
     }
 
-    _GET_REFRESH_TOKEN = function() {
+    _GET_REFRESH_TOKEN = function () {
         return GetCookieByName('refresh-user')
     }
 
-    _GET_ACCESS_TOKEN = function() {
+    _GET_ACCESS_TOKEN = function () {
         return GetCookieByName('access-user')
     }
 
-    _SET_REFRESH_TOKEN = function(refresh_token, remember_me) {
+    _SET_REFRESH_TOKEN = function (refresh_token, remember_me) {
         let expire_day = remember_me == true ? 30 : 'Session'
         SetCookie('refresh-user', refresh_token, expire_day)
     }
 
-    _SET_ACCESS_TOKEN = function(access_token) {
+    _SET_ACCESS_TOKEN = function (access_token) {
         let date = new Date();
         date.setTime(date.getTime() + (20 * 60 * 1000));
         let expire_minute = date
         SetCookie('access-user', access_token, expire_minute)
     }
 
-    GET_USER_TOKEN = function(go_to_login = true) {
+    GET_USER_TOKEN = function (go_to_login = true) {
 
         let refresh = this._GET_REFRESH_TOKEN()
         let access = this._GET_ACCESS_TOKEN()
@@ -174,15 +183,15 @@ class PIZZLE {
         }
     }
 
-    VIEW_ERROR_500 = function() {
+    VIEW_ERROR_500 = function () {
         window.location.href = PAGE_ERROR_500
     }
 
-    VIEW_ERROR_404 = function() {
+    VIEW_ERROR_404 = function () {
         window.location.href = PAGE_ERROR_404
     }
 
-    SEND_AJAX_SYNC = function(url, data, error_message = true, auth = false, error_redirect = true, login_redirect = false, success, failed, method = 'POST') {
+    SEND_AJAX_SYNC = function (url, data, error_message = true, auth = false, error_redirect = true, login_redirect = false, method = 'POST') {
         let This = this
         let details = {}
 
@@ -196,120 +205,118 @@ class PIZZLE {
 
 
         SendAjax(url, data, method,
-            function(response) {
-                // Success
-                SET_DETAILS(response.status_code, response.message, response.data)
-                if (success) {
-                    success(response)
-                }
-            },
-            function(response) {
-                // Failed
-                let status = response.status
-                response = response.responseJSON
+            function (response) {
 
-                if (status != 200 && error_redirect) {
-                    if (status == 500) {
-                        This.VIEW_ERROR_500()
-                    }
-                    if (status == 404) {
-                        This.VIEW_ERROR_404()
-                    }
-                }
+                if (response.success) {
+                    // Success
+                    SET_DETAILS(response.status_code, response.message, response.data)
+                } else {
+                    // Failed
+                    let status = response.status
+                    response = response.responseJSON
 
-                if (status == 401 && auth && This._GET_REFRESH_TOKEN()) {
-                    This.COUNTER_TRY_GET_TOKENS -= 1
-                    if (This.COUNTER_TRY_GET_TOKENS > 0) {
-                        let state_update_token = This.UPDATE_TOKEN_USER(This._GET_REFRESH_TOKEN())
-                        if (state_update_token) {
-                            This.COUNTER_TRY_GET_TOKENS = 3
-                        } else {
-                            // This.VIEW_ERROR_500()
+                    if (status != 200 && error_redirect) {
+                        if (status == 500) {
+                            This.VIEW_ERROR_500()
+                        }
+                        if (status == 404) {
+                            This.VIEW_ERROR_404()
                         }
                     }
-                }
 
-                if (status == 0) {
-                    ShowNotificationMessage('Please Check your connection', 'Error')
-                }
-                SET_DETAILS(parseInt(status), response.error, response.data)
+                    if (status == 401 && auth && This._GET_REFRESH_TOKEN()) {
+                        This.COUNTER_TRY_GET_TOKENS -= 1
+                        if (This.COUNTER_TRY_GET_TOKENS > 0) {
+                            let state_update_token = This.UPDATE_TOKEN_USER(This._GET_REFRESH_TOKEN())
+                            if (state_update_token) {
+                                This.COUNTER_TRY_GET_TOKENS = 3
+                            } else {
+                                // This.VIEW_ERROR_500()
+                            }
+                        }
+                    }
 
-                if (failed) {
-                    failed(response)
-                }
-                if (error_message) {
-                    let error_text = response.error
-                    ShowNotificationMessage(error_text, 'Error')
+                    SET_DETAILS(parseInt(status), response.error, response.data)
+
+                    if (error_message) {
+                        let error_text = response.error
+                        ShowNotificationMessage(error_text, 'Error')
+                    }
                 }
             }, false, auth, login_redirect)
-    }
-
-    SEND_AJAX = function(url, data, error_message = true, auth = false, error_redirect = true, login_redirect = false, success, failed, method = 'POST') {
-        let This = this
-        let details = {}
-
-        function SET_DETAILS(status, message, data) {
-            details = {
-                'status': status,
-                'message': message,
-                'data': data
-            }
-        }
-
-
-        SendAjax(url, data, method,
-            function(response) {
-                // Success
-                SET_DETAILS(response.status_code, response.message, response.data)
-                if (success) {
-                    success(response)
-                }
-            },
-            function(response) {
-                // Failed
-                let status = response.status
-                response = response.responseJSON
-
-                if (status != 200 && error_redirect) {
-                    if (status == 500) {
-                        This.VIEW_ERROR_500()
-                    }
-                    if (status == 404) {
-                        This.VIEW_ERROR_404()
-                    }
-                }
-
-                if (status == 401 && auth && This._GET_REFRESH_TOKEN()) {
-                    This.COUNTER_TRY_GET_TOKENS -= 1
-                    if (This.COUNTER_TRY_GET_TOKENS > 0) {
-                        let state_update_token = This.UPDATE_TOKEN_USER(This._GET_REFRESH_TOKEN())
-                        if (state_update_token) {
-                            This.COUNTER_TRY_GET_TOKENS = 3
-                        } else {
-                            // This.VIEW_ERROR_500()
-                        }
-                    }
-                }
-
-                if (status == 0) {
-                    ShowNotificationMessage('Please Check your connection', 'Error')
-                }
-                SET_DETAILS(parseInt(status), response.error, response.data)
-
-                if (failed) {
-                    failed(response)
-                }
-                if (error_message) {
-                    let error_text = response.error
-                    ShowNotificationMessage(error_text, 'Error')
-                }
-            }, true, auth, login_redirect
-        )
-
         return details
     }
 
-    GET_HTML_ELEMENT_COMMENT = function(comment) {
+    SEND_AJAX = function (url, data, {error_message = true, auth = false, error_redirect = true, login_redirect = false, response, failed, method = 'POST', loading_show = true, loading_section = null} = {}) {
+        let This = this
+        let response_callback = response
+        let failed_callback = failed
+
+        function reponse_call(response) {
+            if (response_callback) {
+                response_callback(response)
+            } else if (failed_callback) {
+                failed_callback(response)
+            }
+        }
+
+        SendAjax(url, data, method,
+            function (response) {
+
+                if (response.success == true) {
+                    // Success
+                    reponse_call({
+                        'status': response.status_code,
+                        'message': response.message,
+                        'data': response.data,
+                        'success': true
+                    })
+                } else {
+                    // Failed
+                    let status = response.status
+
+
+                    if (status != 200 && error_redirect) {
+                        if (status == 500) {
+                            This.VIEW_ERROR_500()
+                        }
+                        if (status == 404) {
+                            This.VIEW_ERROR_404()
+                        }
+                    }
+                    if (status == 401 && auth && This._GET_REFRESH_TOKEN()) {
+                        This.COUNTER_TRY_GET_TOKENS -= 1
+                        if (This.COUNTER_TRY_GET_TOKENS > 0) {
+                            let state_update_token = This.UPDATE_TOKEN_USER(This._GET_REFRESH_TOKEN())
+                            if (state_update_token) {
+                                This.COUNTER_TRY_GET_TOKENS = 3
+                            } else {
+                                // This.VIEW_ERROR_500()
+                            }
+                        }
+                    }
+                    if (status == 0) {
+                        ShowNotificationMessage('Please Check your connection', 'Error')
+                    }
+                    if (error_message) {
+                        let error_text = response.error
+                        ShowNotificationMessage(error_text, 'Error')
+                    }
+                    reponse_call({
+                        'status': response.status_code,
+                        'message': response.error,
+                        'data': response.data,
+                        'success': false
+                    })
+                }
+            },
+            true, auth, login_redirect, loading_show, loading_section
+        )
+
+    }
+
+
+    GET_HTML_ELEMENT_COMMENT = function (comment) {
         let comment_state_rate = ''
         let rate = parseFloat(comment.rate)
         if (rate > 2.5) {
@@ -356,7 +363,7 @@ class PIZZLE {
         `
     }
 
-    CREATE_ELEMENT_COMMENT = function(container, node_comment, insert_before = false) {
+    CREATE_ELEMENT_COMMENT = function (container, node_comment, insert_before = false) {
         if (insert_before) {
             container.insertAdjacentHTML('beforeend', node_comment)
         } else {
@@ -364,7 +371,7 @@ class PIZZLE {
         }
     }
 
-    SHOW_NOT_FOUND_COMMENT = function(container) {
+    SHOW_NOT_FOUND_COMMENT = function (container) {
         container.innerHTML = `
             <div class="not-found-comment">
                 <p>no comment</p>
@@ -373,37 +380,32 @@ class PIZZLE {
     }
 
 
-    NOTIFY_ME = function(slug) {
+    NOTIFY_ME = function (slug, func) {
         let url = this.URL('food/notify-me')
-        let details = this.SEND_AJAX(url, {
+        this.SEND_AJAX(url, {
             'slug': slug
-        }, false, true, true, true)
-        return details
+        }, {'error_message': false, 'auth': true, 'login_redirect': true, 'response': func})
     }
 
 
-    GET_ALL_MEALS = function(data = {}) {
+    GET_ALL_MEALS = function (data = {}, func) {
         let url = this.URL('food/get-meals')
-        let details = this.SEND_AJAX(url, data, true)
-        return details
+        this.SEND_AJAX(url, data, {'error_message': true, 'response': func})
     }
 
-    GET_MEALS_BY_CATEGORY = function(data = {}) {
+    GET_MEALS_BY_CATEGORY = function (data = {}, func) {
         let url = this.URL('food/get-meals-by-category')
-        let details = this.SEND_AJAX(url, data, false, false, true, false)
-        return details
+        this.SEND_AJAX(url, data, {'error_message': false, 'response': func})
     }
 
-    GET_MEALS_WITH_DISCOUNT() {
+    GET_MEALS_WITH_DISCOUNT(func) {
         let url = this.URL('food/get-meals-discounts')
-        let details = this.SEND_AJAX(url)
-        return details.data
+        this.SEND_AJAX(url, {}, {'response': func})
     }
 
-    GET_MEALS_POPULAR(data = {}) {
+    GET_MEALS_POPULAR(data = {}, func) {
         let url = this.URL('food/get-meals-popular')
-        let details = this.SEND_AJAX(url, data)
-        return details.data
+        this.SEND_AJAX(url, data, {'response': func})
     }
 
     ADD_TO_CART_BTN(slug, btn) {
@@ -411,45 +413,54 @@ class PIZZLE {
     }
 
     ADD_TO_CART(slug, count = 1) {
+        let This = this
         let url = this.URL('user/cart/add')
         let data = {
             'slug': slug,
             'count': count
         }
-        let details = this.SEND_AJAX(url, data, false, true, false, true)
-        let status = details.status
-        if (status == 401) {
-            if (this.COUNTER_TRY_ADD_TO_CART > 0) {
-                this.COUNTER_TRY_ADD_TO_CART -= 1
-                this.ADD_TO_CART(slug, count)
+        this.SEND_AJAX(url, data, {
+            'error_message': false,
+            'auth': true,
+            'error_message': false,
+            'login_redirect': true,
+            'response': function (response) {
+                let status = response.status
+                if (status == 401) {
+                    if (This.COUNTER_TRY_ADD_TO_CART > 0) {
+                        This.COUNTER_TRY_ADD_TO_CART -= 1
+                        This.ADD_TO_CART(slug, count)
+                    }
+                }
+                if (status == 200) {
+                    This.COUNTER_TRY_ADD_TO_CART = 1
+                    ShowNotificationMessage(response.message, 'Success', 4000, 1)
+                }
+                if (status != 200 && status != 401) {
+                    ShowNotificationMessage(response.message, 'Error', 5000, 2)
+                }
             }
-        }
-        if (status == 200) {
-            this.COUNTER_TRY_ADD_TO_CART = 1
-            ShowNotificationMessage(details.message, 'Success', 4000, 1)
-        }
-        if (status != 200 && status != 401) {
-            ShowNotificationMessage(details.message, 'Error', 5000, 2)
-        }
+        })
+
     }
 
     GET_HTML_ELEMENT_MEAL(meal) {
-            let This = this
-            let is_available = meal.is_available
+        let This = this
+        let is_available = meal.is_available
 
-            let discount = meal.discount
+        let discount = meal.discount
 
-            let element_discount = ''
-            if (discount && is_available) {
-                element_discount = `
+        let element_discount = ''
+        if (discount && is_available) {
+            element_discount = `
                 <div class="pizza_discount">
                     <p class="pizza_discount_percentage">${meal.discount_percentage}%</p>
                 </div>
             `
-            }
+        }
 
-            let rate_percentage = parseFloat(meal.rate) * 20
-            let element_rate = `
+        let rate_percentage = parseFloat(meal.rate) * 20
+        let element_rate = `
                 <div class="ratings-container">
                     <div class="ratings">
                         <div class="ratings-val" style="width: ${rate_percentage}%"></div>
@@ -458,10 +469,10 @@ class PIZZLE {
         `
 
 
-            let element_info = ''
-            if (meal.type == 'group') {
-                element_info =
-                    `
+        let element_info = ''
+        if (meal.type == 'group') {
+            element_info =
+                `
                 <div class="pizza_slide_info">
                     <div>
                         <i class="fas fa-wine-bottle"></i>
@@ -474,12 +485,12 @@ class PIZZLE {
                 </div>
             
             `
-            }
+        }
 
-            let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL, ['slug', meal.slug])
-            let slug_add_to_cart = meal.slug
+        let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL, ['slug', meal.slug])
+        let slug_add_to_cart = meal.slug
 
-            let node = `
+        let node = `
             <div class="pizza_item">
                 <div class="pizza_slide_header">
                     ${element_discount}${element_rate}
@@ -488,8 +499,8 @@ class PIZZLE {
                     <img src="${meal.cover_image}" alt="${meal.title}" />
                     <div class="pizza_slide_action">
                         ${
-                            is_available == true ? ` <button onclick="PIZZLE_OBJECT.ADD_TO_CART_BTN('${slug_add_to_cart}',this)" btn-add-to-cart="${slug_add_to_cart}" ><i class="fas fa-shopping-cart"></i> Add to cart</button>` : ''
-                        }
+            is_available == true ? ` <button onclick="PIZZLE_OBJECT.ADD_TO_CART_BTN('${slug_add_to_cart}',this)" btn-add-to-cart="${slug_add_to_cart}" ><i class="fas fa-shopping-cart"></i> Add to cart</button>` : ''
+        }
                     </div>
                 </div>
                 ${element_info}
@@ -497,8 +508,8 @@ class PIZZLE {
                     <h3><a href="${slug}">${meal.title_short}</a></h3>
                     <p>${meal.description_short}</p>
                     ${
-                        is_available == true ? `<h3 class="pizza_slide_price"><span class="currencySymbol">${SYMBOL_CURRENCY}</span>${meal.price}</h3>` : `<h6>unavailable</h6>`
-                    }
+            is_available == true ? `<h3 class="pizza_slide_price"><span class="currencySymbol">${SYMBOL_CURRENCY}</span>${meal.price}</h3>` : `<h6>unavailable</h6>`
+        }
                 </div>
             </div> 
         `
@@ -506,7 +517,7 @@ class PIZZLE {
     }
 
 
-    GET_HTML_ELEMENT_SUBMEAL = function(stock_meal) {
+    GET_HTML_ELEMENT_SUBMEAL = function (stock_meal) {
         let This = this
         let meal = stock_meal.meal
         let count = stock_meal.count
@@ -556,7 +567,7 @@ class PIZZLE {
         return node
     }
 
-    GET_HTML_ELEMENT_MEAL_POPULAR = function(meal) {
+    GET_HTML_ELEMENT_MEAL_POPULAR = function (meal) {
         let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL, ['slug', meal.slug])
         let rate_percentage = parseFloat(meal.rate) * 20
         let node = `
@@ -599,40 +610,130 @@ class Home extends PIZZLE {
     constructor() {
         super()
         this.COUNTER_TRY_GET_INFO = 3
+        let This = this
+
 
         this.container_meals_discount = document.getElementById('container-meals-discount')
         this.container_meals_popular = document.getElementById('container-meals-popular')
 
         this.get_info()
-        let meals_discount = this.GET_MEALS_WITH_DISCOUNT()
-        for (let meal of meals_discount) {
-            this.CREATE_ELEMENT_MEAL(meal, this.container_meals_discount)
-        }
+        this.GET_MEALS_WITH_DISCOUNT(function (response) {
+            let meals_discount = response.data
+            for (let meal of meals_discount) {
+                This.CREATE_ELEMENT_MEAL(meal, This.container_meals_discount)
+            }
+            This.set_conf_owl_discountpizza()
 
-        if (meals_discount.length == 0) {
-            document.getElementById('pizza_slider_area_discount').classList.add('d-none')
-        }
-
-        let meals_popular = this.GET_MEALS_POPULAR()
-        for (let meal of meals_popular) {
-            this.CREATE_ELEMENT_MEAL(meal, this.container_meals_popular)
-        }
-
-
+            if (meals_discount.length == 0) {
+                document.getElementById('pizza_slider_area_discount').classList.add('d-none')
+            }
+        })
+        this.GET_MEALS_POPULAR({}, function (response) {
+            let meals_popular = response.data
+            for (let meal of meals_popular) {
+                This.CREATE_ELEMENT_MEAL(meal, This.container_meals_popular)
+            }
+            This.set_conf_owl_popularpizza()
+        })
     }
 
-    get_info = function() {
-        let url = this.URL('')
-        let details = this.SEND_AJAX(url, {}, false)
-        if (details.status == 401) {
-            if (this.COUNTER_TRY_GET_INFO > 0) {
-                this.COUNTER_TRY_GET_INFO -= 1
-                this.get_info()
+    set_conf_owl_popularpizza = function () {
+        $("#container-meals-popular").owlCarousel({
+            autoplay: true,
+            loop: true,
+            margin: 30,
+            touchDrag: true,
+            mouseDrag: true,
+            nav: false,
+            dots: false,
+            autoplayTimeout: 6000,
+            autoplaySpeed: 1200,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                480: {
+                    items: 1
+                },
+                600: {
+                    items: 2
+                },
+                1000: {
+                    items: 3
+                },
+                1200: {
+                    items: 3
+                }
             }
-        }
-        if (details.status == 200) {
-            this.COUNTER_TRY_GET_INFO = 3
-        }
+        });
+        var selector = $('#container-meals-popular');
+
+        $('#container-meals-popular .next_slide').click(function () {
+            selector.trigger('next.owl.carousel');
+        });
+
+        $('#container-meals-popular .prev_slide').click(function () {
+            selector.trigger('prev.owl.carousel');
+        });
+    }
+    set_conf_owl_discountpizza = function () {
+        $("#container-meals-discount").owlCarousel({
+            autoplay: true,
+            loop: true,
+            margin: 30,
+            touchDrag: true,
+            mouseDrag: true,
+            nav: false,
+            dots: false,
+            autoplayTimeout: 6000,
+            autoplaySpeed: 1200,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                480: {
+                    items: 1
+                },
+                600: {
+                    items: 2
+                },
+                1000: {
+                    items: 3
+                },
+                1200: {
+                    items: 3
+                }
+            }
+        });
+
+        var selector = $('#container-meals-discount');
+
+        $('#container-meals-discount .next_slide').click(function () {
+            selector.trigger('next.owl.carousel');
+        });
+
+        $('#container-meals-discount .prev_slide').click(function () {
+            selector.trigger('prev.owl.carousel');
+        });
+    }
+
+    get_info = function () {
+        let This = this
+        let url = this.URL('')
+        this.SEND_AJAX(url, {}, {
+            'error_message': false, 'response': function (response) {
+                if (response.status == 401) {
+                    if (This.COUNTER_TRY_GET_INFO > 0) {
+                        This.COUNTER_TRY_GET_INFO -= 1
+                        This.get_info()
+                    }
+                }
+                if (response.status == 200) {
+                    This.COUNTER_TRY_GET_INFO = 3
+                }
+            }
+        })
+
     }
 }
 
@@ -642,13 +743,12 @@ class Login extends PIZZLE {
         super()
     }
 
-    login = function(username, password) {
+    login = function (username, password, func) {
         let url = this.URL('user/login')
-        let details = this.SEND_AJAX(url, {
+        this.SEND_AJAX(url, {
             'email': username,
             'password': password
-        }, false, false, false, false)
-        return details
+        }, {'error_message': false, 'error_redirect': false, 'response': func})
     }
 
 }
@@ -658,14 +758,13 @@ class SignUp extends PIZZLE {
         super()
     }
 
-    register = function(username, password, password2) {
+    register = function (username, password, password2, func) {
         let url = this.URL('user/register')
-        let details = this.SEND_AJAX(url, {
+        this.SEND_AJAX(url, {
             'email': username,
             'password': password,
             'password2': password2,
-        }, false, false, false, false)
-        return details
+        }, {'error_message': false, 'error_redirect': false, 'response': func})
     }
 }
 
@@ -674,34 +773,31 @@ class ResetPassword extends PIZZLE {
         super()
     }
 
-    send_code = function(email) {
+    send_code = function (email, func, btn) {
         let url = this.URL('user/reset-password/get-code')
-        let details = this.SEND_AJAX(url, {
+        this.SEND_AJAX(url, {
             'email': email
-        }, false, false, false, false)
+        }, {'error_message': false, 'error_redirect': false, 'response': func, 'loading_section': btn})
         this.EMAIL = email
-        return details
     }
 
-    check_code = function(code) {
+    check_code = function (code, func) {
         let url = this.URL('user/reset-password/validate-code')
-        let details = this.SEND_AJAX(url, {
+        this.SEND_AJAX(url, {
             'email': this.EMAIL,
             'code': code
-        }, false, false, false, false)
+        }, {'error_message': false, 'error_redirect': false, 'response': func})
         this.CODE = code
-        return details
     }
 
-    set_password = function(password, password2) {
+    set_password = function (password, password2, func) {
         let url = this.URL('user/reset-password/set-password')
-        let details = this.SEND_AJAX(url, {
+        this.SEND_AJAX(url, {
             'email': this.EMAIL,
             'code': this.CODE,
             'password': password,
             'password2': password2
-        }, false, false, false, false)
-        return details
+        }, {'error_message': false, 'error_redirect': false, 'response': func})
     }
 }
 
@@ -711,14 +807,13 @@ class Food extends PIZZLE {
         this.url_params = new URLSearchParams(window.location.search)
         this.container_related = document.getElementById('container-related-foods')
         this.MEAL = null
-        let data = this.get_info()
-        this.set_info(data)
-        this.related_meals()
+        this.set_info()
+
         this.comment_init()
     }
 
 
-    comment_init = function() {
+    comment_init = function () {
         let This = this
         let message_form = document.getElementById('message-form')
         let must_login = document.getElementById('must-login')
@@ -726,7 +821,7 @@ class Food extends PIZZLE {
         let btn_submit_comment = document.getElementById('btn-submit-comment')
         let input_comment = form_comment.querySelector('textarea')
         if (this.USER) {
-            btn_submit_comment.addEventListener('click', function() {
+            btn_submit_comment.addEventListener('click', function () {
                 if (rate_comment && input_comment.value) {
                     message_form.innerText = ''
                     post_comment(input_comment.value, rate_comment)
@@ -746,39 +841,47 @@ class Food extends PIZZLE {
                 'comment': comment,
                 'rate': rate,
                 'slug': This.MEAL.slug
-            }, true, true, true, true)
-            if (details.status == 200) {
-                document.getElementById('leave-commet').innerHTML = `
-                    <div class="submited-checkmark">
-                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-                        </svg>
-                        <p>
-                            ${details.message}
-                        </p>
-                    </div>
-                `
-            }
+            }, {
+                'auth': true, 'login_redirect': true, 'response': function (response) {
+                    if (response.status == 200) {
+                        document.getElementById('leave-commet').innerHTML = `
+                        <div class="submited-checkmark">
+                            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                            </svg>
+                            <p>
+                                ${response.message}
+                            </p>
+                        </div>
+                    `
+                    }
+                }
+            })
+
         }
     }
 
-    related_meals = function() {
+    related_meals = function () {
+        let This = this
         let data = {
             'category_slug': this.MEAL.category.slug,
             'slug': this.MEAL.slug
         }
-        let details = this.GET_MEALS_BY_CATEGORY(data)
-        if (details.status == 200) {
-            let meals = details.data.meals
-            for (let meal of meals) {
-                this.CREATE_ELEMENT_MEAL(meal, this.container_related)
+        this.GET_MEALS_BY_CATEGORY(data, function (response) {
+            if (response.status == 200) {
+                let meals = response.data.meals
+                for (let meal of meals) {
+                    This.CREATE_ELEMENT_MEAL(meal, This.container_related)
+                }
+                This.SET_CONF_OWL()
             }
-        }
+        })
+
     }
 
 
-    get_info = function() {
+    get_info = function (func) {
         let slug = this.url_params.get('slug')
         if (!slug) {
             this.VIEW_ERROR_404()
@@ -786,219 +889,227 @@ class Food extends PIZZLE {
         let url = this.URL('food/get-meal')
         let details = this.SEND_AJAX(url, {
             'slug': slug
-        }, false, true)
-        let status = details.status
-        if (status == 404) {
-            this.VIEW_ERROR_404()
-        }
-        return details.data
+        }, {
+            'error_message': false, 'auth': true, 'response': function (response) {
+                let status = response.status
+                if (status == 404) {
+                    this.VIEW_ERROR_404()
+                }
+                func(response)
+            }
+        })
+
     }
 
     set_info(data) {
         let This = this
-        this.MEAL = data
-        let is_available = data.is_available
+        this.get_info(function (response) {
+            let data = response.data
+
+            This.MEAL = data
+            This.related_meals()
+            let is_available = data.is_available
 
 
-        // Elements
-        let title_el = document.getElementById('title')
-        let category_el = document.getElementById('category')
-        let rating_val_el = document.getElementById('rating-val')
-        let comments_count_rating = document.getElementById('comments-count-rating')
-        let comments_count = document.getElementById('comments-count')
-        let price_el = document.getElementById('price')
-        let description_el = document.getElementById('description')
-        let quantity_el = document.getElementById('quantity')
-        let container_quantity_el = document.getElementById('container-quantity')
-        let btn_add_to_cart_el = document.getElementById('btn-add-to-cart')
-        let btn_let_me_know = document.getElementById('btn-let-me-know')
-        let container_images = document.getElementById('container-images')
-        let container_comments = document.getElementById('comments')
-        let container_meals_group = document.getElementById('meals-group')
-        let breadcrumb_title_el = document.getElementById('breadcrumb-title')
+            // Elements
+            let title_el = document.getElementById('title')
+            let category_el = document.getElementById('category')
+            let rating_val_el = document.getElementById('rating-val')
+            let comments_count_rating = document.getElementById('comments-count-rating')
+            let comments_count = document.getElementById('comments-count')
+            let price_el = document.getElementById('price')
+            let description_el = document.getElementById('description')
+            let quantity_el = document.getElementById('quantity')
+            let container_quantity_el = document.getElementById('container-quantity')
+            let btn_add_to_cart_el = document.getElementById('btn-add-to-cart')
+            let btn_let_me_know = document.getElementById('btn-let-me-know')
+            let container_images = document.getElementById('container-images')
+            let container_comments = document.getElementById('comments')
+            let container_meals_group = document.getElementById('meals-group')
+            let breadcrumb_title_el = document.getElementById('breadcrumb-title')
 
-        // Data 
-        title_el.innerText = data.title
-        category_el.innerText = data.category.title
-        category_el.href = this.URL_TEMPLATE(PAGE_MEALS, ['category', data.category.slug])
-        rating_val_el.style.width = (parseFloat(data.rate) * 20) + '%'
-        description_el.innerText = data.description
-        quantity_el.max = data.stock
-        breadcrumb_title_el.innerText = data.title_short
+            // Data 
+            title_el.innerText = data.title
+            category_el.innerText = data.category.title
+            category_el.href = This.URL_TEMPLATE(PAGE_MEALS, ['category', data.category.slug])
+            rating_val_el.style.width = (parseFloat(data.rate) * 20) + '%'
+            description_el.innerText = data.description
+            quantity_el.max = data.stock
+            breadcrumb_title_el.innerText = data.title_short
 
 
-        // Event
-        if (is_available) {
-            btn_add_to_cart_el.addEventListener('click', function() {
-                This.ADD_TO_CART(This.MEAL.slug, $('#quantity').val())
-            })
-            btn_add_to_cart_el.classList.remove('d-none')
-        } else {
-            btn_let_me_know.classList.remove('d-none')
-        }
+            // Event
+            if (is_available) {
+                btn_add_to_cart_el.addEventListener('click', function () {
+                    This.ADD_TO_CART(This.MEAL.slug, $('#quantity').val())
+                })
+                btn_add_to_cart_el.classList.remove('d-none')
+            } else {
+                btn_let_me_know.classList.remove('d-none')
+            }
 
-        // Data Node
-        let price_discount_node = ``
-        if (is_available) {
-            if (data.discount) {
-                // Price & Discount
-                price_discount_node = `
-                    <del><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price_base}</del>
-                    <ins><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price}</ins>
-                    <div class="discount-info">
-              
-                        <p>${data.discount_title}</p>
-                        <div>
-                            <span>${data.discount_percentage}%</span>
-                            <div class="d-inline-block" TimerCounterDown ToDateTimer="${data.discount_timeend}">
-                                <span data-content="Second"></span> :
-                                <span data-content="Minute"></span> :
-                                <span data-content="Hour"></span> :
-                                <span data-content="Day"></span>
+            // Data Node
+            let price_discount_node = ``
+            if (is_available) {
+                if (data.discount) {
+                    // Price & Discount
+                    price_discount_node = `
+                        <del><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price_base}</del>
+                        <ins><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price}</ins>
+                        <div class="discount-info">
+                  
+                            <p>${data.discount_title}</p>
+                            <div>
+                                <span>${data.discount_percentage}%</span>
+                                <div class="d-inline-block" TimerCounterDown ToDateTimer="${data.discount_timeend}">
+                                    <span data-content="Second"></span> :
+                                    <span data-content="Minute"></span> :
+                                    <span data-content="Hour"></span> :
+                                    <span data-content="Day"></span>
+                                </div>
                             </div>
+                          
                         </div>
-                      
+                    `
+                } else {
+                    // Price & Discount
+                    price_discount_node = `
+                        <ins><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price}</ins>
+                    `
+                }
+                price_el.innerHTML = price_discount_node
+                RunAllCounterTimers()
+
+
+            } else {
+                price_el.innerHTML = `
+                    <p class="meal-is-unavailable">
+                        The meal is unavailable
+                    </p>
+                `
+                container_quantity_el.classList.add('d-none')
+
+
+                // Notify Me
+                let node_notifyme = ``
+
+                function toggleContentNotify(btn, is_active) {
+                    if (is_active) {
+                        node_notifyme = `<i class="fas fa-check"></i> Will Notified`
+                        btn.setAttribute('notify-me', 'active')
+                    } else {
+                        node_notifyme = ` <i class="fas fa-bell"></i> Notify me when available`
+                        btn.setAttribute('notify-me', 'disabled')
+                    }
+                    btn.innerHTML = node_notifyme
+                }
+
+                toggleContentNotify(btn_let_me_know, data.notify_is_active)
+
+                btn_let_me_know.addEventListener('click', function () {
+                    This.NOTIFY_ME(This.MEAL.slug, function (response) {
+                        let status = response.status
+                        if (status == 200) {
+                            let is_active = response.data.notify_is_active
+                            toggleContentNotify(btn_let_me_know, is_active)
+                        }
+                    })
+
+
+                })
+
+            }
+
+            // Images
+            for (let image of data.images) {
+                let node = `
+                    <div class="product-details-image">
+                        <img src="${image.url}" alt="${data.title}" />
                     </div>
                 `
+                container_images.innerHTML += node
+            }
+
+
+            // Comments 
+            for (let comment of data.comments) {
+                This.CREATE_ELEMENT_COMMENT(container_comments, This.GET_HTML_ELEMENT_COMMENT(comment))
+            }
+
+            if (data.comments.length == 0) {
+                This.SHOW_NOT_FOUND_COMMENT(container_comments)
+            }
+
+            comments_count.innerText = data.comments.length
+            comments_count_rating.innerText = data.comments.length
+
+
+            if (data.type == 'group') {
+                // Meals Group
+
+                // ---Foods
+                for (let food_stock of data.foods) {
+                    let node = This.GET_HTML_ELEMENT_SUBMEAL(food_stock)
+                    container_meals_group.innerHTML += node
+                }
+
+                // ---Drinks
+                for (let drink_stock of data.drinks) {
+                    let node = This.GET_HTML_ELEMENT_SUBMEAL(drink_stock)
+                    container_meals_group.innerHTML += node
+                }
             } else {
-                // Price & Discount
-                price_discount_node = `
-                    <ins><span class="Price-currencySymbol">${SYMBOL_CURRENCY}</span>${data.price}</ins>
-                `
-            }
-            price_el.innerHTML = price_discount_node
-            RunAllCounterTimers()
-
-
-        } else {
-            price_el.innerHTML = `
-                <p class="meal-is-unavailable">
-                    The meal is unavailable
-                </p>
-            `
-            container_quantity_el.classList.add('d-none')
-
-
-            // Notify Me
-            let node_notifyme = ``
-
-            function toggleContentNotify(btn, is_active) {
-                if (is_active) {
-                    node_notifyme = `<i class="fas fa-check"></i> Will Notified`
-                    btn.setAttribute('notify-me', 'active')
-                } else {
-                    node_notifyme = ` <i class="fas fa-bell"></i> Notify me when available`
-                    btn.setAttribute('notify-me', 'disabled')
-                }
-                btn.innerHTML = node_notifyme
-            }
-            toggleContentNotify(btn_let_me_know, data.notify_is_active)
-
-            btn_let_me_know.addEventListener('click', function() {
-                let details = This.NOTIFY_ME(This.MEAL.slug)
-                let status = details.status
-                if (status == 200) {
-                    let is_active = details.data.notify_is_active
-                    toggleContentNotify(btn_let_me_know, is_active)
-                }
-            })
-
-        }
-
-        // Images
-        for (let image of data.images) {
-            let node = `
-                <div class="product-details-image">
-                    <img src="${image.url}" alt="${data.title}" />
-                </div>
-            `
-            container_images.innerHTML += node
-        }
-
-
-        // Comments 
-        for (let comment of data.comments) {
-            this.CREATE_ELEMENT_COMMENT(container_comments, this.GET_HTML_ELEMENT_COMMENT(comment))
-        }
-
-        if (data.comments.length == 0) {
-            this.SHOW_NOT_FOUND_COMMENT(container_comments)
-        }
-
-        comments_count.innerText = data.comments.length
-        comments_count_rating.innerText = data.comments.length
-
-
-
-        if (data.type == 'group') {
-            // Meals Group
-
-            // ---Foods
-            for (let food_stock of data.foods) {
-                let node = this.GET_HTML_ELEMENT_SUBMEAL(food_stock)
-                container_meals_group.innerHTML += node
+                container_meals_group.classList.add('d-none')
             }
 
-            // ---Drinks
-            for (let drink_stock of data.drinks) {
-                let node = this.GET_HTML_ELEMENT_SUBMEAL(drink_stock)
-                container_meals_group.innerHTML += node
-            }
-        } else {
-            container_meals_group.classList.add('d-none')
-        }
 
+            RunOwlCarousel()
 
-
-        RunOwlCarousel()
-
-        function RunOwlCarousel() {
-            $("#container-images").owlCarousel({
-                autoplay: true,
-                loop: true,
-                margin: 30,
-                touchDrag: true,
-                mouseDrag: true,
-                nav: false,
-                dots: false,
-                autoplayTimeout: 6000,
-                autoplaySpeed: 1200,
-                responsive: {
-                    0: {
-                        items: 1
-                    },
-                    480: {
-                        items: 1
-                    },
-                    600: {
-                        items: 1
-                    },
-                    1000: {
-                        items: 1
-                    },
-                    1200: {
-                        items: 1
+            function RunOwlCarousel() {
+                $("#container-images").owlCarousel({
+                    autoplay: true,
+                    loop: true,
+                    margin: 30,
+                    touchDrag: true,
+                    mouseDrag: true,
+                    nav: false,
+                    dots: false,
+                    autoplayTimeout: 6000,
+                    autoplaySpeed: 1200,
+                    responsive: {
+                        0: {
+                            items: 1
+                        },
+                        480: {
+                            items: 1
+                        },
+                        600: {
+                            items: 1
+                        },
+                        1000: {
+                            items: 1
+                        },
+                        1200: {
+                            items: 1
+                        }
                     }
-                }
-            });
+                });
 
-            var selector = $('#container-images');
+                var selector = $('#container-images');
 
-            $('.next_image').click(function() {
-                selector.trigger('next.owl.carousel');
-            });
+                $('.next_image').click(function () {
+                    selector.trigger('next.owl.carousel');
+                });
 
-            $('.prev_image').click(function() {
-                selector.trigger('prev.owl.carousel');
-            });
-        }
-
+                $('.prev_image').click(function () {
+                    selector.trigger('prev.owl.carousel');
+                });
+            }
+        })
 
     }
 
 }
-
-
 
 
 class Foods extends PIZZLE {
@@ -1015,17 +1126,17 @@ class Foods extends PIZZLE {
         this.get_categories()
         this.get_and_create_meals()
         this.get_meals_popular()
-        this.active_element_param_search()
     }
 
-    active_element_param_search = function() {
+    active_element_param_search = function () {
 
         // active category searched
         let category_search = this.url_params.get('category')
         if (category_search && category_search != 'all') {
             try {
                 document.querySelector(`[slug="${category_search}"]`).classList.add('category-active')
-            } catch (e) {}
+            } catch (e) {
+            }
         } else {
             document.getElementById('category-all').classList.add('category-active')
         }
@@ -1038,13 +1149,14 @@ class Foods extends PIZZLE {
         }
         try {
             this.sort_by.querySelector(`[value="${sort_by_search}"]`).setAttribute('selected', 'selected')
-        } catch (e) {}
+        } catch (e) {
+        }
 
     }
 
-    set_event_input_sortby = function() {
+    set_event_input_sortby = function () {
         let This = this
-        this.sort_by.addEventListener('change', function(e) {
+        this.sort_by.addEventListener('change', function (e) {
             let category = This.url_params.get('category') || 'all'
             let new_url = new URLSearchParams(window.location.search);
             new_url.set('sort-by', This.sort_by.value)
@@ -1052,7 +1164,7 @@ class Foods extends PIZZLE {
         })
     }
 
-    pagination_meals = function(pagination) {
+    pagination_meals = function (pagination) {
         let page_active = document.getElementById('page-active')
         let all_pages = document.getElementById('all-pages')
         let container_pagination = document.getElementById('container-pagination')
@@ -1094,7 +1206,6 @@ class Foods extends PIZZLE {
                     node_results += create(pagination.page_next + 1)
                 }
             }
-
 
             return node_results
         }
@@ -1139,80 +1250,89 @@ class Foods extends PIZZLE {
         container.innerHTML += node
     }
 
-    go_to_page = function(page_num) {
+    go_to_page = function (page_num) {
         let url_search = new URLSearchParams(window.location.search)
         url_search.set('page', page_num)
         window.location.search = url_search
     }
 
 
-    get_and_create_meals = function() {
+    get_and_create_meals = function () {
+        let This = this
         let category = this.url_params.get('category')
         let sort_by = this.url_params.get('sort-by')
         let page = this.url_params.get('page')
         let search = this.url_params.get('search')
-        let details
+        let func = function (response) {
+            let meals = response.data.meals
+            for (let meal of meals) {
+                This.CREATE_ELEMENT_MEAL(meal)
+            }
+            This.pagination_meals(response.data.pagination)
+            This.count_results.innerHTML = meals.length
+            if (meals.length < 1) {
+                This.show_not_found_meal(This.container_meals)
+            }
+        }
         if (search) {
             this.get_meals_by_search(search)
         } else {
             if (category) {
-                details = this.GET_ALL_MEALS({
+                this.GET_ALL_MEALS({
                     'category_slug': category,
                     'sort_by': sort_by,
                     'page': page
-                })
+                }, func)
             } else {
-                details = this.GET_ALL_MEALS({
+                this.GET_ALL_MEALS({
                     'sort_by': sort_by,
                     'page': page
-                })
-            }
-            let meals = details.data.meals
-            for (let meal of meals) {
-                this.CREATE_ELEMENT_MEAL(meal)
-            }
-            this.pagination_meals(details.data.pagination)
-            this.count_results.innerHTML = meals.length
-            if (meals.length < 1) {
-                this.show_not_found_meal(this.container_meals)
+                }, func)
             }
         }
 
     }
 
-    get_meals_popular = function() {
-        let meals = this.GET_MEALS_POPULAR({
+    get_meals_popular = function () {
+        let This = this
+        this.GET_MEALS_POPULAR({
             'count_show': 6
+        }, function (response) {
+            let meals = response.data
+            for (let meal of meals) {
+                This.CREATE_ELEMENT_MEAL_POPULAR(meal, This.container_meals_popular)
+            }
         })
-        for (let meal of meals) {
-            this.CREATE_ELEMENT_MEAL_POPULAR(meal, this.container_meals_popular)
-        }
+
     }
 
 
-    get_meals_by_search = function(search_value) {
+    get_meals_by_search = function (search_value) {
+        let This = this
         this.input_search.value = search_value
         let page = this.url_params.get('page')
         let sort_by = this.url_params.get('sort-by')
         let url = this.URL('food/get-meals-by-search')
-        let details = this.SEND_AJAX(url, {
+        this.SEND_AJAX(url, {
             'search_value': search_value,
             'sort_by': sort_by,
             'page': page
+        }, {
+            'response': function (response) {
+                let meals = response.data.meals
+                for (let meal of meals) {
+                    This.CREATE_ELEMENT_MEAL(meal)
+                }
+                This.pagination_meals(response.data.pagination)
+                This.count_results.innerHTML = meals.length
+                if (meals.length < 1) {
+                    This.show_not_found_meal(This.container_meals)
+                }
+            }
         })
-        let meals = details.data.meals
-        for (let meal of meals) {
-            this.CREATE_ELEMENT_MEAL(meal)
-        }
-        this.pagination_meals(details.data.pagination)
-        this.count_results.innerHTML = meals.length
-        if (meals.length < 1) {
-            this.show_not_found_meal(this.container_meals)
-        }
-
     }
 
-    CREATE_ELEMENT_MEAL = function(meal) {
+    CREATE_ELEMENT_MEAL = function (meal) {
         let container = document.createElement('div')
         container.className = 'col-lg-4 col-sm-6'
         let node = this.GET_HTML_ELEMENT_MEAL(meal)
@@ -1221,31 +1341,32 @@ class Foods extends PIZZLE {
     }
 
 
-    set_value_search_in_url = function() {
+    set_value_search_in_url = function () {
         let value_search = this.input_search.value
         window.location.href = this.URL_TEMPLATE(PAGE_MEALS, ['search', value_search])
     }
 
 
-
-    get_categories = function() {
+    get_categories = function () {
+        let This = this
         let url = this.URL('food/get-categories')
-        let details = this.SEND_AJAX(url)
-        let categories = details.data
-        for (let category of categories) {
-            let slug = this.URL_TEMPLATE(PAGE_MEALS, ['category', category.slug])
-            let node = `
-                <li slug="${category.slug}"><a href="${slug}">${category.title}</a></li>
-            `
-            this.container_categories.innerHTML += node
-        }
+        this.SEND_AJAX(url, {}, {
+            'response': function (response) {
+                let categories = response.data
+                for (let category of categories) {
+                    let slug = This.URL_TEMPLATE(PAGE_MEALS, ['category', category.slug])
+                    let node = `
+                        <li slug="${category.slug}"><a href="${slug}">${category.title}</a></li>
+                    `
+                    This.container_categories.innerHTML += node
+                }
+                This.active_element_param_search()
+            }
+        })
 
     }
 
 }
-
-
-
 
 
 class Gallery extends PIZZLE {
@@ -1255,32 +1376,31 @@ class Gallery extends PIZZLE {
         this.get_info()
         this.page = 1
         this.is_loading_more = false
-        this.btn_load_more =  document.getElementById('btn-load-more')
-        this.btn_load_more.addEventListener('click',function(){
+        this.btn_load_more = document.getElementById('btn-load-more')
+        this.btn_load_more.addEventListener('click', function () {
             This.load_more_image()
         })
     }
 
-    get_info = function() {
+    get_info = function () {
         let This = this
         let url = this.URL('gallery/get')
-        this.SEND_AJAX(url,{
+        this.SEND_AJAX(url, {
             'page': this.page
-        },true,false,true,false,function(response){
-            console.log(response);
+        }, true, false, true, false, function (response) {
             This.set_info(response.data.images)
             This.plus_counter_page()
             This.load_more_end()
         })
 
-        
+
     }
 
-    plus_counter_page = function(){
+    plus_counter_page = function () {
         this.page += 1
     }
 
-    get_node_element_image = function(image){
+    get_node_element_image = function (image) {
         let node = `    
             <div class="col-lg-4 col-sm-6 d-inline-block mx-3">
                 <a href="${image.url}" class="gallery-lightbox">
@@ -1301,7 +1421,7 @@ class Gallery extends PIZZLE {
         return node
     }
 
-    set_gallery_conf = function(){
+    set_gallery_conf = function () {
         $(".gallery-lightbox").magnificPopup({
             type: 'image',
             gallery: {
@@ -1311,7 +1431,7 @@ class Gallery extends PIZZLE {
                 enabled: true,
                 duration: 300,
                 easing: 'ease-in-out',
-                opener: function(openerElement) {
+                opener: function (openerElement) {
 
                     return openerElement.is('img') ? openerElement : openerElement.find('img');
                 }
@@ -1319,58 +1439,50 @@ class Gallery extends PIZZLE {
         });
     }
 
-    set_info = function(images) {
+    set_info = function (images) {
         let container = document.getElementById('gallery')
-        for (let image of images){
+        for (let image of images) {
             container.innerHTML += this.get_node_element_image(image)
         }
         this.set_gallery_conf()
-        if (images.length == 0){
+        if (images.length == 0) {
             container.innerHTML = `
                 <div class="not-found">
                     <p>not found image</p>
                 </div>
                 <a href="index.html" class="cta_btn d-block col-8 col-md-4 col-lg-2 mx-auto">Home</a>
             `
-           document.getElementById('btn-load-more').classList.add('d-none')
+            document.getElementById('btn-load-more').classList.add('d-none')
         }
     }
 
-    load_more_image = function(){
+    load_more_image = function () {
         let btn_load = this.btn_load_more
-        if (this.is_loading_more == false){
+        if (this.is_loading_more == false) {
             this.load_more_start()
             this.get_info()
         }
     }
 
-    load_more_start = function(){
+    load_more_start = function () {
         this.is_loading_more = true
-        this.btn_load_more.setAttribute('loading','true')
+        this.btn_load_more.setAttribute('loading', 'true')
     }
 
-    load_more_end = function(){
+    load_more_end = function () {
         this.is_loading_more = false
-        this.btn_load_more.setAttribute('loading','false')
+        this.btn_load_more.setAttribute('loading', 'false')
     }
 
 }
-
-
-
-
-
-
-
-
-
 
 
 function ScrollOnElement(ID_Element, Element = null) {
     if (ID_Element == null) {
         try {
             window.scrollTo(0, Element.scrollTop)
-        } catch (e) {}
+        } catch (e) {
+        }
     }
     try {
         let Element = document.getElementById(ID_Element)
@@ -1409,7 +1521,6 @@ function ClearEffectOnBody() {
 }
 
 
-
 function ShowNotificationMessage(Text, Type, Timer = 5000, LevelOfNecessity = 2) {
     RemoveAllNotifications()
 
@@ -1427,11 +1538,11 @@ function ShowNotificationMessage(Text, Type, Timer = 5000, LevelOfNecessity = 2)
     ContainerMessage.appendChild(BtnClose)
     ContainerMessage.appendChild(Message)
     document.body.appendChild(ContainerMessage)
-    setTimeout(function() {
+    setTimeout(function () {
         ContainerMessage.remove()
     }, Timer)
 
-    BtnClose.onclick = function() {
+    BtnClose.onclick = function () {
         ContainerMessage.remove()
     }
 }
@@ -1440,7 +1551,8 @@ function RemoveAllNotifications() {
     try {
         document.getElementsByClassName('NotificationMessage')[0].remove()
         document.getElementsByClassName('NotificationMessage')[1].remove()
-    } catch (e) {}
+    } catch (e) {
+    }
 }
 
 function ValidListInputs(Inputs) {
@@ -1524,14 +1636,15 @@ function CheckInputValidations(Input, Bigger, Less, SetIn = 'Input', Type = 'Tex
 //////////////////////////////////                  Scroll          ///////////////////////////////////////////////
 
 let HeightWindowBaseTemplate = window.innerHeight
-window.onscroll = function() {
+window.onscroll = function () {
     try {
         if (window.scrollY > HeightWindowBaseTemplate) {
             document.getElementById('ButtonGoToTopPage').classList.add('ButtonGoToTopIsShow')
         } else {
             document.getElementById('ButtonGoToTopPage').classList.remove('ButtonGoToTopIsShow')
         }
-    } catch (e) {}
+    } catch (e) {
+    }
 }
 
 //////////////////////////////////                Functionality Cookie         ///////////////////////////////////////////////
@@ -1540,9 +1653,8 @@ function SetCookieFunctionality_ShowNotification(Text, Type, Timer = 5000, Level
 }
 
 
-
 function GetCookieFunctionality_ShowNotification() {
-    setTimeout(function() {
+    setTimeout(function () {
         let AllCookies = document.cookie.split(';')
         let Cookie_Key
         let Cookie_Val
@@ -1565,7 +1677,8 @@ function GetCookieFunctionality_ShowNotification() {
             Type = Cookie_Val.split('~')[1] || 'Warning'
             Timer = Cookie_Val.split('~')[2] || 8000
             LevelOfNecessity = Cookie_Val.split('~')[3] || 2
-        } catch (e) {}
+        } catch (e) {
+        }
         if (Cookie_Key == 'Functionality_N' || Cookie_Key == ' Functionality_N' || Cookie_Key == ' Functionality_N ') {
             let TextResult = ConvertCharEnglishToPersianDecode(Text)
             ShowNotificationMessage(TextResult, Type, Timer, LevelOfNecessity)
@@ -1630,7 +1743,8 @@ function ConvertCharPersianToEnglishDecode(Text) {
     for (let i of Text) {
         try {
             Res += Dict_Char_Persian_English[i]
-        } catch (e) {}
+        } catch (e) {
+        }
     }
     return Res
 }
@@ -1665,7 +1779,7 @@ function ListIsNone(List) {
 
 function ValueInList(List, Value) {
     let State = false
-    List.filter(function(e) {
+    List.filter(function (e) {
         if (e == Value) {
             State = true
         }
@@ -1674,7 +1788,7 @@ function ValueInList(List, Value) {
 }
 
 ////////////////////////////////////  Replace With Index  ///////////////////////////////////////////////
-String.prototype.ReplaceWithIndex = function(StartIndex, EndIndex, NewStr) {
+String.prototype.ReplaceWithIndex = function (StartIndex, EndIndex, NewStr) {
     return this.substring(0, StartIndex) + NewStr + this.substring(EndIndex);
 };
 
@@ -1774,16 +1888,16 @@ function CreateContainerBlur(Top = 'Default', Class = null, Style = null) {
     DeleteContainerBlur()
     let Container = document.createElement('div')
     let Container2 = document.createElement('div')
-        //  let IconClose = document.createElement('i')
-        // IconClose.onclick = DeleteContainerBlur
-        // IconClose.setAttribute('id','ContainerBlurIconClose')
-        // IconClose.className = 'fa fa-times ContainerBlurIconClose'
+    //  let IconClose = document.createElement('i')
+    // IconClose.onclick = DeleteContainerBlur
+    // IconClose.setAttribute('id','ContainerBlurIconClose')
+    // IconClose.className = 'fa fa-times ContainerBlurIconClose'
     Container.className = 'ContainerBlur'
     Container2.className = 'ContainerContentBlur'
     Class != null ? Container.classList.add(Class) : ''
     Style != null ? Container.style = Style : ''
     Top != 'Default' ? Container.style.top = Top + '%' : ''
-        //   Container2.appendChild(IconClose)
+    //   Container2.appendChild(IconClose)
     Container.appendChild(Container2)
     document.body.insertBefore(Container, document.body.firstElementChild)
     document.body.classList.add('BlurAllElementsExceptContainerBlur')
@@ -1802,7 +1916,7 @@ function DeleteContainerBlur() {
 ////////////////     Click Out Side Container Blur And Other Container With Blur    /////////////////
 
 function ClickOutSideContainer(Container, FuncWhenOutSideClick, State = 'Inside') {
-    document.addEventListener('click', ClickOutSideCnt = function(event) {
+    document.addEventListener('click', ClickOutSideCnt = function (event) {
         let IsClickInContainer = Container.contains(event.target);
         if (!IsClickInContainer) {
             if (State == 'OutSide') {
@@ -1820,7 +1934,7 @@ function ClickOutSideContainer(Container, FuncWhenOutSideClick, State = 'Inside'
 
 function ReturnClickInContainer(Container) {
     let StateResult = false
-    document.addEventListener('click', ClickInSideOrNot = function(event) {
+    document.addEventListener('click', ClickInSideOrNot = function (event) {
         let StateClick = Container.contains(event.target)
         if (StateClick) {
             StateResult = true
@@ -1868,7 +1982,7 @@ function OpenFullscreen(elem) {
 
 //////////////////////////////////       Sign Out Account   ////////////////////////////////////////////
 function SignOutAccount(Path = '/') {
-    CreateMessage_Alert('ایا مطمعن هستید که میخواهید از حساب کاربری خارج شوید ؟', function() {
+    CreateMessage_Alert('ایا مطمعن هستید که میخواهید از حساب کاربری خارج شوید ؟', function () {
         SetCookie('QlYSqVS', 'None*_', '0', Path)
         SetCookie('YPtIeRC', 'None*_', '0', Path)
         location.reload()
@@ -1907,10 +2021,12 @@ function SetTouchPadOnElement(Element, Type, arguments) {
         let Direction = arguments.Direction || 'Rtl'
         let Max = arguments.Max || 'WidthWindow'
         let Min = arguments.Min || 0
-        let OnTouchEndF = arguments.OnTouchEnd || function() {}
-        let OnTouchStartF = arguments.OnTouchStart || function() {}
+        let OnTouchEndF = arguments.OnTouchEnd || function () {
+        }
+        let OnTouchStartF = arguments.OnTouchStart || function () {
+        }
         Element.classList.add('MenuIsClose')
-        Element.ontouchstart = function(e) {
+        Element.ontouchstart = function (e) {
             if (Element.getAttribute('StateOnTouchStart') == 'true') {
                 OnTouchStartF(e)
                 Element.setAttribute('StateOnTouchStart', 'false')
@@ -1918,14 +2034,14 @@ function SetTouchPadOnElement(Element, Type, arguments) {
                 Element.classList.remove('MenuIsClose')
             }
         }
-        Element.ontouchmove = function(e) {
+        Element.ontouchmove = function (e) {
             if (Element == e.target) {
                 SetTouchIncreaseWidthElement(Element, e, Direction, Max, Min)
                 Element.setAttribute('StateOnTouchStart', 'true')
                 Element.style.transition = 'all 0s'
             }
         }
-        Element.ontouchend = function(e) {
+        Element.ontouchend = function (e) {
             OnTouchEndF(e)
             let Element = e.currentTarget
             let ElementInfo = Element.getBoundingClientRect()
@@ -1948,7 +2064,7 @@ function SetTouchPadOnElement(Element, Type, arguments) {
             Element.removeAttribute('style')
         }
     } else if (Type == 'Move') {
-        Element.ontouchmove = function(e) {
+        Element.ontouchmove = function (e) {
             if (Element == e.target) {
                 SetTouchMoveElement(e)
             }
@@ -1957,7 +2073,7 @@ function SetTouchPadOnElement(Element, Type, arguments) {
         let Direction = arguments.Direction || 'Rtl'
         let Max = arguments.Max || 'WidthWindow'
         let Min = arguments.Min || 0
-        Element.ontouchmove = function(e) {
+        Element.ontouchmove = function (e) {
             SetTouchIncreaseWidthElement(Element, e, Direction, Max, Min)
             SetTouchMoveElement(e)
             Element.style.transition = 'all 0s'
@@ -2046,13 +2162,13 @@ function SetClickOutSideMenu(Element) {
     if (StateSetClickOutSideMenu) {
         //  RemoveElementWhenPasteToMenu()
         for (let i of Element.children) {
-            i.addEventListener('click', function(e) {
+            i.addEventListener('click', function (e) {
                 if (e.target.getAttribute('IconCloseMenu') == null) {
                     OpenMenuContainer(Element)
                 }
             })
         }
-        document.addEventListener('click', VarStateEventClickDoc = function(event) {
+        document.addEventListener('click', VarStateEventClickDoc = function (event) {
             let IconOpenMenu = document.getElementById('IconHamburgerMenu')
             let StateClickMenu = Element.contains(event.target)
             let StateClickIconOpen = IconOpenMenu.contains(event.target)
@@ -2120,7 +2236,7 @@ function PasteElementToElement(Element, ToElement, Attr = '') {
 
 let AllClickFunc = document.querySelectorAll('[ClickFunc]')
 for (let i of AllClickFunc) {
-    i.onclick = function(e) {
+    i.onclick = function (e) {
         try {
             let Element = e.currentTarget
             let ValAttr = Element.getAttribute('ClickFunc')
@@ -2134,7 +2250,7 @@ for (let i of AllClickFunc) {
 
         } catch (e) {
             throw e
-            throw (` Attribute "ClickFunc" In One of The Elements or Most Is Wrong`)
+            throw (` Attribute "ClickFunc" In One of The Elements or above Is Wrong`)
         }
     }
 }
@@ -2279,7 +2395,8 @@ let ScrollOnElementVar = (entries, Observer) => {
             Entry.target.classList.add(ClassAnimation)
             try {
                 Entry.target.classList.add(ClassAnimation_2)
-            } catch (e) {}
+            } catch (e) {
+            }
         } else {
             // Loop
             // Entry.target.classList.remove(ClassAnimation)
@@ -2310,81 +2427,95 @@ function ClearEffectOnItemFormInput(Element) {
 
 let AllInputFormBaseJS = document.querySelectorAll('[InputForm]')
 for (let I of AllInputFormBaseJS) {
-    I.addEventListener('focus', function(e) {
+    I.addEventListener('focus', function (e) {
         EffectOnItemFormInput(e.currentTarget.parentNode)
     })
-    I.addEventListener('focusout', function(e) {
+    I.addEventListener('focusout', function (e) {
         ClearEffectOnItemFormInput(e.currentTarget.parentNode)
     })
 }
 
 
 function SignOutAccountMenu() {
-    setTimeout(function() {
+    setTimeout(function () {
         CloseMenuContainer(document.getElementById('ContainerMenuHamburger'))
     })
     SignOutAccount()
 }
 
 
-
 function GetKeyByValue(Obj, Val) {
     return Object.keys(Obj).find(K => Obj[K] === Val);
 }
 
+let COUNTER_SHOW_ERROR_AJAX = true
 
-
-function SendAjax(Url, Data = {}, Method = 'POST', Success, Failed, async_req = true, auth, login_redirect = true) {
+function SendAjax(Url, Data = {}, Method = 'POST', Response, async_req = true, auth, login_redirect = true, loading_show = true, loading_section = null) {
     function __Redirect__(response) {
         if (response.__Redirect__ == 'True') {
-            setTimeout(function() {
+            setTimeout(function () {
                 window.location.href = response.__RedirectURL__
             }, parseInt(response.__RedirectAfter__ || 0))
         }
     }
+
     let timer_loading
 
     function Loading(State) {
-        if (State == 'Show') {
-            LockAllElements()
-            timer_loading = setTimeout(function() {
-                Loading('Hide')
-                let ContainerLoading = document.createElement('div')
-                let CircleLoading = document.createElement('div')
-                ContainerLoading.id = 'ContainerLoadingAJAX'
-                ContainerLoading.classList.add('ContainerLoadingAJAX')
-                ContainerLoading.innerHTML = `
+        if (loading_show) {
+            if (State == 'Show') {
+                if (!loading_section) {
+                    LockAllElements()
+                    timer_loading = setTimeout(function () {
+                        Loading('Hide')
+                        let ContainerLoading = document.createElement('div')
+                        let CircleLoading = document.createElement('div')
+                        ContainerLoading.id = 'ContainerLoadingAJAX'
+                        ContainerLoading.classList.add('ContainerLoadingAJAX')
+                        ContainerLoading.innerHTML = `
                     <div class="LoadingCircle"><span></span></div>
                 `
-                ContainerLoading.innerHTML = `
+                        ContainerLoading.innerHTML = `
                     <img src="assets/img/logo.png" alt="logo">
                 `
-                document.body.classList.add('is-loading')
-                document.body.appendChild(ContainerLoading)
-            }, 300)
+                        document.body.classList.add('is-loading')
+                        document.body.appendChild(ContainerLoading)
+                    }, 300)
+                } else {
+                    // Loading in btn
+                    loading_section.classList.add('loading-section')
+                }
 
-        } else {
-            document.body.classList.remove('is-loading')
-            try {
-                UnlockAllElements()
-                document.getElementById('ContainerLoadingAJAX').remove()
-            } catch (e) {}
-            try {
-                clearTimeout(timer_loading)
-            } catch (e) {}
+            } else {
+                if (!loading_section) {
+                    document.body.classList.remove('is-loading')
+                    try {
+                        UnlockAllElements()
+                        document.getElementById('ContainerLoadingAJAX').remove()
+                    } catch (e) {
+                    }
+                    try {
+                        clearTimeout(timer_loading)
+                    } catch (e) {
+                    }
+                } else {
+                    // remove Loading btn
+                    loading_section.classList.remove('loading-section')
+                }
+            }
         }
     }
 
-    if (Success == undefined) {
-        Success = function(response) {
+    if (Response == undefined) {
+        Response = function (response) {
             __Redirect__(response)
         }
     }
-    if (Failed == undefined) {
-        Failed = function(response) {
-            ShowNotificationMessage('Could not connect to server ', 'Error', 10000, 2)
-        }
-    }
+    // if (Failed == undefined) {
+    //     Failed = function (response) {
+    //         ShowNotificationMessage('Could not connect to server ', 'Error', 10000, 2)
+    //     }
+    // }
     let headers = {
         // 'X-CSRFToken': window.CSRF_TOKEN
         'Content-Type': 'application/json',
@@ -2408,20 +2539,30 @@ function SendAjax(Url, Data = {}, Method = 'POST', Success, Failed, async_req = 
         type: Method,
         async: async_req,
         headers: headers,
-        success: function(response) {
+        success: function (response) {
             __Redirect__(response)
             Loading('Hide')
-            Success(response)
+            response.success = true
+            Response(response)
         },
-        failed: function(response) {
+        failed: function (response) {
             __Redirect__(response)
             Loading('Hide')
-            Failed(response)
+            response = response.responseJSON
+            response.success = false
+            Response(response)
         },
-        error: function(response) {
+        error: function (response) {
             __Redirect__(response)
-            Loading('Hide')
-            Failed(response)
+            response.success = false
+            if (COUNTER_SHOW_ERROR_AJAX && response.status == 0) {
+                COUNTER_SHOW_ERROR_AJAX = false
+                ShowNotificationMessage('Could not connect to server ', 'Error', 10000000, 3)
+            } else {
+                Loading('Hide')
+                Response(response.responseJSON)
+            }
+
         }
     })
 }
@@ -2468,11 +2609,11 @@ class ShowNotificationMessage_Model {
         document.body.appendChild(ContainerNotifications)
         this.ContainerMessage = ContainerMessage
         let Index_Notification = this.Index_Notification
-        setTimeout(function() {
+        setTimeout(function () {
             RemoveNotification_Func(Index_Notification)
         }, Timer)
 
-        BtnClose.onclick = function(e) {
+        BtnClose.onclick = function (e) {
             let Index_Notification = e.target.getAttribute('Index_Notification')
             RemoveNotification_Func(Index_Notification)
         }
@@ -2483,7 +2624,7 @@ class ShowNotificationMessage_Model {
 function RemoveNotification_Func(Index) {
     let Instance = LIST_ALL_NOTIFICATIONS_INSTANCE[Index]
     Instance.ContainerMessage.classList.add('Notification_Removed')
-    setTimeout(function() {
+    setTimeout(function () {
         Instance.ContainerMessage.remove()
         delete Instance
     }, 300)
@@ -2497,7 +2638,7 @@ function ShowNotificationMessage(Text, Type, Timer = 5000, LevelOfNecessity = 3)
 function CreateMessage_Alert(Text, FuncWhenOK, ValueFunc = null, FuncWhenCancel = null) {
     CloseMessage_Alert()
     LockAllElements()
-    setTimeout(function() {
+    setTimeout(function () {
         document.body.className = ''
 
         let Container = document.createElement('div')
@@ -2517,20 +2658,20 @@ function CreateMessage_Alert(Text, FuncWhenOK, ValueFunc = null, FuncWhenCancel 
         BtnClose.innerText = 'بازگشت'
         BtnOk.innerText = 'بله'
 
-        BtnClose.onclick = function() {
+        BtnClose.onclick = function () {
             if (FuncWhenCancel != null) {
                 FuncWhenCancel()
             }
             CloseMessage_Alert()
         }
-        BtnClose1.onclick = function() {
+        BtnClose1.onclick = function () {
             if (FuncWhenCancel != null) {
                 FuncWhenCancel()
             }
             CloseMessage_Alert()
         }
 
-        BtnOk.onclick = function() {
+        BtnOk.onclick = function () {
             if (ValueFunc != null) {
                 FuncWhenOK(ValueFunc)
             } else {
@@ -2543,7 +2684,7 @@ function CreateMessage_Alert(Text, FuncWhenOK, ValueFunc = null, FuncWhenCancel 
         Container.appendChild(BtnClose)
         Container.appendChild(BtnClose1)
         Container.appendChild(BtnOk)
-        ClickOutSideContainer(Container, function() {
+        ClickOutSideContainer(Container, function () {
             CloseMessage_Alert()
         }, 'OutSide')
         document.body.insertBefore(Container, document.body.firstElementChild)
@@ -2558,7 +2699,8 @@ function CreateMessage_Alert(Text, FuncWhenOK, ValueFunc = null, FuncWhenCancel 
 function CloseMessage_Alert() {
     try {
         document.getElementsByClassName('ContainerMessage_Alert')[0].remove()
-    } catch (e) {}
+    } catch (e) {
+    }
     UnlockAllElements()
     Clear_BlurAllElementsExceptMessage_Alert()
 }
@@ -2609,7 +2751,7 @@ function TimerCountDown(Element, ToDate) {
     let El_Minute = Element.querySelector('[data-content=Minute]')
     let El_Hour = Element.querySelector('[data-content=Hour]')
     let El_Day = Element.querySelector('[data-content=Day]')
-    let _ = setInterval(function() {
+    let _ = setInterval(function () {
         let Now = new Date().getTime();
         let Distance = CountDownDate - Now;
         let Days = Math.floor(Distance / (1000 * 60 * 60 * 24));

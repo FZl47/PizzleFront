@@ -10,15 +10,15 @@
     display: none;
 }
 
-.BlurAllElementsExceptMenu>*:not(.Container_More_Hamburger)> :not(.HamburgerMenu_Header) {
+.BlurAllElementsExceptMenu > *:not(.Container_More_Hamburger) > :not(.HamburgerMenu_Header) {
     filter: blur(2.5px);
 }
 
-.BlurAllElementsExceptMessage_Alert> :not(.ContainerMessage_Alert) {
+.BlurAllElementsExceptMessage_Alert > :not(.ContainerMessage_Alert) {
     filter: blur(.5px);
 }
 
-.BlurAllElementsExceptContainerBlur> :not(.ContianerBlur):not(.ContainerBlur *):not(.ContainerBlur) {
+.BlurAllElementsExceptContainerBlur > :not(.ContianerBlur):not(.ContainerBlur *):not(.ContainerBlur) {
     filter: blur(10px);
 }
 
@@ -26,22 +26,23 @@
     filter: brightness(80%) blur(2px);
 }
 
- ::-webkit-scrollbar {
+::-webkit-scrollbar {
     background: #eee;
     width: 10px;
 }
 
- ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     background-color: var(--ColorBase);
 }
 
-@media (pointer:none),
-(pointer:coarse) {
-     ::-webkit-scrollbar {
+@media (pointer: none),
+(pointer: coarse) {
+    ::-webkit-scrollbar {
         background: initial;
         width: 0;
     }
-     ::-webkit-scrollbar-thumb {
+
+    ::-webkit-scrollbar-thumb {
         background: initial;
     }
 }
@@ -128,7 +129,7 @@
     font-weight: bold;
 }
 
-.ContainerNotFoundContent>* {
+.ContainerNotFoundContent > * {
     margin: 0;
     font-size: 110%;
     display: inline-block;
@@ -435,7 +436,7 @@
     box-shadow: 0 3px 5px #dddddd;
 }
 
-.BtnStyleActive_1>* {
+.BtnStyleActive_1 > * {
     background: transparent !important;
     color: white !important;
     border: none !important;
@@ -1309,7 +1310,7 @@ button:focus {
     position: fixed;
     top: 1%;
     right: 1%;
-    z-index: 9999999;
+    z-index: 100000000000000000000000;
     max-height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
@@ -1660,13 +1661,16 @@ button:focus {
         width: 35%;
         left: 32.5%;
     }
+
     .TextMessage_Alert {
         font-size: 100%;
     }
+
     .ContainerBlur[Size='Medium'] {
         width: 70%;
         right: 15%;
     }
+
     .ContainerBlur {
         width: 70%;
         right: 15%;
@@ -1678,13 +1682,16 @@ button:focus {
         width: 45%;
         left: 27.5%;
     }
+
     .TextMessage_Alert {
         font-size: 95%;
     }
+
     .ContainerMessage_Alert {
         width: 45%;
         left: 27.5%;
     }
+
     .TextMessage_Alert {
         font-size: 95%;
     }
@@ -1695,13 +1702,16 @@ button:focus {
         width: 50%;
         left: 25%;
     }
+
     .TextMessage_Alert {
         font-size: 90%;
     }
+
     .ContainerBlur[Size='Small'] {
         width: 70%;
         right: 15%;
     }
+
     .Breadcrumb li {
         font-size: 100%;
     }
@@ -1713,26 +1723,32 @@ button:focus {
         left: 20%;
         padding: 80px 30px;
     }
+
     .TextMessage_Alert {
         font-size: 85%;
     }
+
     .TextMessage_Alert {
         width: 100%;
     }
+
     .ContainerBlur {
         width: 80%;
         right: 10%;
     }
+
     .ItemFormInput i {
         text-align: center;
         width: 10%;
         vertical-align: middle;
         font-size: 120%;
     }
+
     .ContainerBlur[Size='Small'] {
         width: 75%;
         right: 12.5%;
     }
+
     .Breadcrumb li {
         font-size: 98%;
     }
@@ -1743,13 +1759,16 @@ button:focus {
         width: 80%;
         left: 10%;
     }
+
     .TextMessage_Alert {
         font-size: 90%;
     }
+
     .ContainerBlur[Size='Medium'] {
         width: 85%;
         right: 7.5%;
     }
+
     .ContainerBlur[Size='Small'] {
         width: 88%;
         right: 6%;
@@ -1761,28 +1780,35 @@ button:focus {
         width: 70%;
         left: 15%;
     }
+
     .TextMessage_Alert {
         font-size: 77%;
     }
+
     .ContainerBlur {
         width: 92%;
         right: 4%;
     }
+
     .ContainerMessage_Alert {
         width: 90%;
         left: 5%;
     }
+
     .TextMessage_Alert {
         font-size: 95%;
     }
+
     .ContainerBlur[Size='Medium'] {
         width: 98%;
         right: 1%;
     }
+
     .ContainerBlur[Size='Small'] {
         width: 98%;
         right: 1%;
     }
+
     .Breadcrumb li {
         font-size: 90%;
     }
@@ -1793,6 +1819,7 @@ button:focus {
         width: 95%;
         left: 2.5%;
     }
+
     .TextMessage_Alert {
         font-size: 88%;
     }

@@ -34,44 +34,44 @@ let set_gallery_conf = undefined;
         =================================================================	
         */
 
-        $(".pizza_slide").owlCarousel({
-            autoplay: true,
-            loop: true,
-            margin: 30,
-            touchDrag: true,
-            mouseDrag: true,
-            nav: false,
-            dots: false,
-            autoplayTimeout: 6000,
-            autoplaySpeed: 1200,
-            responsive: {
-                0: {
-                    items: 1
-                },
-                480: {
-                    items: 1
-                },
-                600: {
-                    items: 2
-                },
-                1000: {
-                    items: 3
-                },
-                1200: {
-                    items: 3
-                }
-            }
-        });
-
-        var selector = $('.pizza_slide');
-
-        $('.next_slide').click(function() {
-            selector.trigger('next.owl.carousel');
-        });
-
-        $('.prev_slide').click(function() {
-            selector.trigger('prev.owl.carousel');
-        });
+        // $(".pizza_slide").owlCarousel({
+        //     autoplay: true,
+        //     loop: true,
+        //     margin: 30,
+        //     touchDrag: true,
+        //     mouseDrag: true,
+        //     nav: false,
+        //     dots: false,
+        //     autoplayTimeout: 6000,
+        //     autoplaySpeed: 1200,
+        //     responsive: {
+        //         0: {
+        //             items: 1
+        //         },
+        //         480: {
+        //             items: 1
+        //         },
+        //         600: {
+        //             items: 2
+        //         },
+        //         1000: {
+        //             items: 3
+        //         },
+        //         1200: {
+        //             items: 3
+        //         }
+        //     }
+        // });
+        //
+        // var selector = $('.pizza_slide');
+        //
+        // $('.next_slide').click(function() {
+        //     selector.trigger('next.owl.carousel');
+        // });
+        //
+        // $('.prev_slide').click(function() {
+        //     selector.trigger('prev.owl.carousel');
+        // });
 
         /* 
         =================================================================

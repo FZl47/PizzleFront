@@ -159,19 +159,21 @@
             }
 
             if (state_valid) {
-                let details = SIGNUP.register(username.value, password.value, password2.value)
-                if (details.status == 200) {
-                    text_message_form.setAttribute('message-type', 'success-text')
-                    text_message_form.innerText = details.message
-                    SIGNUP._SET_ACCESS_TOKEN(details.data.access_token)
-                    SIGNUP._SET_REFRESH_TOKEN(details.data.refresh_token, remember_me.checked)
-                    setTimeout(function() {
-                        window.location.href = PAGE_HOME
-                    }, 500)
-                } else {
-                    text_message_form.setAttribute('message-type', 'alert-text')
-                    text_message_form.innerText = details.message
-                }
+                SIGNUP.register(username.value, password.value, password2.value, function(response) {
+                    if (response.status == 200) {
+                        text_message_form.setAttribute('message-type', 'success-text')
+                        text_message_form.innerText = response.message
+                        SIGNUP._SET_ACCESS_TOKEN(response.data.access_token)
+                        SIGNUP._SET_REFRESH_TOKEN(response.data.refresh_token, remember_me.checked)
+                        setTimeout(function() {
+                            history.back();
+                        }, 500)
+                    } else {
+                        text_message_form.setAttribute('message-type', 'alert-text')
+                        text_message_form.innerText = response.message
+                    }
+                })
+
             }
         })
     </script>

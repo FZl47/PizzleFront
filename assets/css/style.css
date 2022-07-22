@@ -40,7 +40,6 @@ Developer		:  Hassan Rasu
 	27 - single news page
 */
 
-
 /*================================================
 01 - import fonts
 ==================================================*/
@@ -65,7 +64,7 @@ body {
 }
 
 body.is-loading {
-    overflow: hidden!important;
+    overflow: hidden !important;
 }
 
 html,
@@ -173,7 +172,7 @@ li {
     width: 100%;
     margin: 20px auto;
     color: #f7b035;
-    border: 1px solid #f7b035!important;
+    border: 1px solid #f7b035 !important;
     font-weight: 500;
     text-transform: uppercase;
     overflow: hidden;
@@ -187,7 +186,7 @@ li {
 
 .btn-notify-me {
     color: #ffbb47;
-    border: 1px solid #eee!important;
+    border: 1px solid #eee !important;
 }
 
 .btn-notify-me i {
@@ -201,7 +200,7 @@ li {
 
 .btn-notify-me[notify-me='active'] {
     color: #f7b035;
-    border: 1px solid #f7b035!important;
+    border: 1px solid #f7b035 !important;
 }
 
 .btn-notify-me[notify-me='active'] i {
@@ -217,7 +216,7 @@ li {
     }
 }
 
-@media screen and (max-width:450px) {
+@media screen and (max-width: 450px) {
     .cta_btn_outline {
         width: 100%;
         padding: 13px 16px;
@@ -349,7 +348,7 @@ section {
     margin-right: 0
 }
 
-.pagination li>* {
+.pagination li > * {
     display: block;
     width: 45px;
     height: 45px;
@@ -363,17 +362,17 @@ section {
     border: 1px solid #ddd
 }
 
-.pagination li.active>* {
+.pagination li.active > * {
     background: #f7b035 none repeat scroll 0 0;
     color: #fff;
     border: 1px solid #f7b035
 }
 
-.pagination li.active>*:hover {
+.pagination li.active > *:hover {
     border: 1px solid #f7b035
 }
 
-.pagination li>*:hover {
+.pagination li > *:hover {
     border: 1px solid #f7b035
 }
 
@@ -471,7 +470,7 @@ section {
     transition: all 0.3s ease-in-out
 }
 
-.mainmenu ul li>ul {
+.mainmenu ul li > ul {
     position: absolute;
     top: 120%;
     left: 0;
@@ -487,19 +486,19 @@ section {
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"
 }
 
-.mainmenu ul li:hover>ul {
+.mainmenu ul li:hover > ul {
     visibility: visible;
     top: 100%;
     opacity: 1;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)"
 }
 
-.mainmenu ul li>ul li {
+.mainmenu ul li > ul li {
     display: block;
     padding: 0
 }
 
-.mainmenu ul li>ul li a {
+.mainmenu ul li > ul li a {
     display: block;
     padding: 7px 20px;
     color: #000;
@@ -507,11 +506,11 @@ section {
     line-height: 24px;
 }
 
-.mainmenu ul li>ul li a:after {
+.mainmenu ul li > ul li a:after {
     display: none
 }
 
-.mainmenu ul li>ul li a:hover {
+.mainmenu ul li > ul li a:hover {
     padding-left: 25px
 }
 
@@ -531,18 +530,18 @@ section {
 
 .mainmenu ul li a:hover,
 .header_tools li a:hover,
-.mainmenu li.active>a {
+.mainmenu li.active > a {
     color: #f7b035
 }
 
-.mainmenu ul li:hover>a {
+.mainmenu ul li:hover > a {
     color: #f7b035
 }
 
 .mainmenu ul li a:hover:after,
 .header_tools li a:hover:after,
-.mainmenu li.active>a:after,
-.mainmenu ul li:hover>a:after {
+.mainmenu li.active > a:after,
+.mainmenu ul li:hover > a:after {
     width: 100%;
     -webkit-transition: .4s;
     transition: .4s;
@@ -627,9 +626,9 @@ section {
     color: #000
 }
 
-.header_black li>a:hover,
-.header_black .mainmenu ul li:hover>a,
-.header_black .mainmenu li.active>a {
+.header_black li > a:hover,
+.header_black .mainmenu ul li:hover > a,
+.header_black .mainmenu li.active > a {
     color: #f7b035 !important
 }
 
@@ -702,7 +701,7 @@ section {
 .hero_area .shape_4,
 .promo_shape,
 .promo_shape_food,
-.best_pizza_right>img.shape_17,
+.best_pizza_right > img.shape_17,
 .fun_shape_7,
 .fun_shape_4,
 .fun_shape_3,
@@ -943,7 +942,7 @@ section {
     font-family: 'Delius Unicase', cursive;
 }
 
-.best_pizza_left h2>span {
+.best_pizza_left h2 > span {
     display: block;
     color: #000;
     font-size: 40%;
@@ -1010,7 +1009,7 @@ section {
     border-radius: 10px;
     -webkit-transition: all 0.4s ease 0s;
     transition: all 0.4s ease 0s;
-    margin-bottom: 30px
+    margin-bottom: 30px;
 }
 
 .pizza_slide_header {
@@ -1046,7 +1045,7 @@ section {
     margin-left: 10px;
     font-size: 75%;
     color: #aaa;
-    position: static!important;
+    position: static !important;
 }
 
 .pizza_discount_time p {
@@ -1057,7 +1056,7 @@ section {
 
 .pizza_discount_percentage {
     color: rgb(255, 65, 40);
-    position: static!important;
+    position: static !important;
     margin: 0;
     padding: 0 3px;
     display: inline-block;
@@ -1125,8 +1124,7 @@ section {
     left: 50%;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    width: 100%;
-    ;
+    width: 100%;;
     visibility: visible;
     opacity: 0;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
@@ -2003,8 +2001,7 @@ section {
     display: inline-block;
     -webkit-box-flex: 0;
     -ms-flex: 0 0 50%;
-    flex: 0 0 50%;
-    ;
+    flex: 0 0 50%;;
     margin-top: 30px
 }
 
@@ -2333,7 +2330,7 @@ section {
     margin: 20px 0;
 }
 
-.login-wrapper form>.form-row {
+.login-wrapper form > .form-row {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -2341,7 +2338,7 @@ section {
     position: relative;
 }
 
-.login-wrapper form>.form-row>input {
+.login-wrapper form > .form-row > input {
     -webkit-transition: 100ms ease all;
     transition: 100ms ease all;
     width: 100%;
@@ -2354,7 +2351,7 @@ section {
     font-weight: 600
 }
 
-.login-wrapper form>.form-row>button {
+.login-wrapper form > .form-row > button {
     border: none;
     background: #f7b035;
     padding: 10px 34px;
@@ -2370,7 +2367,7 @@ section {
     border: 2px solid #f7b035
 }
 
-.login-wrapper form>.form-row>button:hover {
+.login-wrapper form > .form-row > button:hover {
     color: #000;
     background: transparent
 }
@@ -2379,7 +2376,7 @@ section {
     margin: 10px auto;
 }
 
-.socials-wrapper>p {
+.socials-wrapper > p {
     background: transparent;
     color: rgb(85, 85, 85);
     font-size: 15px;
@@ -2418,8 +2415,8 @@ section {
     color: rgb(31, 31, 31);
 }
 
-.socials-wrapper>p:after,
-.socials-wrapper>p:before {
+.socials-wrapper > p:after,
+.socials-wrapper > p:before {
     background: #dec7b5;
     content: '';
     display: block;
@@ -2431,15 +2428,15 @@ section {
     width: 20.5%;
 }
 
-.socials-wrapper>p:before {
+.socials-wrapper > p:before {
     left: 0;
 }
 
-.socials-wrapper>p:after {
+.socials-wrapper > p:after {
     right: 0;
 }
 
-.socials-wrapper>ul {
+.socials-wrapper > ul {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -2450,11 +2447,11 @@ section {
     padding: 0;
 }
 
-.socials-wrapper>ul>li {
+.socials-wrapper > ul > li {
     margin: .5em;
 }
 
-.socials-wrapper>ul>li>a {
+.socials-wrapper > ul > li > a {
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
@@ -2474,23 +2471,23 @@ section {
     width: 2em;
 }
 
-.socials-wrapper>ul>li>a.facebook {
+.socials-wrapper > ul > li > a.facebook {
     background-color: #3763d2;
 }
 
-.socials-wrapper>ul>li>a.twitter {
+.socials-wrapper > ul > li > a.twitter {
     background-color: #1abcff;
 }
 
-.socials-wrapper>ul>li>a.twitch {
+.socials-wrapper > ul > li > a.twitch {
     background-color: #7b5dfa;
 }
 
-.socials-wrapper>ul>li>a.youtube {
+.socials-wrapper > ul > li > a.youtube {
     background-color: #fd434f;
 }
 
-.socials-wrapper>ul>li>a:hover {
+.socials-wrapper > ul > li > a:hover {
     -webkit-transform: translatey(-0.25em);
     transform: translatey(-0.25em);
 }
@@ -2513,11 +2510,11 @@ section {
     left: -100px;
 }
 
-.custom-checkbox input[type="checkbox"]:checked+label~.checkbox {
+.custom-checkbox input[type="checkbox"]:checked + label ~ .checkbox {
     background-color: #f7b035;
 }
 
-.custom-checkbox input[type="checkbox"]:checked+label~.checkbox:before {
+.custom-checkbox input[type="checkbox"]:checked + label ~ .checkbox:before {
     opacity: 1;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
     -webkit-transform: translate(-50%, -50%) scale(1, 1);
@@ -2658,7 +2655,7 @@ section {
     margin-bottom: 0;
 }
 
-.single-sidebar>form {
+.single-sidebar > form {
     width: 100%;
     border: 1px solid #dddddd;
     height: 55px;
@@ -2666,7 +2663,7 @@ section {
     border-radius: 40px;
 }
 
-.single-sidebar>form input {
+.single-sidebar > form input {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -2676,7 +2673,7 @@ section {
     border-radius: inherit;
 }
 
-.single-sidebar>form button {
+.single-sidebar > form button {
     position: absolute;
     right: 5px;
     width: 42px;
@@ -2695,7 +2692,7 @@ section {
     margin-bottom: 35px;
 }
 
-.single-sidebar>.sub_title:before {
+.single-sidebar > .sub_title:before {
     position: absolute;
     content: "";
     bottom: -15px;
@@ -2705,7 +2702,7 @@ section {
     background: #f7b035 none repeat scroll 0 0;
 }
 
-.single-sidebar>.sub_title:after {
+.single-sidebar > .sub_title:after {
     position: absolute;
     height: 4px;
     width: 15%;
@@ -2719,13 +2716,13 @@ section {
     position: relative;
 }
 
-.single-sidebar>ul>li {
+.single-sidebar > ul > li {
     border-bottom: 1px solid #ddd;
     padding: 10px 0 10px 25px;
     overflow: hidden
 }
 
-.recent-blog>li {
+.recent-blog > li {
     padding: 10px 0 !important
 }
 
@@ -2748,7 +2745,7 @@ section {
 }
 
 .category a:hover,
-.recent-blog>li a:hover {
+.recent-blog > li a:hover {
     color: #f7b035
 }
 
@@ -2913,7 +2910,7 @@ section {
     margin-top: 20px;
 }
 
-.discount-info>div>span {
+.discount-info > div > span {
     font-family: 25px;
     font-weight: bold;
     background: #f7b035;
@@ -2943,7 +2940,7 @@ section {
     box-shadow: 0 2px 3px #ffd399d7;
 }
 
-.discount-info>div>div span {
+.discount-info > div > div span {
     padding: 5px 7px;
     width: 35px;
     display: inline-block;
@@ -2981,7 +2978,7 @@ section {
     display: none;
 }
 
-.choose_option input[type="radio"]:checked+label {
+.choose_option input[type="radio"]:checked + label {
     background: #f7b035;
     color: #fff;
     border-color: #f7b035
@@ -3180,7 +3177,7 @@ section {
     margin: 0
 }
 
-.cart-quantity>input {
+.cart-quantity > input {
     border: 2px solid #ddd;
     padding: 5px;
     width: 70px;
@@ -3264,7 +3261,7 @@ section {
     color: #fff;
     margin: 0;
     background: #ff9721;
-    cursor: pointer!important;
+    cursor: pointer !important;
 }
 
 .checkout-action a.cta_btn:hover {
@@ -3419,15 +3416,15 @@ section {
     -webkit-transition: background 0.25s linear;
 }
 
-.checkout-payment input[type="radio"]:checked~.check {
+.checkout-payment input[type="radio"]:checked ~ .check {
     border: 3px solid #f7b035;
 }
 
-.checkout-payment input[type="radio"]:checked~.check:before {
+.checkout-payment input[type="radio"]:checked ~ .check:before {
     background: #f7b035;
 }
 
-.checkout-payment input[type="radio"]:checked~label {
+.checkout-payment input[type="radio"]:checked ~ label {
     color: #f7b035;
 }
 
@@ -3853,9 +3850,9 @@ section {
 }
 
 .category-active:before {
-    background: #f7b035!important;
-    width: 8px!important;
-    height: 8px!important;
+    background: #f7b035 !important;
+    width: 8px !important;
+    height: 8px !important;
     border-radius: 5px;
 }
 
@@ -3949,11 +3946,11 @@ section {
 }
 
 .product_area {
-    margin-bottom: 0px!important;
+    margin-bottom: 0px !important;
 }
 
 .pizza_slider_area {
-    margin-top: 100px!important;
+    margin-top: 100px !important;
 }
 
 .not-found-comment {
@@ -4025,7 +4022,7 @@ section {
 }
 
 #gallery {
-    text-align: center!important;
+    text-align: center !important;
 }
 
 .btn-load-more {
@@ -4073,6 +4070,31 @@ section {
     animation: AnimationLoadCircleSimple .6s linear infinite;
 }
 
+.loading-section {
+    position: relative;
+}
+
+.loading-section * {
+    opacity: 0;
+    cursor: default;
+}
+
+.loading-section:after {
+    content: " ";
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    border: 4px solid rgb(221, 221, 221);
+    border-top: 4px solid #ff9a16;
+    border-radius: 50%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    animation: AnimationLoadCircleSimple .6s linear infinite;
+}
+
 @keyframes AnimationLoadCircleSimple {
     100% {
         transform: rotate(360deg);
@@ -4086,14 +4108,14 @@ section {
     margin: 50px auto;
 }
 
-@media screen and (max-width:920px) {
+@media screen and (max-width: 920px) {
     .position-relative-920 {
-        position: relative!important;
+        position: relative !important;
     }
 }
 
-@media screen and (min-width:700px) {
+@media screen and (min-width: 700px) {
     .text-md-left {
-        text-align: left!important;
+        text-align: left !important;
     }
 }
