@@ -882,6 +882,7 @@ class Food extends PIZZLE {
 
 
     get_info = function (func) {
+        let This = this
         let slug = this.url_params.get('slug')
         if (!slug) {
             this.VIEW_ERROR_404()
@@ -893,7 +894,7 @@ class Food extends PIZZLE {
             'error_message': false, 'auth': true, 'response': function (response) {
                 let status = response.status
                 if (status == 404) {
-                    this.VIEW_ERROR_404()
+                    This.VIEW_ERROR_404()
                 }
                 func(response)
             }
@@ -1373,8 +1374,9 @@ class Gallery extends PIZZLE {
     constructor() {
         super()
         let This = this
-        this.get_info()
-        this.page = 1
+        this.pagination = null
+        let page_at_url = this.get_page_at_url()
+        this.get_info(page_at_url)
         this.is_loading_more = false
         this.btn_load_more = document.getElementById('btn-load-more')
         this.btn_load_more.addEventListener('click', function () {
@@ -1382,22 +1384,38 @@ class Gallery extends PIZZLE {
         })
     }
 
-    get_info = function () {
+    get_page_at_url = function () {
+        let url = new URL(window.location.href);
+        let page = url.searchParams.get('page') || 1
+        return page
+    }
+
+    set_page_in_url = function (page) {
+        window.history.replaceState(null, null, `?page=${page}`)
+    }
+
+    get_info = function (page = 1, loading_show = true,callback=undefined) {
         let This = this
         let url = this.URL('gallery/get')
         this.SEND_AJAX(url, {
-            'page': this.page
-        }, true, false, true, false, function (response) {
-            This.set_info(response.data.images)
-            This.plus_counter_page()
-            This.load_more_end()
+            'page': page
+        }, {
+            'loading_show': loading_show,
+            'response': function (response) {
+                if (response.success) {
+                    let pagination = response.data.pagination
+                    This.pagination = pagination
+                    if (pagination.has_next == false) {
+                        This.btn_load_more.remove()
+                    }
+                    This.set_info(response.data.images)
+                    This.load_more_end()
+                    if(callback){
+                        callback(response)
+                    }
+                }
+            }
         })
-
-
-    }
-
-    plus_counter_page = function () {
-        this.page += 1
     }
 
     get_node_element_image = function (image) {
@@ -1432,7 +1450,6 @@ class Gallery extends PIZZLE {
                 duration: 300,
                 easing: 'ease-in-out',
                 opener: function (openerElement) {
-
                     return openerElement.is('img') ? openerElement : openerElement.find('img');
                 }
             }
@@ -1457,10 +1474,13 @@ class Gallery extends PIZZLE {
     }
 
     load_more_image = function () {
+        let This = this
         let btn_load = this.btn_load_more
         if (this.is_loading_more == false) {
             this.load_more_start()
-            this.get_info()
+            this.get_info(this.pagination.page_next, false,function (response) {
+                This.set_page_in_url(This.pagination.page_active)
+            })
         }
     }
 
@@ -2473,11 +2493,11 @@ function SendAjax(Url, Data = {}, Method = 'POST', Response, async_req = true, a
                         ContainerLoading.id = 'ContainerLoadingAJAX'
                         ContainerLoading.classList.add('ContainerLoadingAJAX')
                         ContainerLoading.innerHTML = `
-                    <div class="LoadingCircle"><span></span></div>
-                `
+                                <div class="LoadingCircle"><span></span></div>
+                            `
                         ContainerLoading.innerHTML = `
-                    <img src="assets/img/logo.png" alt="logo">
-                `
+                                <img src="assets/img/logo.png" alt="logo">
+                            `
                         document.body.classList.add('is-loading')
                         document.body.appendChild(ContainerLoading)
                     }, 300)
