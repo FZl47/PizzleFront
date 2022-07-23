@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<!-- saved from url=(0055)http://evro.themescare.com/themes/pizze-item/login.html -->
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Pizzle</title>
+    <!-- favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon/favicon-32x32.png">
+    <!-- Bootstrap Css -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <!--Owl-Carousel css-->
+    <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="assets/css/owl.theme.default.min.css">
+    <!-- Fontawesome Css -->
+    <link rel="stylesheet" href="assets/css/all.css">
+    <!-- Magnific popup CSS -->
+    <link rel="stylesheet" href="assets/css/magnific-popup.css">
+    <!-- Main Css -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!--Responsive css-->
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <!-- Base Css -->
+    <!-- Custome Added -->
+    <link rel="stylesheet" href="assets/css/base.css">
+</head>
+
+<body class="notfound">
+
+    <!-- Header Area Start -->
+    <div class="error-page-header-area">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col-lg-4 col-sm-4">
+                    <div class="error-page-logo">
+                        <a href="index.html">
+                            <img src="assets/img/logo_black.png" alt="Site Logo">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-8 col-sm-8">
+                    <div class="error-page-logo-right">
+                        <a href="index.html"> <span class="fa fa-home"></span>back to home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header Area End -->
+
+
+    <!-- Error Page Area Start -->
+    <div class="error-page-area">
+        <img src="assets/img/shape_10.png" alt="shape" class="shape_10">
+        <img src="assets/img/shape_12.png" alt="shape" class="shape_12">
+        <img src="assets/img/shape_14.png" alt="shape" class="shape_14">
+        <img src="assets/img/shape_15.png" alt="shape" class="shape_15">
+        <img src="assets/img/shape_16.png" alt="shape" class="shape_16">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="login_inn">
+                        <div class="login-wrapper">
+                            <img class="login_icon" src="assets/img/login.png" alt="login user" />
+                            <h3>Account Login</h3>
+                            <p id="text-message-form"></p>
+                            <form>
+                                <div class="form-row">
+                                    <input type="email" id="username" placeholder="Email" />
+                                </div>
+                                <div class="form-row">
+                                    <input type="password" id="password" placeholder="Password" />
+                                </div>
+                                <div class="form-row"></div>
+                                <div class="custom-checkbox">
+                                    <input id="remember-me" type="checkbox" name="remember_me" checked="checked">
+                                    <label for="remember-me">Remember me</label>
+                                    <span class="checkbox"></span>
+                                </div>
+                                <div class="form-row"></div>
+                                <div class="form-row">
+                                    <button type="button" id="btn-login">Login to your Account!</button>
+                                </div>
+                                <div class="form-row"></div>
+                                <div class="form-row"></div>
+                                <div class="socials-wrapper">
+                                    <p>
+                                        <a href="signup.html">Create an Account</a>
+                                    </p>
+                                </div>
+                                <div class="socials-wrapper">
+                                    <p>
+                                        <a style="font-size:95%" href="reset-password.html">Reset Password</a>
+                                    </p>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Error Page Area End -->
+
+
+    <!-- Jquery -->
+    <script src="assets/js/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <!--Owl-Carousel js-->
+    <script src="assets/js/OwlCarousel/dist/owl.carousel.js"></script>
+    <!-- Magnific Popup JS -->
+    <script src="assets/js/jquery.magnific-popup.min.js"></script>
+    <!-- TweenMax JS -->
+    <script src="assets/js/tweenmax.min.js"></script>
+    <!-- ScrollMagic JS -->
+    <script src="assets/js/scrollmagic.min.js"></script>
+    <!-- Animation gsap JS -->
+    <script src="assets/js/animation.gsap.js"></script>
+    <!-- Main JS -->
+    <script src="assets/js/main.js"></script>
+    <!-- Base JS -->
+    <!-- Custome Added -->
+    <script src="assets/js/base.js"></script>
+    <script>
+        const LOGIN = new Login()
+
+        let username = document.getElementById('username')
+        let password = document.getElementById('password')
+        let remember_me = document.getElementById('remember-me')
+        let btn_login = document.getElementById('btn-login')
+        let text_message_form = document.getElementById('text-message-form')
+
+        btn_login.addEventListener('click', function() {
+            let state_valid = true
+            text_message_form.innerText = ''
+            if (!ValidationEmail(username.value)) {
+                text_message_form.setAttribute('message-type', 'alert-text')
+                text_message_form.innerText = 'Please enter valid email'
+                state_valid = false
+            }
+
+            if (!ValidatePassword(password.value)) {
+                text_message_form.setAttribute('message-type', 'alert-text')
+                text_message_form.innerText = 'Please enter valid password'
+                state_valid = false
+            }
+
+            if (state_valid) {
+                LOGIN.login(username.value, password.value, function(response) {
+                    if (response.status == 200) {
+                        text_message_form.setAttribute('message-type', 'success-text')
+                        text_message_form.innerText = response.message
+                        LOGIN._SET_ACCESS_TOKEN(response.data.access_token)
+                        LOGIN._SET_REFRESH_TOKEN(response.data.refresh_token, remember_me.checked)
+                        setTimeout(function() {
+                            history.back();
+                            // window.location.href = PAGE_HOME
+                        }, 500)
+                    } else {
+                        text_message_form.setAttribute('message-type', 'alert-text')
+                        text_message_form.innerText = response.message
+                    }
+                })
+
+            }
+
+
+        })
+    </script>
+</body>
+
+</html>
