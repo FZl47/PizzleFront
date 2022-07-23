@@ -127,7 +127,7 @@ class PIZZLE {
         }
     }
 
-    UPDATE_TOKEN_USER = function (refresh) {
+    UPDATE_TOKEN_USER = function (refresh, login_redirect = false) {
         let url = this.URL('user/token/get-access-token')
         let details = this.SEND_AJAX_SYNC(url, {
             'refresh': refresh
@@ -135,6 +135,8 @@ class PIZZLE {
         if (details.status == 200) {
             this._SET_ACCESS_TOKEN(details.data.access)
             return true
+        } else if (details.status == 401 && login_redirect) {
+            window.location.href = PAGE_LOGIN
         } else {
             return false
         }
@@ -212,8 +214,7 @@ class PIZZLE {
                     SET_DETAILS(response.status_code, response.message, response.data)
                 } else {
                     // Failed
-                    let status = response.status
-                    response = response.responseJSON
+                    let status = response.status_code
 
                     if (status != 200 && error_redirect) {
                         if (status == 500) {
@@ -227,7 +228,7 @@ class PIZZLE {
                     if (status == 401 && auth && This._GET_REFRESH_TOKEN()) {
                         This.COUNTER_TRY_GET_TOKENS -= 1
                         if (This.COUNTER_TRY_GET_TOKENS > 0) {
-                            let state_update_token = This.UPDATE_TOKEN_USER(This._GET_REFRESH_TOKEN())
+                            let state_update_token = This.UPDATE_TOKEN_USER(This._GET_REFRESH_TOKEN(), login_redirect)
                             if (state_update_token) {
                                 This.COUNTER_TRY_GET_TOKENS = 3
                             } else {
@@ -252,7 +253,7 @@ class PIZZLE {
         let response_callback = response
         let failed_callback = failed
 
-        function reponse_call(response) {
+        function response_call(response) {
             if (response_callback) {
                 response_callback(response)
             } else if (failed_callback) {
@@ -265,7 +266,7 @@ class PIZZLE {
 
                 if (response.success == true) {
                     // Success
-                    reponse_call({
+                    response_call({
                         'status': response.status_code,
                         'message': response.message,
                         'data': response.data,
@@ -273,9 +274,7 @@ class PIZZLE {
                     })
                 } else {
                     // Failed
-                    let status = response.status
-
-
+                    let status = response.status_code
                     if (status != 200 && error_redirect) {
                         if (status == 500) {
                             This.VIEW_ERROR_500()
@@ -287,7 +286,7 @@ class PIZZLE {
                     if (status == 401 && auth && This._GET_REFRESH_TOKEN()) {
                         This.COUNTER_TRY_GET_TOKENS -= 1
                         if (This.COUNTER_TRY_GET_TOKENS > 0) {
-                            let state_update_token = This.UPDATE_TOKEN_USER(This._GET_REFRESH_TOKEN())
+                            let state_update_token = This.UPDATE_TOKEN_USER(This._GET_REFRESH_TOKEN(), login_redirect)
                             if (state_update_token) {
                                 This.COUNTER_TRY_GET_TOKENS = 3
                             } else {
@@ -302,7 +301,7 @@ class PIZZLE {
                         let error_text = response.error
                         ShowNotificationMessage(error_text, 'Error')
                     }
-                    reponse_call({
+                    response_call({
                         'status': response.status_code,
                         'message': response.error,
                         'data': response.data,
@@ -605,7 +604,6 @@ class PIZZLE {
 
 }
 
-
 class Home extends PIZZLE {
     constructor() {
         super()
@@ -736,7 +734,6 @@ class Home extends PIZZLE {
 
     }
 }
-
 
 class Login extends PIZZLE {
     constructor() {
@@ -1112,7 +1109,6 @@ class Food extends PIZZLE {
 
 }
 
-
 class Foods extends PIZZLE {
     constructor() {
         super()
@@ -1369,7 +1365,6 @@ class Foods extends PIZZLE {
 
 }
 
-
 class Gallery extends PIZZLE {
     constructor() {
         super()
@@ -1394,7 +1389,7 @@ class Gallery extends PIZZLE {
         window.history.replaceState(null, null, `?page=${page}`)
     }
 
-    get_info = function (page = 1, loading_show = true,callback=undefined) {
+    get_info = function (page = 1, loading_show = true, callback = undefined) {
         let This = this
         let url = this.URL('gallery/get')
         this.SEND_AJAX(url, {
@@ -1410,7 +1405,7 @@ class Gallery extends PIZZLE {
                     }
                     This.set_info(response.data.images)
                     This.load_more_end()
-                    if(callback){
+                    if (callback) {
                         callback(response)
                     }
                 }
@@ -1478,7 +1473,7 @@ class Gallery extends PIZZLE {
         let btn_load = this.btn_load_more
         if (this.is_loading_more == false) {
             this.load_more_start()
-            this.get_info(this.pagination.page_next, false,function (response) {
+            this.get_info(this.pagination.page_next, false, function (response) {
                 This.set_page_in_url(This.pagination.page_active)
             })
         }
@@ -1494,6 +1489,32 @@ class Gallery extends PIZZLE {
         this.btn_load_more.setAttribute('loading', 'false')
     }
 
+}
+
+class Cart extends PIZZLE {
+    constructor() {
+        super();
+        this.COUNTER_TRY_GET_USER_CART = 2
+        this.get_info()
+    }
+
+    get_info = function () {
+        let This = this
+        let url = this.URL('user/cart/get')
+        this.SEND_AJAX(url, {}, {
+            error_message: false, auth: true, login_redirect: true, response: function (response) {
+                let status = response.status
+                if (status == 200){
+                    console.log(response)
+                }else if (status == 401){
+                    This.COUNTER_TRY_GET_USER_CART -= 1
+                    if (This.COUNTER_TRY_GET_USER_CART > 0){
+                        This.get_info()
+                    }
+                }
+            }
+        })
+    }
 }
 
 
