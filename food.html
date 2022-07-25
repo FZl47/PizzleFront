@@ -558,13 +558,7 @@
         const FOOD_OBJECT = new Food()
 
 
-        function event_input_quantity(input) {
-            let max = parseInt(input.attr('max'))
-            let value = parseInt(input.val())
-            if (value > max) {
-                input.val(max)
-            }
-        }
+
 
         function roundHalf(num) {
             return Math.round(num * 2) / 2;
