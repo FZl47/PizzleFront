@@ -28,7 +28,8 @@
 
 ::-webkit-scrollbar {
     background: #eee;
-    width: 10px;
+    width: 8px;
+    height: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -165,7 +166,7 @@
 }
 
 .BtnStyle_1:hover {
-    box-shadow: 0 3px 15px rgba(110, 255, 155, 0.5);
+    box-shadow: 0 3px 10px rgba(255, 213, 38, 0.3);
 }
 
 .BtnStyle_1_OutLine {

@@ -3174,7 +3174,8 @@ section {
     text-transform: capitalize;
     font-weight: 600;
     font-size: 14px;
-    margin: 0
+    margin: 0;
+    display: inline-block;
 }
 
 .cart-quantity > input {
@@ -3193,20 +3194,31 @@ section {
     font-weight: 500;
 }
 
-.cart-close a {
+.cart-close button {
     width: 35px;
     display: inline-block;
     height: 35px;
-    line-height: 35px;
     border: 1px solid #ddd;
+    background: none;
     border-radius: 5px;
 }
 
-.cart-clear a {
+.cart-clear button {
     display: inline-block;
     font-weight: 600;
+    font-size: 90%;
     text-transform: capitalize;
     margin-right: 15px;
+    border: none;
+    outline: none;
+    background: rgb(255, 240, 237);
+    border-radius: 10px;
+    padding: 5px 12px;
+    transition: all .25s;
+}
+
+.cart-clear button:hover {
+    background: rgb(255, 223, 227);
 }
 
 .cart-clear {
@@ -3307,6 +3319,69 @@ section {
     margin: 0
 }
 
+.discount-perentage-cart {
+    width: 38px;
+    height: 38px;
+    padding-top: 6px;
+    border-radius: 50%;
+    background: #ff501f;
+    color: #fff;
+    text-align: center;
+    position: relative;
+}
+
+.discount-perentage-cart::after {
+    content: "%";
+    position: absolute;
+    right: 3px;
+    top: -3px;
+    display: block;
+    height: 14px;
+    width: 15px;
+    font-size: 68%;
+    padding: 0;
+}
+
+.order-is-empty {
+    width: 100%;
+}
+
+.order-is-empty .content {
+    margin-bottom: 40px;
+}
+
+.order-is-empty p {
+    font-size: 180%;
+    font-family: 'Rubik', sans-serif;
+    color: #888888 !important;
+}
+
+.order-is-empty a {
+    display: inline-block;
+    margin-top: 40px;
+    width: 200px;
+    padding: 10px 5px;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 110%;
+    background: var(--ColorBase);
+    transition: all .3s;
+}
+
+.order-is-empty a i {
+    transition: inherit;
+}
+
+.order-is-empty a:hover i {
+    animation: AnimationIconOrderBtn .4s linear forwards;
+}
+
+@keyframes AnimationIconOrderBtn {
+    50% {
+        transform: translate(-5px);
+    }
+}
 
 /*================================================
 26 - checkout page
@@ -4093,6 +4168,12 @@ section {
     bottom: 0;
     margin: auto;
     animation: AnimationLoadCircleSimple .6s linear infinite;
+}
+
+.loading-section-small::after {
+    width: 25px;
+    height: 25px;
+    border-width: 2px;
 }
 
 @keyframes AnimationLoadCircleSimple {

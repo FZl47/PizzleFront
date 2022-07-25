@@ -12,6 +12,14 @@ const PAGE_MEALS = 'foods.html'
 const SYMBOL_CURRENCY = '$'
 
 
+function event_input_quantity(input) {
+    let max = parseInt(input.attr('max'))
+    let value = parseInt(input.val())
+    if (value > max) {
+        input.val(max)
+    }
+}
+
 function GET_USER_TOKEN(go_to_login = true) {
 
     let refresh = GetCookieByName('refresh-user')
@@ -117,7 +125,6 @@ class PIZZLE {
             return `${URL_BACKEND}/${url}${slash}?${arg[0]}=${arg[1]}`
         }
     }
-
 
     URL_TEMPLATE = function (name_template, arg = null) {
         if (!arg) {
@@ -1495,7 +1502,60 @@ class Cart extends PIZZLE {
     constructor() {
         super();
         this.COUNTER_TRY_GET_USER_CART = 2
+        this.container_order_details = document.getElementById('container-order-details')
+        this.container_subtotal = document.getElementById('subtotal')
+        this.container_subtotal_without_discount = document.getElementById('subtotal-without-discount')
+        this.container_total = document.getElementById('total')
         this.get_info()
+    }
+
+    get_node_element_orderdetail(order_detail) {
+        let meal = order_detail.meal
+        let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL, ['slug', meal.slug])
+        let node_discount = ''
+        if (meal.discount) {
+            node_discount = `
+                <p class="discount-perentage-cart">${meal.discount_percentage}</p>
+            `
+        }
+
+
+        let node = `
+            <tr class="shop-cart-item" id="orderdetail-${order_detail.id}">
+                <td class=" cart-preview">
+                    <a href="${slug}">
+                        <img src="assets/img/pizza_slide_3.png" alt="cart-1">
+                    </a>
+                </td>
+                <td class=" cart-product">
+                    <a href="${slug}"> 
+                        <p>${meal.title_short}</p>
+                    </a>
+                </td>
+                <td>
+                         ${node_discount}
+                </td>
+                <td class=" cart-price">
+                    <p>${SYMBOL_CURRENCY}${meal.price_without_discount}</p>
+                </td>
+                <td class=" cart-quantity">
+                    <div class="num-block skin-2">
+                        <div class="num-in">
+                            <span class="minus dis"></span>
+                            <input type="text" class="in-num" orderdetail-id="${order_detail.id}" min="1" max="${meal.stock}"  value="${order_detail.count}" readonly="">
+                            <span class="plus"></span>
+                        </div>
+                    </div>
+                </td>
+                <td class="cart-total" >
+                    <p id="orderdetail-price">${SYMBOL_CURRENCY}${order_detail.price}</p>
+                </td>
+                <td class="cart-close">
+                    <button onclick="CART_OBJECT.delete_orderdetail('${order_detail.id}')"><i class="fa fa-times"></i></button>
+                </td>
+            </tr>
+        `
+        return node
     }
 
     get_info = function () {
@@ -1504,14 +1564,125 @@ class Cart extends PIZZLE {
         this.SEND_AJAX(url, {}, {
             error_message: false, auth: true, login_redirect: true, response: function (response) {
                 let status = response.status
-                if (status == 200){
-                    console.log(response)
-                }else if (status == 401){
+                if (status == 200) {
+                    This.set_info(response)
+                } else if (status == 401) {
                     This.COUNTER_TRY_GET_USER_CART -= 1
-                    if (This.COUNTER_TRY_GET_USER_CART > 0){
+                    if (This.COUNTER_TRY_GET_USER_CART > 0) {
                         This.get_info()
                     }
                 }
+            }
+        })
+    }
+
+    create_orderdetails(order) {
+        let This = this
+        for (let order_detail of order.details) {
+            this.container_order_details.innerHTML += this.get_node_element_orderdetail(order_detail)
+        }
+
+        $(".num-in span").on("click", function () {
+            var $input = $(this).parents('.num-block').find('input.in-num');
+            if ($(this).hasClass('minus')) {
+                var count = parseFloat($input.val()) - 1;
+                count = count < 1 ? 1 : count;
+                if (count < 2) {
+                    $(this).addClass('dis');
+                } else {
+                    $(this).removeClass('dis');
+                }
+                $input.val(count);
+            } else {
+                var count = parseFloat($input.val()) + 1
+                $input.val(count);
+                if (count > 1) {
+                    $(this).parents('.num-block').find(('.minus')).removeClass('dis');
+                }
+            }
+
+            $input.change();
+            This.event_input_quantity($input)
+            return false;
+        });
+    }
+
+
+    set_info = function (response) {
+        let _data = response.data
+        let order = _data.order
+        let user = _data.user
+        if (order.details.length == 0) {
+            document.getElementById('order-is-empty').classList.remove('d-none')
+            document.getElementById('container').remove()
+        } else {
+            this.create_orderdetails(order)
+            this.container_subtotal.innerText = `${SYMBOL_CURRENCY}${order.price}`
+            this.container_subtotal_without_discount.innerText = `${SYMBOL_CURRENCY}${order.price_without_discount}`
+            this.container_total.innerText = `${SYMBOL_CURRENCY}${order.price}`
+        }
+    }
+
+    delete_orderdetail = function (id) {
+        let This = this
+        let url = this.URL('user/cart/orderdetail/delete')
+        let orderdetail_element = document.getElementById(`orderdetail-${id}`)
+        this.SEND_AJAX(url, {
+            'id': id
+        }, {
+            auth: true,
+            error_redirect: false,
+            loading_section: orderdetail_element,
+            response: function (response) {
+                if (response.status) {
+                    orderdetail_element.remove()
+                    let data = response.data
+                    This.container_subtotal.innerText = `${SYMBOL_CURRENCY}${data.price_order}`
+                    This.container_subtotal_without_discount.innerText = `${SYMBOL_CURRENCY}${data.price_order_without_discount}`
+                    This.container_total.innerText = `${SYMBOL_CURRENCY}${data.price_order}`
+                }
+            }
+        })
+    }
+
+    delete_all_orderdetail = function () {
+        let url = this.URL('user/cart/orderdetail/delete-all')
+        this.SEND_AJAX(url, {}, {
+            auth: true,
+            error_redirect: false,
+            loading_section: document.getElementById('cart_box'),
+            response: function (response) {
+                if (response.status) {
+                    location.reload()
+                }
+            }
+        })
+    }
+
+    event_input_quantity = function (input) {
+        event_input_quantity(input)
+        let This = this
+        let parent_input = input[0].parentNode
+        let value = input.val()
+        let id = input.attr('orderdetail-id')
+        let url = CART_OBJECT.URL('user/cart/orderdetail/changecount')
+        parent_input.classList.add('loading-section-small')
+        CART_OBJECT.SEND_AJAX(url, {
+            'id': id,
+            'count': value
+        }, {
+            auth: true,
+            login_redirect: true,
+            error_redirect: false,
+            loading_section: parent_input,
+            response: function (response) {
+                let data = response.data
+                let orderdetail_element = document.getElementById(`orderdetail-${data.id}`)
+                input.val(data.count)
+                orderdetail_element.querySelector('#orderdetail-price').innerText = `${SYMBOL_CURRENCY}${data.price_detail}`
+                This.container_subtotal.innerText = `${SYMBOL_CURRENCY}${data.price_order}`
+                This.container_subtotal_without_discount.innerText = `${SYMBOL_CURRENCY}${data.price_order_without_discount}`
+                This.container_total.innerText = `${SYMBOL_CURRENCY}${data.price_order}`
             }
         })
     }
@@ -2595,13 +2766,14 @@ function SendAjax(Url, Data = {}, Method = 'POST', Response, async_req = true, a
         },
         error: function (response) {
             __Redirect__(response)
+            response = response.responseJSON
             response.success = false
             if (COUNTER_SHOW_ERROR_AJAX && response.status == 0) {
                 COUNTER_SHOW_ERROR_AJAX = false
                 ShowNotificationMessage('Could not connect to server ', 'Error', 10000000, 3)
             } else {
                 Loading('Hide')
-                Response(response.responseJSON)
+                Response(response)
             }
 
         }
