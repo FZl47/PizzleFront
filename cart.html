@@ -133,96 +133,43 @@
 
 <!-- Cart Page Start -->
 <section class="cart_page_area">
-    <div class="container">
+    <div class="text-left">
+        <img src="assets/img/shape_10.png" alt="Hamburger image">
+    </div>
+    <div class="container" id="container">
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-12 col-lg-10 mx-auto">
                 <div class="cart-table-left">
                     <h3>Shopping Cart</h3>
-                    <div class="table-responsive cart_box">
+                    <div class="table-responsive cart_box" id="cart_box">
                         <table class="table">
                             <thead>
                             <tr>
                                 <th>Preview</th>
                                 <th>Product</th>
+                                <th></th>
                                 <th>Price</th>
                                 <th>Quantity</th>
                                 <th>Total</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr class="shop-cart-item">
-                                <td class=" cart-preview">
-                                    <a href="#">
-                                        <img src="assets/img/pizza_slide_3.png" alt="cart-1">
-                                    </a>
-                                </td>
-                                <td class=" cart-product">
-                                    <a href="#">
-                                        <p>Paneer Makhani Pizza</p>
-                                    </a>
-                                </td>
-                                <td class=" cart-price">
-                                    <p>£18.00</p>
-                                </td>
-                                <td class=" cart-quantity">
-                                    <div class="num-block skin-2">
-                                        <div class="num-in">
-                                            <span class="minus dis"></span>
-                                            <input type="text" class="in-num" value="1" readonly="">
-                                            <span class="plus"></span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class=" cart-total">
-                                    <p>£18.00</p>
-                                </td>
-                                <td class=" cart-close">
-                                    <a href="#"><i class="fa fa-times"></i></a>
-                                </td>
-                            </tr>
-                            <tr class="shop-cart-item">
-                                <td class=" cart-preview">
-                                    <a href="#">
-                                        <img src="assets/img/juice_2.png" alt="cart-1">
-                                    </a>
-                                </td>
-                                <td class=" cart-product">
-                                    <a href="#">
-                                        <p>Orange Juice</p>
-                                    </a>
-                                </td>
-                                <td class=" cart-price">
-                                    <p>£6.00</p>
-                                </td>
-                                <td class=" cart-quantity">
-                                    <div class="num-block skin-2">
-                                        <div class="num-in">
-                                            <span class="minus dis"></span>
-                                            <input type="text" class="in-num" value="1" readonly="">
-                                            <span class="plus"></span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class=" cart-total">
-                                    <p>£6.00</p>
-                                </td>
-                                <td class=" cart-close">
-                                    <a href="#"><i class="fa fa-times"></i></a>
-                                </td>
-                            </tr>
+                            <tbody id="container-order-details">
+
                             </tbody>
                         </table>
                     </div>
                     <div class="cart-clear">
-                        <a href="#">clear cart</a>
-                        <a href="#">update cart</a>
+                        <!--                        <a href="#">update cart</a>-->
+                        <button onclick="CART_OBJECT.delete_all_orderdetail()">clear cart</button>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <div class="order-summury-box">
-                    <h3>Order Summury</h3>
+        </div>
+        <div class="row" style="margin-top: 100px;">
+            <div class="col-12 col-lg-8 mx-auto">
+                <div class="order-summury-box choice-address-box">
+                    <h3>Choice Address</h3>
                     <div class="summury-inn">
                         <table>
                             <tbody>
@@ -242,12 +189,73 @@
                         </table>
                     </div>
                 </div>
+            </div>
+            <div class="col-12 col-lg-4 mx-auto">
+                <div class="order-summury-box">
+                    <h3>Order Summary</h3>
+                    <div class="summury-inn">
+                        <table>
+                            <tbody>
+                            <tr>
+                                <td>Subtotal</td>
+                                <td id="subtotal">-</td>
+                            </tr>
+                            <tr>
+                                <td>Subtotal Without Discount</td>
+                                <td id="subtotal-without-discount">-</td>
+                            </tr>
+                            <tr>
+                                <td>Shipping and Handling</td>
+                                <td>Free Shipping</td>
+                            </tr>
+                            <tr>
+                                <td>Total</td>
+                                <td id="total">-</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div class="checkout-action">
-                    <a href="#" class="cta_btn">Proceed to checkout <span></span></a>
+                    <a href="#" class="cta_btn col-12 col-lg-11 text-center">Proceed to checkout <span></span></a>
                 </div>
             </div>
         </div>
     </div>
+    <div class="order-is-empty d-none" id="order-is-empty">
+        <div class="content text-center">
+            <p>Your shopping cart is empty</p>
+            <a href="foods.html">
+                Order
+                <i class="fa fa-shopping-cart"></i>
+            </a>
+            <div class="row col-12 col-md-8 mt-5 mx-auto">
+                <div class="col-lg-6">
+                    <div class="order_promo_box">
+                        <img src="assets/img/promo_order_1.jpg" alt="img">
+                        <div class="promo_order_text">
+                            <h2>Mexican Green Wave</h2>
+                            <a href="foods.html" class="cta_btn small_btn"><i class="fas fa-shopping-cart"></i> Order
+                                Now</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="order_promo_box">
+                        <img src="assets/img/promo_order_3.jpg" alt="img">
+                        <div class="promo_order_text">
+                            <h2>Double Cheese Pizza</h2>
+                            <a href="foods.html" class="cta_btn small_btn"><i class="fas fa-shopping-cart"></i> Order
+                                Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="text-right">
+            <img src="assets/img/shape_16.png" alt="design image drink">
+        </div>
 </section>
 <!-- Cart Page End -->
 
@@ -446,6 +454,8 @@
 <script>
     const PIZZLE_OBJECT = new PIZZLE()
     const CART_OBJECT = new Cart()
+
+
 </script>
 </body>
 </html>
