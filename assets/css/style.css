@@ -154,6 +154,19 @@ li {
     list-style-type: none;
 }
 
+.is-loading img {
+    width: 200px;
+    height: auto;
+}
+
+@media screen and (max-width: 600px) {
+    .is-loading img {
+        width: 140px;
+        height: auto;
+    }
+
+}
+
 .cta_btn {
     display: inline-block;
     padding: 13px 30px;
@@ -3351,7 +3364,7 @@ section {
 }
 
 .order-is-empty p {
-    font-size: 180%;
+    font-size: 165%;
     font-family: 'Rubik', sans-serif;
     color: #888888 !important;
 }
@@ -3734,7 +3747,7 @@ section {
 
 .leave-comment button {
     border: none;
-    background: #f7b035;
+    background: #f7a43b;
     padding: 10px 34px;
     border-radius: 40px;
     text-transform: uppercase;
@@ -3744,7 +3757,7 @@ section {
     font-family: 'Rubik', sans-serif;
     -webkit-transition: all 0.4s ease 0s;
     transition: all 0.4s ease 0s;
-    border: 2px solid #f7b035;
+    border: 2px solid #f7a43b;
 }
 
 .ratings-container {
@@ -4147,11 +4160,13 @@ section {
 
 .loading-section {
     position: relative;
+    color: transparent!important;
 }
 
 .loading-section * {
     opacity: 0;
     cursor: default;
+    color: transparent!important;
 }
 
 .loading-section:after {
@@ -4174,6 +4189,12 @@ section {
     width: 25px;
     height: 25px;
     border-width: 2px;
+}
+
+.loading-section-large::after {
+    width: 50px;
+    height: 50px;
+    border-width: 4px;
 }
 
 @keyframes AnimationLoadCircleSimple {

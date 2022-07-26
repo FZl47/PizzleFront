@@ -822,6 +822,7 @@ class Food extends PIZZLE {
         let message_form = document.getElementById('message-form')
         let must_login = document.getElementById('must-login')
         let form_comment = document.getElementById('form-comment')
+        form_comment.classList.add('loading-section-large')
         let btn_submit_comment = document.getElementById('btn-submit-comment')
         let input_comment = form_comment.querySelector('textarea')
         if (this.USER) {
@@ -846,7 +847,7 @@ class Food extends PIZZLE {
                 'rate': rate,
                 'slug': This.MEAL.slug
             }, {
-                'auth': true, 'login_redirect': true, 'response': function (response) {
+                'auth': true, 'loading_section':form_comment , 'login_redirect': true, 'response': function (response) {
                     if (response.status == 200) {
                         document.getElementById('leave-commet').innerHTML = `
                         <div class="submited-checkmark">
@@ -1612,7 +1613,7 @@ class Cart extends PIZZLE {
         let _data = response.data
         let order = _data.order
         let user = _data.user
-        if (order.details.length == 0) {
+        if (order.is_not_empty == false) {
             document.getElementById('order-is-empty').classList.remove('d-none')
             document.getElementById('container').remove()
         } else {
@@ -1661,13 +1662,13 @@ class Cart extends PIZZLE {
 
     event_input_quantity = function (input) {
         event_input_quantity(input)
-        let This = this
+        let This = CART_OBJECT
         let parent_input = input[0].parentNode
         let value = input.val()
         let id = input.attr('orderdetail-id')
-        let url = CART_OBJECT.URL('user/cart/orderdetail/changecount')
+        let url = This.URL('user/cart/orderdetail/changecount')
         parent_input.classList.add('loading-section-small')
-        CART_OBJECT.SEND_AJAX(url, {
+        This.SEND_AJAX(url, {
             'id': id,
             'count': value
         }, {
