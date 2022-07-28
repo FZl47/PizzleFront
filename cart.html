@@ -133,7 +133,7 @@
 
 <!-- Cart Page Start -->
 <section class="cart_page_area">
-    <div class="text-left">
+    <div class="text-left d-none">
         <img src="assets/img/shape_10.png" alt="Hamburger image">
     </div>
     <div class="container" id="container">
@@ -166,27 +166,20 @@
                 </div>
             </div>
         </div>
-        <div class="row" style="margin-top: 100px;">
+        <div class="row mt-0 mt-md-5">
             <div class="col-12 col-lg-8 mx-auto">
                 <div class="order-summury-box choice-address-box">
                     <h3>Choice Address</h3>
                     <div class="summury-inn">
-                        <table>
-                            <tbody>
-                            <tr>
-                                <td>Cart Subtotal</td>
-                                <td>£24.00</td>
-                            </tr>
-                            <tr>
-                                <td>Shipping and Handling</td>
-                                <td>Free Shipping</td>
-                            </tr>
-                            <tr>
-                                <td>Order Total</td>
-                                <td>£24.00</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <div id="container-address"></div>
+                        <div id="container-address-notfound" class="d-none">
+                            <i class="fa fa-map-marker-alt"></i>
+                            <p>Address not found</p>
+                        </div>
+                        <button id="btn-add-address" class="btn-add_address">
+                            <i class="fa fa-plus"></i>
+                            Add address
+                        </button>
                     </div>
                 </div>
             </div>
@@ -206,7 +199,7 @@
                             </tr>
                             <tr>
                                 <td>Shipping and Handling</td>
-                                <td>Free Shipping</td>
+                                <td id="cost-shipping">-</td>
                             </tr>
                             <tr>
                                 <td>Total</td>
@@ -216,9 +209,16 @@
                         </table>
                     </div>
                 </div>
-                <div class="checkout-action">
-                    <a href="#" class="cta_btn col-12 col-lg-11 text-center d-block mx-auto">Proceed to checkout <span></span></a>
+                <div class="container-description-order order-summury-box">
+                    <h3>Description</h3>
+                    <div class="summury-inn">
+                        <textarea id="input-description-order" placeholder="Your description ..."></textarea>
+                    </div>
                 </div>
+            </div>
+            <div class="checkout-action mt-3">
+                <button id="btn-pay" class="cta_btn col-12 col-lg-3 text-center d-block mx-auto">
+                    PLACE ORDER<span></span></button>
             </div>
         </div>
     </div>
@@ -253,9 +253,9 @@
             </div>
         </div>
     </div>
-        <div class="text-right">
-            <img src="assets/img/shape_16.png" alt="design image drink">
-        </div>
+    <div class="text-right">
+        <img src="assets/img/shape_16.png" alt="design image drink">
+    </div>
 </section>
 <!-- Cart Page End -->
 

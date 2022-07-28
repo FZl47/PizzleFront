@@ -176,6 +176,7 @@ li {
     overflow: hidden;
     background: #f7b035;
     border-radius: 40px;
+    border: none;
 }
 
 .cta_btn_outline {
@@ -2907,7 +2908,7 @@ section {
 }
 
 .product-details-text .price ins {
-    font-size: 42px;
+    font-size: 36px;
     text-decoration: none;
     font-weight: 700;
     color: #f7b035;
@@ -3219,18 +3220,21 @@ section {
 .cart-clear button {
     display: inline-block;
     font-weight: 600;
-    font-size: 90%;
+    font-size: 85%;
     text-transform: capitalize;
     margin-right: 15px;
     border: none;
     outline: none;
-    background: rgb(255, 240, 237);
+    color: #555;
+    background: transparent;
+    border: 1px solid #e5e5e5;
     border-radius: 10px;
     padding: 5px 12px;
     transition: all .25s;
 }
 
 .cart-clear button:hover {
+    border-color: transparent;
     background: rgb(255, 223, 227);
 }
 
@@ -3353,6 +3357,161 @@ section {
     width: 15px;
     font-size: 68%;
     padding: 0;
+}
+
+
+.address-item {
+    border: 1px solid #f7d2b4;
+    margin: 12px 10px;
+    border-radius: 8px;
+    padding-right: 10px;
+    font-size: 95%;
+    transition: all .15s;
+}
+
+.address-item-selected {
+    background: #fff;
+    color: #f77c00;
+    border-color: #f79626;
+}
+
+.address-item label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 10px 15px;
+}
+
+.address-item p {
+    padding: 0;
+    margin: 0;
+}
+
+.address-item input[type=radio] {
+    position: absolute;
+    visibility: hidden;
+}
+
+.address-item .check {
+    display: block;
+    position: absolute;
+    border: 3px solid #bbb;
+    border-radius: 100%;
+    height: 20px;
+    width: 20px;
+    /*top: 0;*/
+    right: 0;
+    /*bottom: 0;*/
+    z-index: 5;
+    transition: border .15s linear;
+}
+
+.address-item .check:before {
+    display: block;
+    position: absolute;
+    content: '';
+    border-radius: 100%;
+    height: 8px;
+    width: 8px;
+    top: 3px;
+    left: 3px;
+    margin: auto;
+    transition: border .15s linear;
+}
+
+.address-item input[type="radio"]:checked ~ .check {
+    border: 3px solid #f79626;
+}
+
+.address-item input[type="radio"]:checked ~ .check:before {
+    background: #f79626;
+}
+
+.free{
+    color: #1fd275;
+}
+
+.free-lable{
+    color: #1fd275;
+    font-size: 90%;
+    margin-right: 25px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+#container-address-notfound {
+    text-align: center;
+    margin-top: 15px;
+}
+
+#container-address-notfound p {
+    font-size: 120%;
+    font-weight: bold;
+    color: #888;
+    margin-top: 10px;
+}
+
+#container-address-notfound i {
+    font-size: 350%;
+    color: #f73a38;
+}
+
+.btn-add_address {
+    border: none;
+    border-radius: 30px;
+    background: none;
+    border: 1px solid #ddd;
+    color: #888;
+    padding: 6px 15px;
+    margin: 10px;
+    margin-top: 20px;
+    font-size: 98%;
+    transition: all .15s;
+}
+
+.btn-add_address i {
+    font-size: 80%;
+    margin-right: 5px;
+    transition: all .15s;
+}
+
+.btn-add_address:hover {
+    background: #f7a43b;
+    border-color: #f7a43b;
+    color: #fff;
+}
+
+.btn-add_address-active {
+    width: 200px;
+    margin: 40px auto;
+    margin-bottom: 20px;
+    padding: 10px;
+    display: block;
+    color: #fff;
+    background: #f7a43b;
+    border-color: #f7a43b;
+}
+
+.container-description-order{
+    width: 100%;
+    margin-top: 30px;
+}
+
+.container-description-order textarea{
+    width: 100%;
+    height: 110px;
+    border-radius: 10px;
+    padding: 3px 7px;
+    color: #444;
+    border: 1px solid #ddd;
+    font-size: 95%;
+}
+
+.container-description-order textarea::placeholder{
+    color: #777;
+    font-size: 95%;
+    padding-left: 5px;
 }
 
 .order-is-empty {
@@ -3980,6 +4139,7 @@ section {
     display: block;
 }
 
+
 #category {
     color: #777;
     font-size: 110%;
@@ -4160,13 +4320,13 @@ section {
 
 .loading-section {
     position: relative;
-    color: transparent!important;
+    color: transparent !important;
 }
 
 .loading-section * {
     opacity: 0;
     cursor: default;
-    color: transparent!important;
+    color: transparent !important;
 }
 
 .loading-section:after {

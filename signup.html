@@ -166,7 +166,7 @@
                         SIGNUP._SET_ACCESS_TOKEN(response.data.access_token)
                         SIGNUP._SET_REFRESH_TOKEN(response.data.refresh_token, remember_me.checked)
                         setTimeout(function() {
-                            history.back();
+                            window.location.href = PAGE_HOME;
                         }, 500)
                     } else {
                         text_message_form.setAttribute('message-type', 'alert-text')

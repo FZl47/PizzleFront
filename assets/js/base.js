@@ -847,7 +847,7 @@ class Food extends PIZZLE {
                 'rate': rate,
                 'slug': This.MEAL.slug
             }, {
-                'auth': true, 'loading_section':form_comment , 'login_redirect': true, 'response': function (response) {
+                'auth': true, 'loading_section': form_comment, 'login_redirect': true, 'response': function (response) {
                     if (response.status == 200) {
                         document.getElementById('leave-commet').innerHTML = `
                         <div class="submited-checkmark">
@@ -1502,13 +1502,52 @@ class Gallery extends PIZZLE {
 class Cart extends PIZZLE {
     constructor() {
         super();
+        GetCookieFunctionality_ShowNotification()
+        let This = this
         this.COUNTER_TRY_GET_USER_CART = 2
+        this.ID_ADDRESS = null
+        this.ADDRESS = {
+            'id': null,
+            'cost': 0
+        }
+        this.ORDER = null
         this.container_order_details = document.getElementById('container-order-details')
         this.container_subtotal = document.getElementById('subtotal')
         this.container_subtotal_without_discount = document.getElementById('subtotal-without-discount')
         this.container_total = document.getElementById('total')
+        this.container_address = document.getElementById('container-address')
+        this.container_address_notfound = document.getElementById('container-address-notfound')
+        this.input_description = document.getElementById('input-description-order')
+        this.btn_add_address = document.getElementById('btn-add-address')
+        this.btn_pay = document.getElementById('btn-pay')
+        this.cost_shipping = document.getElementById('cost-shipping')
         this.get_info()
+        this.btn_pay.addEventListener('click', function () {
+            let address_id = This.ADDRESS.id
+            if (address_id) {
+                let url = This.URL('user/cart/pay')
+                let data = {
+                    'address_id': address_id,
+                    'description': This.input_description.value
+                }
+                This.SEND_AJAX(url, data, {
+                    error_message: true,
+                    auth: true,
+                    error_redirect: false,
+                    login_redirect: true,
+                    response: function (response) {
+                        if (response.success) {
+                            SetCookieFunctionality_ShowNotification('Your order has been successfully placed', 'Success',6000,3)
+                            location.reload()
+                        }
+                    }
+                })
+            } else {
+                ShowNotificationMessage('Please Select address', 'Error')
+            }
+        })
     }
+
 
     get_node_element_orderdetail(order_detail) {
         let meal = order_detail.meal
@@ -1519,7 +1558,6 @@ class Cart extends PIZZLE {
                 <p class="discount-perentage-cart">${meal.discount_percentage}</p>
             `
         }
-
 
         let node = `
             <tr class="shop-cart-item" id="orderdetail-${order_detail.id}">
@@ -1555,6 +1593,25 @@ class Cart extends PIZZLE {
                     <button onclick="CART_OBJECT.delete_orderdetail('${order_detail.id}')"><i class="fa fa-times"></i></button>
                 </td>
             </tr>
+        `
+        return node
+    }
+
+    get_node_element_address(address) {
+        let node_free = `
+            <span class="free-lable">Free</span>
+        `
+        let node = `
+               <div class="address-item" id="address-${address.id}"> 
+                    <label for="address-input-${address.id}">
+                        <p>${address.address}</p>
+                        <input type="radio" name="address" value="${address.id}" cost="${address.cost}" class="address-input" id="address-input-${address.id}">
+                        ${address.is_free == true ? node_free : ''}
+                        <div class="check">
+                          <div class="inside"></div>
+                        </div>
+                    </label>
+               </div>
         `
         return node
     }
@@ -1608,20 +1665,87 @@ class Cart extends PIZZLE {
         });
     }
 
+    create_addresses(addresses) {
+        let This = this
+
+        function unselect_all_address() {
+            for (let address_input of addresses_input) {
+                address_input.parentNode.parentNode.classList.remove('address-item-selected')
+            }
+        }
+
+        function select_address(input) {
+            input.parentNode.parentNode.classList.add('address-item-selected')
+            let cost = input.getAttribute('cost')
+            let id = input.getAttribute('value')
+            cost = Math.round(cost * 100) / 100;
+            let price_order = Math.round(This.ORDER.price * 100) / 100;
+            This.ADDRESS = {
+                'id': id,
+                'cost': cost
+            }
+            if (cost != 0) {
+                This.cost_shipping.innerText = `${SYMBOL_CURRENCY} ${cost.toFixed(2)}`
+
+                This.set_price_order()
+                // This.container_total.innerText = `${SYMBOL_CURRENCY} ${(price_order + cost).toFixed(2)}`
+            } else {
+                This.cost_shipping.innerHTML = `
+                    <p class="free">Free</p>
+                `
+                This.set_price_order()
+            }
+
+        }
+
+        for (let address of addresses) {
+            this.container_address.innerHTML += this.get_node_element_address(address)
+        }
+
+        let addresses_input = document.querySelectorAll('.address-input')
+        for (let address_input of addresses_input) {
+            address_input.addEventListener('change', function (e) {
+                unselect_all_address()
+                This.ID_ADDRESS = this.getAttribute('value')
+                select_address(this)
+            })
+        }
+
+        if (addresses.length != 0) {
+            // Select Default address
+            document.querySelector('.address-input').click()
+        } else {
+            this.container_address.classList.add('d-none')
+            this.container_address_notfound.classList.remove('d-none')
+            this.btn_add_address.classList.add('btn-add_address-active')
+        }
+
+    }
 
     set_info = function (response) {
         let _data = response.data
         let order = _data.order
         let user = _data.user
+        let addresses = user.address
+        this.ORDER = order
         if (order.is_not_empty == false) {
             document.getElementById('order-is-empty').classList.remove('d-none')
             document.getElementById('container').remove()
         } else {
             this.create_orderdetails(order)
-            this.container_subtotal.innerText = `${SYMBOL_CURRENCY}${order.price}`
-            this.container_subtotal_without_discount.innerText = `${SYMBOL_CURRENCY}${order.price_without_discount}`
-            this.container_total.innerText = `${SYMBOL_CURRENCY}${order.price}`
+            this.create_addresses(addresses)
+            this.set_price_order()
         }
+    }
+
+    set_price_order() {
+        let cost_address = this.ADDRESS.cost
+        let order = this.ORDER
+        let subtotal = parseFloat(order.price)
+        let total = parseFloat(order.price)
+        this.container_total.innerText = `${SYMBOL_CURRENCY}${(total + cost_address).toFixed(2)}`
+        this.container_subtotal.innerText = `${SYMBOL_CURRENCY}${subtotal.toFixed(2)}`
+        this.container_subtotal_without_discount.innerText = `${SYMBOL_CURRENCY}${order.price_without_discount}`
     }
 
     delete_orderdetail = function (id) {
@@ -1635,12 +1759,15 @@ class Cart extends PIZZLE {
             error_redirect: false,
             loading_section: orderdetail_element,
             response: function (response) {
-                if (response.status) {
-                    orderdetail_element.remove()
+                orderdetail_element.remove()
+                if (response.success) {
                     let data = response.data
-                    This.container_subtotal.innerText = `${SYMBOL_CURRENCY}${data.price_order}`
-                    This.container_subtotal_without_discount.innerText = `${SYMBOL_CURRENCY}${data.price_order_without_discount}`
-                    This.container_total.innerText = `${SYMBOL_CURRENCY}${data.price_order}`
+                    This.ORDER = data.order
+                    This.set_price_order()
+                    let allDetails = document.querySelectorAll('.shop-cart-item')
+                    if (allDetails.length == 0) {
+                        location.reload()
+                    }
                 }
             }
         })
@@ -1678,12 +1805,12 @@ class Cart extends PIZZLE {
             loading_section: parent_input,
             response: function (response) {
                 let data = response.data
+                let order = data.order
+                This.ORDER = order
                 let orderdetail_element = document.getElementById(`orderdetail-${data.id}`)
                 input.val(data.count)
                 orderdetail_element.querySelector('#orderdetail-price').innerText = `${SYMBOL_CURRENCY}${data.price_detail}`
-                This.container_subtotal.innerText = `${SYMBOL_CURRENCY}${data.price_order}`
-                This.container_subtotal_without_discount.innerText = `${SYMBOL_CURRENCY}${data.price_order_without_discount}`
-                This.container_total.innerText = `${SYMBOL_CURRENCY}${data.price_order}`
+                This.set_price_order()
             }
         })
     }
@@ -1862,7 +1989,7 @@ window.onscroll = function () {
 
 //////////////////////////////////                Functionality Cookie         ///////////////////////////////////////////////
 function SetCookieFunctionality_ShowNotification(Text, Type, Timer = 5000, LevelOfNecessity = 2) {
-    document.cookie = `Functionality_N=${ConvertCharPersianToEnglishDecode(Text)}~${Type}~${Timer}~${LevelOfNecessity};path=/`
+    document.cookie = `Functionality_N=${Text}~${Type}~${Timer}~${LevelOfNecessity};path=/`
 }
 
 
@@ -1893,7 +2020,8 @@ function GetCookieFunctionality_ShowNotification() {
         } catch (e) {
         }
         if (Cookie_Key == 'Functionality_N' || Cookie_Key == ' Functionality_N' || Cookie_Key == ' Functionality_N ') {
-            let TextResult = ConvertCharEnglishToPersianDecode(Text)
+            // let TextResult = ConvertCharEnglishToPersianDecode(Text)
+            let TextResult = Text
             ShowNotificationMessage(TextResult, Type, Timer, LevelOfNecessity)
         }
         document.cookie = `${Cookie_Key}=Closed; expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`
@@ -1957,6 +2085,7 @@ function ConvertCharPersianToEnglishDecode(Text) {
         try {
             Res += Dict_Char_Persian_English[i]
         } catch (e) {
+            Res += i
         }
     }
     return Res
