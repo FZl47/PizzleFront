@@ -1525,6 +1525,7 @@ class Cart extends PIZZLE {
         this.btn_pay.addEventListener('click', function () {
             let address_id = This.ADDRESS.id
             if (address_id) {
+                alert('Transferring to the banking portal')
                 let url = This.URL('user/cart/pay')
                 let data = {
                     'address_id': address_id,
