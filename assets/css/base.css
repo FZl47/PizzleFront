@@ -1619,6 +1619,10 @@ button:focus {
     border-radius: 50%;
 }
 
+.AnimationRotateClock{
+    animation: AnimationRotateClock 5s linear infinite;
+}
+
 @keyframes AnimationOpacity {
     0% {
         opacity: 0;

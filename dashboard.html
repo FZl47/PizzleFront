@@ -28,21 +28,21 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
     <style>
         .content-dashboard {
-            background: #fff8ef;
+            background: #fff;
             justify-content: space-between;
-            align-items: center;
+            align-items: first;
             margin: 40px auto;
             padding: 30px 0;
             border-radius: 12px;
         }
 
         .menu-dashboard {
-            border-right: 2px solid #EDDFC6;
+            /*border-right: 2px solid #EDDFC6;*/
         }
 
         .article-dashboard {
             height: 100%;
-            padding: 30px 50px;
+            padding: 30px 40px;
         }
 
         .article-dashboard h2 {
@@ -67,16 +67,33 @@
             color: #777;
             font-size: 105%;
             margin: 5px auto;
-            padding: 14px 12px;
+            padding: 13px 10px;
             z-index: 1;
             width: 100%;
             outline: none;
             border: none;
             background: none;
-            border-bottom: 1px solid #ffd5b2;
+            border-bottom: 1px solid rgba(255, 232, 211, 0.7);
             transition: all .3s;
         }
 
+        .article-dashboard li a {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #777;
+            font-size: 105%;
+            margin: 5px auto;
+            padding: 13px 10px;
+            z-index: 1;
+            width: 100%;
+            outline: none;
+            border: none;
+            background: none;
+            border-bottom: 1px solid rgba(255, 232, 211, 0.7);
+            transition: all .3s;
+        }
 
 
         /*.article-dashboard li a:after {*/
@@ -98,20 +115,270 @@
         /*}*/
 
         .article-dashboard li button:hover {
-            background: #ffab35;
+            background: #ffb34f;
+            color: #fff;
+            border-radius: 10px;
+            border-color: transparent;
+        }
+
+        .article-dashboard li a:hover {
+            background: #ffb34f;
             color: #fff;
             border-radius: 10px;
             border-color: transparent;
         }
 
         .menu-item-active {
-            background: #ffab35!important;
-            color: #fff!important;
-            border-radius: 10px!important;
-            border-color: transparent!important;
-            box-shadow: 3px 0 1px 0 #ee8100;
+            background: #ffb34f !important;
+            color: #fff !important;
+            border-radius: 10px !important;
+            border-color: transparent !important;
+            box-shadow: 3px 0 1px 0 #eea246;
         }
 
+        .article-container {
+            display: none;
+            margin: auto;
+            padding: 10px 20px;
+            border-radius: 10px;
+            min-height: 550px;
+            border: 1px solid rgba(211, 216, 203, 0.3);
+        }
+
+        .article-container.active {
+            display: block;
+        }
+
+        .article-container h2 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #666;
+        }
+
+        .article-content {
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        .article-content h4 {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .main-item {
+            display: inline-block;
+            width: 370px;
+            margin: 10px;
+            padding: 15px 20px;
+            text-align: right;
+            border-radius: 10px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .main-item p {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #aaa;
+            margin: 0;
+            padding: 0;
+            margin-bottom: 20px;
+            font-size: 150%;
+        }
+
+        .main-item i {
+            font-size: 130%;
+        }
+
+        .main-item p:last-of-type {
+            display: block;
+            text-align: left;
+            font-size: 220%;
+            font-weight: bold;
+            color: #777;
+        }
+
+        .main-item-order i {
+            color: #96e9ff;
+        }
+
+        .main-item-coin i {
+            color: #ffdc85;
+        }
+
+        .main-item-info i {
+            color: #64ffb4;
+        }
+
+        .last-visit {
+            display: flex;
+            justify-content: space-between;
+            align-items: first;
+            border: 1px solid #f1f1f1;
+            padding: 10px;
+            margin: 10px auto;
+            border-radius: 12px;
+        }
+
+        .last-visit img {
+            width: 60px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .last-visit a {
+            display: block;
+        }
+
+        .last-visit-time {
+            color: #777;
+            font-size: 90%;
+        }
+
+        .last-visit p {
+            display: inline-block;
+        }
+
+        .order-item {
+            margin: 15px auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            white-space: nowrap;
+            overflow: auto;
+        }
+
+        .order-item > div {
+            padding: 10px 20px;
+        }
+
+        .order-item-more {
+            margin-top: 10px;
+            padding-top: 20px !important;
+            border-top: 1px solid #eee;
+        }
+
+        .order-status-completed {
+            color: #12c999 !important;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .field {
+            display: inline-block;
+            margin: 0 20px;
+        }
+
+        .field-lg {
+            margin: 10px 0;
+        }
+
+        .field-lg h6 {
+            margin: 10px auto;
+            color: #888;
+        }
+
+        .field-lg div {
+            margin-left: 40px;
+            color: #aaa;
+        }
+
+        .field-title {
+            display: block;
+            font-size: 80%;
+            margin: 0;
+            padding: 0;
+            margin-left: -2px;
+            color: #aaa;
+            text-align: center;
+        }
+
+        .field-result {
+            color: #333;
+            font-size: 95%;
+            text-align: center;
+        }
+
+        .field button {
+            border: none;
+            background: none;
+            font-size: 120%;
+        }
+
+        .address-item {
+            padding: 10px;
+            border: 1px solid #eee;
+        }
+
+        .address-item-edit {
+            border-top: 1px solid #eee;
+            padding-top: 20px !important;
+            margin: 20px auto;
+        }
+
+        .address-item-edit > div > div {
+            margin: 8px auto;
+        }
+
+        label {
+            font-size: 90%;
+            color: #888;
+            margin: 0;
+            margin-left: -10px;
+            padding: 0;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        input:focus {
+            box-shadow: 0 0 5px #c7f1ff;
+        }
+
+        textarea:focus {
+            box-shadow: 0 0 5px #c7f1ff;
+        }
+
+        .fa-trash {
+            color: #ff625d;
+            transition: all .25s;
+        }
+
+        .fa-trash:hover {
+            color: #ff4a45;
+        }
+
+        .fa-ellipsis-h {
+            color: #818181;
+        }
+
+        .fa-ellipsis-v {
+            color: #818181;
+        }
+
+        .fa-edit {
+            color: #7f9aae;
+        }
+
+        /*.address-item-edit button{*/
+        /*    border: none;*/
+        /*    background: linear-gradient(240deg, #ff5463, #ff471d);*/
+        /*    padding: 10px 20px;*/
+        /*    border-radius: 12px;*/
+        /*    color: #fff;*/
+        /*}*/
+
+        .btn-submit {
+            border: none;
+            background: linear-gradient(240deg, #19e2e5, #0ef5a4);
+            padding: 7px 18px;
+            border-radius: 10px;
+            color: #fff;
+        }
 
     </style>
 </head>
@@ -225,57 +492,468 @@
         <h2>Menu</h2>
         <ul>
             <li>
-                <button type-action="main" class="menu-item-active">
+                <button type-more="main" class="menu-item-active">
                     Main
                     <i class="fa fa-tachometer-alt"></i>
                 </button>
             </li>
             <li>
-                <button type-action="orders">
-                    Orders
+                <a href="cart.html">
+                    Cart
                     <i class="fa fa-shopping-cart"></i>
+                </a>
+            </li>
+            <li>
+                <button type-more="orders">
+                    Orders
+                    <i class="fa fa-list-alt"></i>
                 </button>
             </li>
             <li>
-                <button type-action="address">
+                <button type-more="address">
                     Address
                     <i class="fa fa-map-marker-alt"></i>
                 </button>
             </li>
             <li>
-                <button type-action="comments">
+                <button type-more="comments">
                     Comments
                     <i class="fa fa-comment-alt"></i>
                 </button>
             </li>
             <li>
-                <button type-action="notification">
+                <button type-more="notification">
                     Notification
                     <i class="fa fa-bell"></i>
                 </button>
             </li>
             <li>
-                <button type-action="information">
+                <button type-more="information">
                     Information
                     <i class="fa fa-info-circle"></i>
                 </button>
             </li>
             <li>
-                <button type-action="home">
+                <a href="index.html">
                     Home
                     <i class="fa fa-home"></i>
-                </button>
+                </a>
             </li>
             <li>
-                <button type-action="signout">
+                <button type-more="signout" onclick="SignOutAccount()">
                     Sign out
                     <i class="fa fa-sign-out-alt"></i>
                 </button>
             </li>
         </ul>
     </div>
-    <div class="article-dashboard col-12 col-lg-7 col-xl-8">
-        wad
+    <div class="article-dashboard col-12 col-lg-8 col-xl-9">
+        <div id="container-main" class="article-container active">
+            <h2>
+                Main
+                <i class="fa fa-tachometer-alt"></i>
+            </h2>
+            <div class="article-content">
+                <div class="main-items d-block d-xl-flex justify-content-around align-items-center">
+                    <div class="main-item main-item-info">
+                        <p>
+                            Info
+                            <i class="fa fa-info-circle"></i>
+                        </p>
+                        <p>Fazel Momeni</p>
+                    </div>
+                    <div class="main-item main-item-order">
+                        <p>
+                            Order Count
+                            <i class="fa fa-list-alt"></i>
+                        </p>
+                        <p>10</p>
+                    </div>
+                    <!--                    <div class="main-item main-item-coin">-->
+                    <!--                        <p>-->
+                    <!--                            Coins-->
+                    <!--                            <i class="fa fa-coins"></i>-->
+                    <!--                        </p>-->
+                    <!--                        <p>20</p>-->
+                    <!--                    </div>-->
+
+                </div>
+                <div class="last-visits mt-5">
+                    <h4>Last Visit</h4>
+                    <div class="last-visit">
+                        <div>
+                            <a href="#">
+                                <img src="assets/img/4.jpg" alt="awda">
+                                w
+                            </a>
+                        </div>
+                        <div class="last-visit-time">
+                            <p>21 days ago</p>
+                            <i class="fa fa-clock AnimationRotateClock"></i>
+                        </div>
+                    </div>
+                    <div class="last-visit">
+                        <div>
+                            <a href="#">
+                                <img src="assets/img/4.jpg" alt="awda">
+                                w
+                            </a>
+                        </div>
+                        <div class="last-visit-time">
+                            <p>21 days ago</p>
+                            <i class="fa fa-clock AnimationRotateClock"></i>
+                        </div>
+                    </div>
+                    <div class="last-visit">
+                        <div>
+                            <a href="#">
+                                <img src="assets/img/4.jpg" alt="awda">
+                                w
+                            </a>
+                        </div>
+                        <div class="last-visit-time">
+                            <p>21 days ago</p>
+                            <i class="fa fa-clock AnimationRotateClock"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="container-orders" class="article-container">
+            <h2>
+                Orders
+                <i class="fa fa-list-alt"></i>
+            </h2>
+            <div class="article-content mt-5">
+                <div class="order-item">
+                    <div class="collapse-toggle d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="field">
+                                <p class="field-title">
+                                    #
+                                </p>
+                                <p class="field-result">
+                                    1
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    count
+                                </p>
+                                <p class="field-result">
+                                    3
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    time
+                                </p>
+                                <p class="field-result">
+                                    3 days ago
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    price
+                                </p>
+                                <p class="field-result">
+                                    $12.00
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    address
+                                </p>
+                                <p class="field-result">
+                                    70 Washington Square...
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="field">
+                                <p class="field-title">
+                                    status
+                                </p>
+                                <p class="field-result order-status-completed">
+                                    Completed
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    more
+                                </p>
+                                <p class="field-result">
+                                    <button data-toggle="collapse" data-target="#demo">
+                                        <i class="fa fa-ellipsis-h"></i>
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-item-more collapse" id="demo">
+                        <div class="field-lg">
+                            <h6>Details :</h6>
+                            <div>
+                                awd
+                            </div>
+                        </div>
+                        <div class="field-lg">
+                            <h6>Address :</h6>
+                            <div>
+                                awd
+                            </div>
+                        </div>
+                        <div class="field-lg">
+                            <h6>Description :</h6>
+                            <div>
+                                awd
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-item">
+                    <div class="collapse-toggle d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="field">
+                                <p class="field-title">
+                                    #
+                                </p>
+                                <p class="field-result">
+                                    1
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    count
+                                </p>
+                                <p class="field-result">
+                                    3
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    time
+                                </p>
+                                <p class="field-result">
+                                    3 days ago
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    price
+                                </p>
+                                <p class="field-result">
+                                    $12.00
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    address
+                                </p>
+                                <p class="field-result">
+                                    70 Washington Square...
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="field">
+                                <p class="field-title">
+                                    status
+                                </p>
+                                <p class="field-result order-status-completed">
+                                    Completed
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    more
+                                </p>
+                                <p class="field-result">
+                                    <button data-toggle="collapse" data-target="#demo">
+                                        <i class="fa fa-ellipsis-h"></i>
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-item-more collapse" id="demo">
+                        <div class="field-lg">
+                            <h6>Details :</h6>
+                            <div>
+                                awd
+                            </div>
+                        </div>
+                        <div class="field-lg">
+                            <h6>Address :</h6>
+                            <div>
+                                awd
+                            </div>
+                        </div>
+                        <div class="field-lg">
+                            <h6>Description :</h6>
+                            <div>
+                                awd
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-left mt-5 col-12 col-lg-10 mx-auto">
+                <a href="foods.html" class="cta_btn text-center" style="width: 200px;">
+                    ORDER NOW
+                </a>
+            </div>
+        </div>
+        <div id="container-address" class="article-container">
+            <h2>
+                Address
+                <i class="fa fa-map-marker-alt"></i>
+            </h2>
+            <div class="article-content mt-5">
+                <div class="address-item">
+                    <div class="collapse-toggle d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="field">
+                                <p class="field-title">
+                                    #
+                                </p>
+                                <p class="field-result">
+                                    1
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    postal code
+                                </p>
+                                <p class="field-result">
+                                    323423
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    address
+                                </p>
+                                <p class="field-result">
+                                    70 Washington Square...
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="field">
+                                <p class="field-title">
+                                    Edit
+                                </p>
+                                <p class="field-result">
+                                    <button data-toggle="collapse" data-target="#address">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    Delete
+                                </p>
+                                <p class="field-result">
+                                    <button>
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="address-item-edit collapse" id="address">
+                        <div class="col-12 col-lg-7 mx-auto">
+                            <div>
+                                <label for="#PostalCode">
+                                    Postal Code :
+                                </label>
+                                <input type="text" id="#PostalCode">
+                            </div>
+                            <div>
+                                <label for="#Address">
+                                    Address :
+                                </label>
+                                <textarea type="text" id="#Address"></textarea>
+                            </div>
+                            <div class="select-address-map">
+                                <button class="btn-submit">Change</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="address-item">
+                    <div class="collapse-toggle d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="field">
+                                <p class="field-title">
+                                    #
+                                </p>
+                                <p class="field-result">
+                                    1
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    postal code
+                                </p>
+                                <p class="field-result">
+                                    323423
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    address
+                                </p>
+                                <p class="field-result">
+                                    70 Washington Square...
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="field">
+                                <p class="field-title">
+                                    Edit
+                                </p>
+                                <p class="field-result">
+                                    <button data-toggle="collapse" data-target="#address">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    Delete
+                                </p>
+                                <p class="field-result">
+                                    <button>
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="address-item-edit collapse" id="address">
+                        <div class="col-12 col-lg-7 mx-auto">
+                            <div>
+                                <label for="#PostalCode">
+                                    Postal Code :
+                                </label>
+                                <input type="text" id="#PostalCode">
+                            </div>
+                            <div>
+                                <label for="#Address">
+                                    Address :
+                                </label>
+                                <textarea type="text" id="#Address"></textarea>
+                            </div>
+                            <div class="select-address-map">
+                                <button class="btn-submit">Change</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 <!-- Content End -->
@@ -475,6 +1153,63 @@
 <script>
     const PIZZLE_OBJECT = new PIZZLE()
 
+</script>
+<script>
+    let btns_menu = document.querySelector('.menu-dashboard').querySelectorAll('li button')
+    for (let btn of btns_menu) {
+        btn.addEventListener('click', function () {
+            let type = this.getAttribute('type-more')
+            active_container(type)
+        })
+    }
+
+    function deactive_all_btns_menu() {
+        for (let btn of btns_menu) {
+            btn.classList.remove('menu-item-active')
+        }
+    }
+
+    function deactive_all_container() {
+        let all = document.querySelectorAll('.article-container')
+        for (let container of all) {
+            container.classList.remove('active')
+        }
+    }
+
+    function active_btn_menu(type) {
+        document.querySelector(`[type-more="${type}"]`).classList.add('menu-item-active')
+    }
+
+    function active_container(type) {
+        deactive_all_btns_menu()
+        deactive_all_container()
+        document.getElementById(`container-${type}`).classList.add('active')
+        active_btn_menu(type)
+    }
+
+    let FuncSetActiveContainer = active_container
+    let UrlContainer = window.location.href
+    let ValueForItemMenu = UrlContainer.split('?')[1]
+    if (ValueForItemMenu != undefined && ValueForItemMenu != '' && ValueForItemMenu != ' ') {
+        if (ValueForItemMenu == 'Home') {
+            GoToUrl('/')
+        }
+        FuncSetActiveContainer(ValueForItemMenu)
+    }
+
+    function active_collapses() {
+        let collapses = document.querySelectorAll('[data-toggle="collapse"]')
+        for (let collapse of collapses) {
+            collapse.addEventListener('click', function () {
+                let target = this.getAttribute('data-target')
+                let state = this.getAttribute('state') || 'open'
+                let target_element = document.querySelector(target)
+                target_element.classList.toggle('show')
+            })
+        }
+    }
+
+    active_collapses()
 
 </script>
 </body>

@@ -2324,12 +2324,10 @@ function OpenFullscreen(elem) {
 }
 
 //////////////////////////////////       Sign Out Account   ////////////////////////////////////////////
-function SignOutAccount(Path = '/') {
-    CreateMessage_Alert('ایا مطمعن هستید که میخواهید از حساب کاربری خارج شوید ؟', function () {
-        SetCookie('QlYSqVS', 'None*_', '0', Path)
-        SetCookie('YPtIeRC', 'None*_', '0', Path)
-        location.reload()
-    }, Path)
+function SignOutAccount() {
+    SetCookie('refresh-user','',0)
+    SetCookie('access-user','',0)
+    window.location.href = PAGE_HOME
 }
 
 //////////////////////////////////       Menu      ////////////////////////////////////////////
