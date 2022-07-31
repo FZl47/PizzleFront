@@ -304,7 +304,7 @@ class PIZZLE {
                     if (status == 0) {
                         ShowNotificationMessage('Please Check your connection', 'Error')
                     }
-                    if (error_message) {
+                    if (error_message && status != 0) {
                         let error_text = response.error
                         ShowNotificationMessage(error_text, 'Error')
                     }
@@ -522,7 +522,6 @@ class PIZZLE {
         return node
     }
 
-
     GET_HTML_ELEMENT_SUBMEAL = function (stock_meal) {
         let This = this
         let meal = stock_meal.meal
@@ -563,7 +562,46 @@ class PIZZLE {
                     ${element_count}${element_rate}
                 </div>
                 <div class="pizza_slide_img">
-                    <img src="${meal.cover_image}" alt="${meal.title}" />
+                    <img src="${meal.cover_image}" alt="${meal.title_short}" />
+                </div>
+                <div class="pizza_slide_text">
+                    <h3><a href="${slug}">${meal.title_short}</a></h3>
+                </div>
+            </div> 
+        `
+        return node
+    }
+
+    GET_HTML_ELEMENT_MEALDETAIL = function (detail) {
+        let This = this
+        let meal = detail.meal
+        let count = detail.count
+
+
+        // let rate_percentage = parseFloat(meal.rate) * 20
+        // let element_rate = `
+        //         <div class="ratings-container">
+        //             <div class="ratings">
+        //                 <div class="ratings-val" style="width: ${rate_percentage}%"></div>
+        //             </div>
+        //         </div>
+        // `
+
+        let element_count = ``
+        if (count > 1) {
+            element_count = `
+                <p>${count}x</p>
+            `
+        }
+
+        let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL, ['slug', meal.slug])
+        let node = `
+            <div class="pizza_item_detail">
+                <div class="pizza_slide_header">
+                    ${element_count}
+                </div>
+                <div class="pizza_slide_img">
+                    <img src="${meal.cover_image}" alt="${meal.title_short}" title="${meal.title_short}" onclick="GoToUrl('${slug}')" />
                 </div>
                 <div class="pizza_slide_text">
                     <h3><a href="${slug}">${meal.title_short}</a></h3>
@@ -1538,7 +1576,7 @@ class Cart extends PIZZLE {
                     login_redirect: true,
                     response: function (response) {
                         if (response.success) {
-                            SetCookieFunctionality_ShowNotification('Your order has been successfully placed', 'Success',6000,3)
+                            SetCookieFunctionality_ShowNotification('Your order has been successfully placed', 'Success', 6000, 3)
                             location.reload()
                         }
                     }
@@ -1817,6 +1855,217 @@ class Cart extends PIZZLE {
     }
 }
 
+
+class Dashboard extends PIZZLE {
+    constructor() {
+        super();
+        this.COUNTER_TRY_GET_INFO = 2
+        this.get_info()
+    }
+
+    get_info = function () {
+        let This = this
+        let url = this.URL('user/get-dashboard')
+        this.SEND_AJAX(url, {}, {
+            auth: true,
+            login_redirect: true,
+            error_redirect: true,
+            error_message: false,
+            response: function (response) {
+                let status = response.status
+                if (status == 200) {
+                    console.log(response)
+                    This.set_info(response.data)
+                }
+                This.COUNTER_TRY_GET_INFO -= 1
+                if (status == 401 && This.COUNTER_TRY_GET_INFO > 0) {
+                    This.get_info()
+                }
+            }
+        })
+    }
+
+    set_info = function (data) {
+
+        let container_visits = document.querySelector('.last-visits > div')
+        let container_orders = document.querySelector('#container-orders .article-content')
+
+        let full_name = document.getElementById('full-name')
+        let order_count = document.getElementById('order-count')
+
+
+        let user = data.user
+        let orders = data.orders
+        let address = data.address
+        let comments = data.comments
+        let lastvisits = data.lastvisits
+        let notifications = data.notifications
+
+        full_name.innerText = user.full_name
+        order_count.innerText = orders.length
+
+
+        if (orders.length == 0) {
+            document.querySelector('.main-item-order').insertAdjacentHTML('beforeend', `
+                <a href="foods.html" class="cta_btn small_btn mt-1">Order Now</a>
+            `)
+        }
+
+
+        // Last Visits
+        for (let lastvisit of lastvisits) {
+            let meal = lastvisit.meal
+            let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL, ['slug', meal.slug])
+            let node = `
+                <div class="last-visit">
+                    <div>
+                        <a href="${slug}">
+                            <img src="${meal.image}" alt="${meal.title}">
+                            ${meal.title}
+                        </a>
+                    </div>
+                    <div class="last-visit-time">
+                        <p>${lastvisit.time_past}</p>
+                        <i class="fa fa-clock AnimationRotateClock"></i>
+                    </div>
+                </div>
+            `
+            container_visits.innerHTML += node
+        }
+        if (lastvisits.length == 0) {
+            container_visits.innerHTML = `
+                <div class="not-found">
+                    <p>Not found last visit</p>
+                     <a href="foods.html"  class="text-light fs-5">visit now</a>
+                </div>
+            `
+        }
+
+        // Orders
+        let _counter_orders_loop = 0
+        for (let order of orders) {
+            _counter_orders_loop++
+
+            let node_status = ``
+            let node_details = ``
+
+            if (order.status == 'preparation') {
+                node_status = `
+                    <p class="field-result order-status-preparation">
+                            ${order.status}
+                    </p>
+                `
+            } else if (order.status == 'sending') {
+                node_status = `
+                    <p class="field-result order-status-sending">
+                            ${order.status}
+                    </p>
+                `
+            } else if (order.status == 'delivered') {
+                node_status = `
+                    <p class="field-result order-status-delivered">
+                            ${order.status}
+                    </p>
+                `
+            }
+
+            for (let detail of order.details) {
+                node_details += this.GET_HTML_ELEMENT_MEALDETAIL(detail)
+            }
+
+            let node = `
+                <div class="order-item">
+                    <div class="collapse-toggle d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="field">
+                                <p class="field-title">
+                                    #
+                                </p>
+                                <p class="field-result">
+                                    ${_counter_orders_loop}
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    count
+                                </p>
+                                <p class="field-result">
+                                    ${order.details.length}
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    time
+                                </p>
+                                <p class="field-result">
+                                    ${order.time_paid}
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    price
+                                </p>
+                                <p class="field-result">
+                                    ${SYMBOL_CURRENCY}${order.price}
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    address
+                                </p>
+                                <p class="field-result">
+                                    ${order.address.address_short}
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="field">
+                                <p class="field-title">
+                                    status
+                                </p>
+                                ${node_status}
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    more
+                                </p>
+                                <p class="field-result">
+                                    <button data-toggle="collapse" data-target="#order-item-${_counter_orders_loop}">
+                                        <i class="fa fa-ellipsis-h"></i>
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-item-more collapse" id="order-item-${_counter_orders_loop}">
+                        <div class="field-lg">
+                            <h6>Details :</h6>
+                            <div>
+                                ${node_details}
+                            </div>
+                        </div>
+                        <div class="field-lg">
+                            <h6>Address :</h6>
+                            <div>
+                                ${order.address.address} - ${order.address.postal_code}
+                            </div>
+                        </div>
+                        <div class="field-lg">
+                            <h6>Description :</h6>
+                            <div>
+                                ${order.description ? order.description : 'Without description'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+            container_orders.innerHTML += node
+        }
+        active_collapses()
+
+
+    }
+}
 
 function ScrollOnElement(ID_Element, Element = null) {
     if (ID_Element == null) {
@@ -2325,8 +2574,8 @@ function OpenFullscreen(elem) {
 
 //////////////////////////////////       Sign Out Account   ////////////////////////////////////////////
 function SignOutAccount() {
-    SetCookie('refresh-user','',0)
-    SetCookie('access-user','',0)
+    SetCookie('refresh-user', '', 0)
+    SetCookie('access-user', '', 0)
     window.location.href = PAGE_HOME
 }
 
@@ -2895,7 +3144,14 @@ function SendAjax(Url, Data = {}, Method = 'POST', Response, async_req = true, a
         },
         error: function (response) {
             __Redirect__(response)
-            response = response.responseJSON
+            if (response.responseJSON) {
+                response = response.responseJSON
+            } else {
+                response = {
+                    'error': 'Server Error 500',
+                    'status': response.status
+                }
+            }
             response.success = false
             if (COUNTER_SHOW_ERROR_AJAX && response.status == 0) {
                 COUNTER_SHOW_ERROR_AJAX = false

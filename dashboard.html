@@ -169,6 +169,7 @@
         .main-item {
             display: inline-block;
             width: 370px;
+            height: 150px;
             margin: 10px;
             padding: 15px 20px;
             text-align: right;
@@ -222,9 +223,11 @@
         }
 
         .last-visit img {
-            width: 60px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             margin-right: 15px;
+            object-fit: cover !important;
         }
 
         .last-visit a {
@@ -258,7 +261,19 @@
             border-top: 1px solid #eee;
         }
 
-        .order-status-completed {
+        .order-status-preparation {
+            color: #f1bd67 !important;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .order-status-sending {
+            color: #2fb9f6 !important;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .order-status-delivered {
             color: #12c999 !important;
             font-weight: bold;
             text-transform: uppercase;
@@ -274,13 +289,13 @@
         }
 
         .field-lg h6 {
-            margin: 10px auto;
+            margin: 15px auto;
             color: #888;
         }
 
-        .field-lg div {
+        .field-lg > div {
             margin-left: 40px;
-            color: #aaa;
+            color: #888;
         }
 
         .field-title {
@@ -378,6 +393,10 @@
             padding: 7px 18px;
             border-radius: 10px;
             color: #fff;
+        }
+
+        .text-light {
+            color: #aaa !important;
         }
 
     </style>
@@ -560,14 +579,14 @@
                             Info
                             <i class="fa fa-info-circle"></i>
                         </p>
-                        <p>Fazel Momeni</p>
+                        <p id="full-name">-</p>
                     </div>
                     <div class="main-item main-item-order">
                         <p>
                             Order Count
                             <i class="fa fa-list-alt"></i>
                         </p>
-                        <p>10</p>
+                        <p id="order-count">-</p>
                     </div>
                     <!--                    <div class="main-item main-item-coin">-->
                     <!--                        <p>-->
@@ -580,41 +599,8 @@
                 </div>
                 <div class="last-visits mt-5">
                     <h4>Last Visit</h4>
-                    <div class="last-visit">
-                        <div>
-                            <a href="#">
-                                <img src="assets/img/4.jpg" alt="awda">
-                                w
-                            </a>
-                        </div>
-                        <div class="last-visit-time">
-                            <p>21 days ago</p>
-                            <i class="fa fa-clock AnimationRotateClock"></i>
-                        </div>
-                    </div>
-                    <div class="last-visit">
-                        <div>
-                            <a href="#">
-                                <img src="assets/img/4.jpg" alt="awda">
-                                w
-                            </a>
-                        </div>
-                        <div class="last-visit-time">
-                            <p>21 days ago</p>
-                            <i class="fa fa-clock AnimationRotateClock"></i>
-                        </div>
-                    </div>
-                    <div class="last-visit">
-                        <div>
-                            <a href="#">
-                                <img src="assets/img/4.jpg" alt="awda">
-                                w
-                            </a>
-                        </div>
-                        <div class="last-visit-time">
-                            <p>21 days ago</p>
-                            <i class="fa fa-clock AnimationRotateClock"></i>
-                        </div>
+                    <div>
+
                     </div>
                 </div>
             </div>
@@ -625,178 +611,7 @@
                 <i class="fa fa-list-alt"></i>
             </h2>
             <div class="article-content mt-5">
-                <div class="order-item">
-                    <div class="collapse-toggle d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="field">
-                                <p class="field-title">
-                                    #
-                                </p>
-                                <p class="field-result">
-                                    1
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    count
-                                </p>
-                                <p class="field-result">
-                                    3
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    time
-                                </p>
-                                <p class="field-result">
-                                    3 days ago
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    price
-                                </p>
-                                <p class="field-result">
-                                    $12.00
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    address
-                                </p>
-                                <p class="field-result">
-                                    70 Washington Square...
-                                </p>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="field">
-                                <p class="field-title">
-                                    status
-                                </p>
-                                <p class="field-result order-status-completed">
-                                    Completed
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    more
-                                </p>
-                                <p class="field-result">
-                                    <button data-toggle="collapse" data-target="#demo">
-                                        <i class="fa fa-ellipsis-h"></i>
-                                    </button>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="order-item-more collapse" id="demo">
-                        <div class="field-lg">
-                            <h6>Details :</h6>
-                            <div>
-                                awd
-                            </div>
-                        </div>
-                        <div class="field-lg">
-                            <h6>Address :</h6>
-                            <div>
-                                awd
-                            </div>
-                        </div>
-                        <div class="field-lg">
-                            <h6>Description :</h6>
-                            <div>
-                                awd
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="order-item">
-                    <div class="collapse-toggle d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="field">
-                                <p class="field-title">
-                                    #
-                                </p>
-                                <p class="field-result">
-                                    1
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    count
-                                </p>
-                                <p class="field-result">
-                                    3
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    time
-                                </p>
-                                <p class="field-result">
-                                    3 days ago
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    price
-                                </p>
-                                <p class="field-result">
-                                    $12.00
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    address
-                                </p>
-                                <p class="field-result">
-                                    70 Washington Square...
-                                </p>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="field">
-                                <p class="field-title">
-                                    status
-                                </p>
-                                <p class="field-result order-status-completed">
-                                    Completed
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    more
-                                </p>
-                                <p class="field-result">
-                                    <button data-toggle="collapse" data-target="#demo">
-                                        <i class="fa fa-ellipsis-h"></i>
-                                    </button>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="order-item-more collapse" id="demo">
-                        <div class="field-lg">
-                            <h6>Details :</h6>
-                            <div>
-                                awd
-                            </div>
-                        </div>
-                        <div class="field-lg">
-                            <h6>Address :</h6>
-                            <div>
-                                awd
-                            </div>
-                        </div>
-                        <div class="field-lg">
-                            <h6>Description :</h6>
-                            <div>
-                                awd
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             </div>
             <div class="text-left mt-5 col-12 col-lg-10 mx-auto">
                 <a href="foods.html" class="cta_btn text-center" style="width: 200px;">
@@ -1152,6 +967,7 @@
 <script src="assets/js/base.js"></script>
 <script>
     const PIZZLE_OBJECT = new PIZZLE()
+    const DASHBOARD = new Dashboard()
 
 </script>
 <script>
@@ -1209,7 +1025,7 @@
         }
     }
 
-    active_collapses()
+    // active_collapses()
 
 </script>
 </body>
