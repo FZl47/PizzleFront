@@ -546,6 +546,11 @@
     border-radius: 4px;
 }
 
+[valid='false'] {
+    box-shadow: none !important;
+    border: 1px solid #ff8a72 !important;
+}
+
 .Label {
     font-size: 80%;
     color: #888888;
@@ -1619,7 +1624,7 @@ button:focus {
     border-radius: 50%;
 }
 
-.AnimationRotateClock{
+.AnimationRotateClock {
     animation: AnimationRotateClock 5s linear infinite;
 }
 

@@ -1886,9 +1886,16 @@ class Dashboard extends PIZZLE {
     }
 
     set_info = function (data) {
+        let This = this
 
         let container_visits = document.querySelector('.last-visits > div')
         let container_orders = document.querySelector('#container-orders .article-content')
+        let container_address = document.querySelector('#container-address .article-content')
+        let container_add_address = document.querySelector('#container-add-address')
+
+        let btn_add_address = document.getElementById('btn-add-address')
+        let btn_submit_address = document.getElementById('btn-submit-address')
+
 
         let full_name = document.getElementById('full-name')
         let order_count = document.getElementById('order-count')
@@ -1896,7 +1903,7 @@ class Dashboard extends PIZZLE {
 
         let user = data.user
         let orders = data.orders
-        let address = data.address
+        let addresses = data.address
         let comments = data.comments
         let lastvisits = data.lastvisits
         let notifications = data.notifications
@@ -2014,7 +2021,7 @@ class Dashboard extends PIZZLE {
                                     address
                                 </p>
                                 <p class="field-result">
-                                    ${order.address.address_short}
+                                    ${order.address ? order.address.address_short : '-'}
                                 </p>
                             </div>
                         </div>
@@ -2047,7 +2054,7 @@ class Dashboard extends PIZZLE {
                         <div class="field-lg">
                             <h6>Address :</h6>
                             <div>
-                                ${order.address.address} - ${order.address.postal_code}
+                                 ${order.address ? order.address.address : ''} - ${order.address ? order.address.postal_code : ''}
                             </div>
                         </div>
                         <div class="field-lg">
@@ -2061,9 +2068,220 @@ class Dashboard extends PIZZLE {
             `
             container_orders.innerHTML += node
         }
+
+
+        // Address
+        this._counter_address_loop = 0
+        for (let address of addresses) {
+            this._counter_address_loop++
+            let node = this.get_html_element_address(address, this._counter_address_loop)
+            container_address.innerHTML += node
+        }
+
+
+        if (addresses.length == 0) {
+            container_address.insertAdjacentHTML('beforebegin', `
+              <div class="not-found" style="margin-top: 50px;border-bottom: 1px solid #eee; padding-bottom: 70px;">
+                  <h4>not found address</h4>
+              </div>
+            `)
+            btn_add_address.classList.add('d-none')
+            container_add_address.classList.add('show')
+        }
+
+
         active_collapses()
+        CheckInputValInit()
 
+    }
 
+    add_address = function () {
+        let This = this
+        let container_address = document.querySelector('#container-address .article-content')
+        let container_add_address = document.querySelector('#container-add-address')
+        let input_postalcode = document.getElementById('PostalCodeAdd')
+        let input_address = document.getElementById('AddressAdd')
+        let postal_code_valid = input_postalcode.getAttribute('valid') || 'false'
+        let address_valid = input_address.getAttribute('valid') || 'false'
+        if (postal_code_valid == 'true' && address_valid == 'true') {
+            let url = this.URL('user/address/add')
+            this.SEND_AJAX(url, {
+                'address': input_address.value,
+                'postalcode': input_postalcode.value
+            }, {
+                auth: true,
+                loading_section: container_add_address,
+                error_redirect: false,
+                error_message: true,
+                response: function (response) {
+                    if (response.success) {
+                        This._counter_address_loop++
+                        let address = response.data.address
+                        let node = This.get_html_element_address(address, This._counter_address_loop)
+                        container_address.innerHTML += node
+                        ShowNotificationMessage(response.message, 'Success')
+                        // Hide collapse add address
+                        active_collapses()
+                        document.querySelector('#container-add-address').classList.remove('show')
+                        CheckInputValInit()
+                    }
+                }
+            })
+        } else {
+            ShowNotificationMessage('Please enter the fields correctly', 'Error')
+        }
+
+    }
+
+    get_html_element_address = function (address, _counter_address_loop) {
+        let node_cost = ``
+        if (address.cost == 0) {
+            node_cost = `
+                    <p class="free-lable">Free</p>
+                `
+        } else {
+            node_cost = `
+                    ${SYMBOL_CURRENCY}${address.cost}
+                `
+        }
+        let node = `
+                <div class="address-item" id="address-item-${address.id}" counter-loop="${_counter_address_loop}">
+                    <div class="collapse-toggle d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="field">
+                                <p class="field-title">
+                                    #
+                                </p>
+                                <p class="field-result">
+                                    ${_counter_address_loop}
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    postal code
+                                </p>
+                                <p class="field-result">
+                                    ${address.postal_code}
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    address
+                                </p>
+                                <p class="field-result">
+                                    ${address.address_short}
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    cost
+                                </p>
+                                <p class="field-result">
+                                    ${node_cost}
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="field">
+                                <p class="field-title">
+                                    Edit
+                                </p>
+                                <p class="field-result">
+                                    <button data-toggle="collapse" data-target="#address-collapse-${address.id}">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="field-title">
+                                    Delete
+                                </p>
+                                <p class="field-result">
+                                    <button onclick="DASHBOARD.delete_address('${address.id}')">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="address-item-edit collapse" id="address-collapse-${address.id}">
+                        <div class="col-12 col-lg-7 mx-auto">
+                            <div>
+                                <label for="#PostalCode-${address.id}">
+                                    Postal Code :
+                                </label>
+                                <input type="number" id="PostalCode-${address.id}" value="${address.postal_code}" CheckInputVal Bigger="3" Less="15" TypeVal="Number" oninput="CheckInputValidations(this,3,15,'Input','Number')">
+                            </div>
+                            <div>
+                                <label for="#Address-${address.id}">
+                                    Address :
+                                </label>
+                                <textarea type="text" id="Address-${address.id}" CheckInputVal Bigger="3" Less="200" oninput="CheckInputValidations(this,3,200,'Input','Text')" >${address.address}</textarea>
+                            </div>
+                            <div class="select-address-map">
+                                <button class="btn-submit" onclick="DASHBOARD.change_address('${address.id}')">Edit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+        return node
+    }
+
+    delete_address = function (id) {
+
+        let element_address = document.getElementById(`address-item-${id}`)
+        let url = this.URL('user/address/delete')
+        this.SEND_AJAX(url, {
+            'address_id': id
+        }, {
+            auth: true,
+            error_message: true,
+            login_redirect: true,
+            error_redirect: false,
+            loading_section: element_address,
+            response: function (response) {
+                if (response.success) {
+                    element_address.remove()
+                    ShowNotificationMessage(response.message, 'Success')
+                }
+            }
+        })
+    }
+
+    change_address = function (id) {
+        let This = this
+        let element_address = document.getElementById(`address-item-${id}`)
+        let input_postalcode = document.getElementById(`PostalCode-${id}`)
+        let input_address = document.getElementById(`Address-${id}`)
+        let postal_code_valid = input_postalcode.getAttribute('valid') || 'false'
+        let address_valid = input_address.getAttribute('valid') || 'false'
+        let url = this.URL('user/address/edit')
+        if (postal_code_valid == 'true' && address_valid == 'true') {
+            this.SEND_AJAX(url, {
+                'address_id': id,
+                'address': input_address.value,
+                'postalcode': input_postalcode.value
+            }, {
+                auth: true,
+                error_message: true,
+                login_redirect: true,
+                error_redirect: false,
+                loading_section: element_address,
+                response: function (response) {
+                    if (response.success) {
+                        let address = response.data.address
+                        let _counter_address = element_address.getAttribute('counter-loop')
+                        let node = This.get_html_element_address(address,_counter_address)
+                        element_address.outerHTML = node
+                        ShowNotificationMessage(response.message, 'Success')
+                        active_collapses()
+                        CheckInputValInit()
+                    }
+                }
+            })
+        }else{
+             ShowNotificationMessage('Please enter the fields correctly', 'Error')
+        }
     }
 }
 
@@ -2217,7 +2435,6 @@ function CheckInputValidations(Input, Bigger, Less, SetIn = 'Input', Type = 'Tex
     if (NoSpace == true && Type == 'Text') {
         Input.value = Value.replace(/\s+/g, '')
     }
-
     Input.setAttribute('Valid', State)
     return State
 }
@@ -2865,19 +3082,22 @@ if (ValueForItemMenu != undefined && ValueForItemMenu != '' && ValueForItemMenu 
 }*/
 
 
-let AllCheckInputVal = document.querySelectorAll('[CheckInputVal]')
-for (let i of AllCheckInputVal) {
-    let Bigger = i.getAttribute('Bigger')
-    let Less = i.getAttribute('Less')
-    let TypeVal = i.getAttribute('TypeVal') || 'Text'
-    let SetIn = i.getAttribute('SetIn') || 'Input'
-    if (TypeVal == 'File') {
-        ValidationFile(i)
-    } else {
-        CheckInputValidations(i, Bigger, Less, SetIn, TypeVal)
+function CheckInputValInit() {
+    let AllCheckInputVal = document.querySelectorAll('[CheckInputVal]')
+    for (let i of AllCheckInputVal) {
+        let Bigger = i.getAttribute('Bigger')
+        let Less = i.getAttribute('Less')
+        let TypeVal = i.getAttribute('TypeVal') || 'Text'
+        let SetIn = i.getAttribute('SetIn') || 'Input'
+        if (TypeVal == 'File') {
+            ValidationFile(i)
+        } else {
+            CheckInputValidations(i, Bigger, Less, SetIn, TypeVal)
+        }
     }
 }
 
+CheckInputValInit()
 
 function ValidationEmail(Email) {
     const Re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

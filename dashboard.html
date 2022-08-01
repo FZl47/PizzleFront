@@ -390,9 +390,37 @@
         .btn-submit {
             border: none;
             background: linear-gradient(240deg, #19e2e5, #0ef5a4);
-            padding: 7px 18px;
-            border-radius: 10px;
+            padding: 8px 18px;
+            border-radius: 12px;
             color: #fff;
+            min-width: 100px;
+            transition: all .2s;
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0 3px 5px rgba(173, 255, 196, 0.8);
+            border-radius: 16px;
+        }
+
+        .btn-submit-outline {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            color: #777777;
+            background: none;
+            padding: 8px 18px;
+            min-width: 150px;
+        }
+
+        .btn-submit-outline:hover {
+            background: linear-gradient(240deg, #19e2e5, #0ef5a4);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .btn-submit-outline:focus {
+            background: linear-gradient(240deg, #19e2e5, #0ef5a4);
+            color: #fff;
+            border-color: transparent;
         }
 
         .text-light {
@@ -625,146 +653,26 @@
                 <i class="fa fa-map-marker-alt"></i>
             </h2>
             <div class="article-content mt-5">
-                <div class="address-item">
-                    <div class="collapse-toggle d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="field">
-                                <p class="field-title">
-                                    #
-                                </p>
-                                <p class="field-result">
-                                    1
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    postal code
-                                </p>
-                                <p class="field-result">
-                                    323423
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    address
-                                </p>
-                                <p class="field-result">
-                                    70 Washington Square...
-                                </p>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="field">
-                                <p class="field-title">
-                                    Edit
-                                </p>
-                                <p class="field-result">
-                                    <button data-toggle="collapse" data-target="#address">
-                                        <i class="fa fa-edit"></i>
-                                    </button>
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    Delete
-                                </p>
-                                <p class="field-result">
-                                    <button>
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="address-item-edit collapse" id="address">
-                        <div class="col-12 col-lg-7 mx-auto">
-                            <div>
-                                <label for="#PostalCode">
-                                    Postal Code :
-                                </label>
-                                <input type="text" id="#PostalCode">
-                            </div>
-                            <div>
-                                <label for="#Address">
-                                    Address :
-                                </label>
-                                <textarea type="text" id="#Address"></textarea>
-                            </div>
-                            <div class="select-address-map">
-                                <button class="btn-submit">Change</button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="text-right">
+                    <button class="btn-submit-outline mb-4" id="btn-add-address" data-toggle="collapse" data-target="#container-add-address">Add Address</button>
                 </div>
-                <div class="address-item">
-                    <div class="collapse-toggle d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="field">
-                                <p class="field-title">
-                                    #
-                                </p>
-                                <p class="field-result">
-                                    1
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    postal code
-                                </p>
-                                <p class="field-result">
-                                    323423
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    address
-                                </p>
-                                <p class="field-result">
-                                    70 Washington Square...
-                                </p>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="field">
-                                <p class="field-title">
-                                    Edit
-                                </p>
-                                <p class="field-result">
-                                    <button data-toggle="collapse" data-target="#address">
-                                        <i class="fa fa-edit"></i>
-                                    </button>
-                                </p>
-                            </div>
-                            <div class="field">
-                                <p class="field-title">
-                                    Delete
-                                </p>
-                                <p class="field-result">
-                                    <button>
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </p>
-                            </div>
-                        </div>
+                <div id="container-add-address" class="col-12 col-md-8 mx-auto collapse" style="margin-top: 100px;margin-bottom: 40px;">
+                    <h3 style="margin-left: -40px;">Add Address</h3>
+                    <div>
+                        <label for="#PostalCodeAdd">Postal Code :</label>
+                        <input type="number" id="PostalCodeAdd"
+                               oninput="CheckInputValidations(this,3,15,'Input','Number')">
                     </div>
-                    <div class="address-item-edit collapse" id="address">
-                        <div class="col-12 col-lg-7 mx-auto">
-                            <div>
-                                <label for="#PostalCode">
-                                    Postal Code :
-                                </label>
-                                <input type="text" id="#PostalCode">
-                            </div>
-                            <div>
-                                <label for="#Address">
-                                    Address :
-                                </label>
-                                <textarea type="text" id="#Address"></textarea>
-                            </div>
-                            <div class="select-address-map">
-                                <button class="btn-submit">Change</button>
-                            </div>
-                        </div>
+                    <div>
+                        <label for="AddressAdd">Address :</label>
+                        <textarea id="AddressAdd" rows="4"
+                                  oninput="CheckInputValidations(this,3,200,'Input')"></textarea>
+                    </div>
+                    <div class="text-left">
+                        <button class="btn-submit mt-2" style="width: 150px" id="btn-submit-address" onclick="DASHBOARD.add_address()">
+                            Submit
+                            <i class="fa fa-plus"></i>
+                        </button>
                     </div>
                 </div>
             </div>
