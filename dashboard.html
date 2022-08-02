@@ -427,6 +427,29 @@
             color: #aaa !important;
         }
 
+        .single-comment-box .fa-clock {
+            color: #999;
+        }
+
+        .single-comment-box img{
+            width: 80px;
+            cursor: pointer;
+        }
+
+        .btn-delete-comment {
+            border: none;
+            outline: none;
+            background: none;
+        }
+
+        .fa-minus-circle {
+            color: #999;
+        }
+
+        .fa-check-circle {
+            font-size: 105%;
+        }
+
     </style>
 </head>
 <body>
@@ -654,9 +677,12 @@
             </h2>
             <div class="article-content mt-5">
                 <div class="text-right">
-                    <button class="btn-submit-outline mb-4" id="btn-add-address" data-toggle="collapse" data-target="#container-add-address">Add Address</button>
+                    <button class="btn-submit-outline mb-4" id="btn-add-address" data-toggle="collapse"
+                            data-target="#container-add-address">Add Address
+                    </button>
                 </div>
-                <div id="container-add-address" class="col-12 col-md-8 mx-auto collapse" style="margin-top: 100px;margin-bottom: 40px;">
+                <div id="container-add-address" class="col-12 col-md-8 mx-auto collapse"
+                     style="margin-top: 80px;margin-bottom: 40px;">
                     <h3 style="margin-left: -40px;">Add Address</h3>
                     <div>
                         <label for="#PostalCodeAdd">Postal Code :</label>
@@ -669,12 +695,22 @@
                                   oninput="CheckInputValidations(this,3,200,'Input')"></textarea>
                     </div>
                     <div class="text-left">
-                        <button class="btn-submit mt-2" style="width: 150px" id="btn-submit-address" onclick="DASHBOARD.add_address()">
+                        <button class="btn-submit mt-2" style="width: 150px" id="btn-submit-address"
+                                onclick="DASHBOARD.add_address()">
                             Submit
                             <i class="fa fa-plus"></i>
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div id="container-comments" class="article-container">
+            <h2>
+                Comments
+                <i class="fa fa-comment-alt"></i>
+            </h2>
+            <div class="article-content" style="margin-top: 100px;">
+
             </div>
         </div>
     </div>
@@ -921,16 +957,35 @@
         FuncSetActiveContainer(ValueForItemMenu)
     }
 
-    function active_collapses() {
+    function active_collapses(element = null) {
         let collapses = document.querySelectorAll('[data-toggle="collapse"]')
-        for (let collapse of collapses) {
-            collapse.addEventListener('click', function () {
-                let target = this.getAttribute('data-target')
-                let state = this.getAttribute('state') || 'open'
+
+        function set_on_target(element) {
+            element.onclick = function () {
+                let target = element.getAttribute('data-target')
+                let state = element.getAttribute('state') || 'open'
                 let target_element = document.querySelector(target)
-                target_element.classList.toggle('show')
-            })
+                setTimeout(function () {
+                    target_element.classList.toggle('show')
+                })
+            }
+
         }
+
+        if (element) {
+            set_on_target(element)
+        } else {
+            for (let collapse of collapses) {
+                set_on_target(collapse)
+            }
+        }
+    }
+
+    function show_collapse(element) {
+        let target = element.getAttribute('data-target')
+        let state = element.getAttribute('state') || 'open'
+        let target_element = document.querySelector(target)
+        target_element.classList.toggle('show')
     }
 
     // active_collapses()

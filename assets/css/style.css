@@ -4407,11 +4407,12 @@ section {
     margin: 50px auto;
 }
 
-.not-found > *{
+.not-found > *:not(.cta_btn,p){
     text-align: center!important;
     display: block!important;
     color: rgb(255, 54, 28)!important;
 }
+
 
 @media screen and (max-width: 920px) {
     .position-relative-920 {

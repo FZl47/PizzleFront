@@ -387,7 +387,7 @@ class PIZZLE {
 
 
     NOTIFY_ME = function (slug, func) {
-        let url = this.URL('food/notify-me')
+        let url = this.URL('food/notify')
         this.SEND_AJAX(url, {
             'slug': slug
         }, {'error_message': false, 'auth': true, 'login_redirect': true, 'response': func})
@@ -879,7 +879,7 @@ class Food extends PIZZLE {
         }
 
         function post_comment(comment, rate) {
-            let url = This.URL('food/submit-comment')
+            let url = This.URL('food/comment/submit')
             let details = This.SEND_AJAX(url, {
                 'comment': comment,
                 'rate': rate,
@@ -1892,6 +1892,7 @@ class Dashboard extends PIZZLE {
         let container_orders = document.querySelector('#container-orders .article-content')
         let container_address = document.querySelector('#container-address .article-content')
         let container_add_address = document.querySelector('#container-add-address')
+        let container_comments = document.querySelector('#container-comments .article-content')
 
         let btn_add_address = document.getElementById('btn-add-address')
         let btn_submit_address = document.getElementById('btn-submit-address')
@@ -2078,7 +2079,6 @@ class Dashboard extends PIZZLE {
             container_address.innerHTML += node
         }
 
-
         if (addresses.length == 0) {
             container_address.insertAdjacentHTML('beforebegin', `
               <div class="not-found" style="margin-top: 50px;border-bottom: 1px solid #eee; padding-bottom: 70px;">
@@ -2088,6 +2088,26 @@ class Dashboard extends PIZZLE {
             btn_add_address.classList.add('d-none')
             container_add_address.classList.add('show')
         }
+
+
+        // Comments
+        for (let comment of comments) {
+            let node = this.get_html_element_comment(comment)
+            container_comments.innerHTML += node
+        }
+        if (comments.length == 0){
+            container_comments.innerHTML = `
+                <div class="not-found">
+                    <h2>Not found comment</h2>
+                    <p class="text-light fs-6">Share your opinion about one of our food</p>
+                    <a href="${PAGE_MEALS}" class="cta_btn mx-auto mt-3" style="width: 200px;color: white">
+                        Foods
+                        <i class="fa fa-pizza-slice"></i>
+                    </a>
+                </div>
+            `
+        }
+
 
 
         active_collapses()
@@ -2187,7 +2207,7 @@ class Dashboard extends PIZZLE {
                                     Edit
                                 </p>
                                 <p class="field-result">
-                                    <button data-toggle="collapse" data-target="#address-collapse-${address.id}">
+                                    <button onclick="show_collapse(this)" data-target="#address-collapse-${address.id}">
                                         <i class="fa fa-edit"></i>
                                     </button>
                                 </p>
@@ -2227,8 +2247,77 @@ class Dashboard extends PIZZLE {
         return node
     }
 
-    delete_address = function (id) {
+    get_html_element_comment = function (comment) {
+        let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL,['slug',comment.meal.slug])
+        let node_is_checked = ``
 
+        if (comment.is_checked){
+            node_is_checked = `
+                <i class="fa fa-check-circle" title="published"></i>
+            `
+        }else{
+            node_is_checked = `
+                <i class="fa fa-clock" title="checking..."></i>
+            `
+        }
+
+        let node = `
+            <div class="single-comment-box" id="comment-${comment.id}">
+                 <div class="main-comment">
+                    <div class="author-image">
+                        <img src="${comment.meal.cover_image}" alt="${comment.meal.title}" title="${comment.meal.title_short}" onclick="GoToUrl('${slug}')">
+                    </div>
+                    <div class="comment-text">
+                        <div class="comment-info">
+                            <div>
+                                <h4>
+                                    <a href="${slug}">${comment.meal.title_short}</a>
+                                </h4>
+                                <div class="ratings-container d-inline-block text-center mx-2 w-auto">
+                                    <div class="ratings">
+                                        <div class="ratings-val" id="rating-val" style="width: ${parseFloat(comment.rate) * 20}%"></div>
+                                    </div>
+                                </div>
+                                <p>${comment.time_send}</p>
+                            </div>
+                            <div>
+                                <span class="d-inline-block" style="margin-right: 7px;">${node_is_checked}</span>
+                                <button class="btn-delete-comment" onclick="DASHBOARD.delete_comment('${comment.id}')">
+                                      <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="comment-text-inner">
+                            <p>${comment.text}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+
+        return node
+    }
+
+    delete_comment = function(id){
+        let element_comment = document.querySelector(`#comment-${id}`)
+        let url = this.URL('food/comment/delete')
+        this.SEND_AJAX(url,{
+            'comment_id':id
+        },{
+            auth:true,
+            error_message:true,
+            error_redirect:false,
+            loading_section:element_comment,
+            response:function (response) {
+                if (response.success){
+                    element_comment.remove()
+                    ShowNotificationMessage(response.message,'Success')
+                }
+            }
+        })
+    }
+
+    delete_address = function (id) {
         let element_address = document.getElementById(`address-item-${id}`)
         let url = this.URL('user/address/delete')
         this.SEND_AJAX(url, {
@@ -2271,18 +2360,20 @@ class Dashboard extends PIZZLE {
                     if (response.success) {
                         let address = response.data.address
                         let _counter_address = element_address.getAttribute('counter-loop')
-                        let node = This.get_html_element_address(address,_counter_address)
+                        let node = This.get_html_element_address(address, _counter_address)
                         element_address.outerHTML = node
                         ShowNotificationMessage(response.message, 'Success')
-                        active_collapses()
+                        active_collapses(element_address.querySelector('[data-toggle="collapse"]'))
                         CheckInputValInit()
                     }
                 }
             })
-        }else{
-             ShowNotificationMessage('Please enter the fields correctly', 'Error')
+        } else {
+            ShowNotificationMessage('Please enter the fields correctly', 'Error')
         }
     }
+
+
 }
 
 function ScrollOnElement(ID_Element, Element = null) {
