@@ -154,6 +154,7 @@
             justify-content: space-between;
             align-items: center;
             color: #666;
+            padding: 10px;
         }
 
         .article-content {
@@ -431,9 +432,15 @@
             color: #999;
         }
 
-        .single-comment-box img{
+        .single-comment-box img {
             width: 80px;
             cursor: pointer;
+        }
+
+        .btn-default {
+            border: none;
+            outline: none;
+            background: none;
         }
 
         .btn-delete-comment {
@@ -448,6 +455,21 @@
 
         .fa-check-circle {
             font-size: 105%;
+        }
+
+        .notification {
+            display: flex;
+            justify-content: space-between;
+            align-items: first;
+            margin: 14px auto;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            padding: 7px;
+        }
+
+        .notification img {
+            width: 90px;
+            height: 100%;
         }
 
     </style>
@@ -592,7 +614,7 @@
                 </button>
             </li>
             <li>
-                <button type-more="notification">
+                <button type-more="notifications">
                     Notification
                     <i class="fa fa-bell"></i>
                 </button>
@@ -710,6 +732,15 @@
                 <i class="fa fa-comment-alt"></i>
             </h2>
             <div class="article-content" style="margin-top: 100px;">
+
+            </div>
+        </div>
+        <div id="container-notifications" class="article-container">
+            <h2>
+                Notifications
+                <i class="fa fa-bell"></i>
+            </h2>
+            <div class="article-content mt-5">
 
             </div>
         </div>
@@ -943,8 +974,14 @@
     function active_container(type) {
         deactive_all_btns_menu()
         deactive_all_container()
-        document.getElementById(`container-${type}`).classList.add('active')
-        active_btn_menu(type)
+        try {
+            document.getElementById(`container-${type}`).classList.add('active')
+            active_btn_menu(type)
+        } catch (e) {
+            // Default page
+            active_container('main')
+        }
+
     }
 
     let FuncSetActiveContainer = active_container

@@ -1893,6 +1893,7 @@ class Dashboard extends PIZZLE {
         let container_address = document.querySelector('#container-address .article-content')
         let container_add_address = document.querySelector('#container-add-address')
         let container_comments = document.querySelector('#container-comments .article-content')
+        let container_notifications = document.querySelector('#container-notifications .article-content')
 
         let btn_add_address = document.getElementById('btn-add-address')
         let btn_submit_address = document.getElementById('btn-submit-address')
@@ -2095,11 +2096,11 @@ class Dashboard extends PIZZLE {
             let node = this.get_html_element_comment(comment)
             container_comments.innerHTML += node
         }
-        if (comments.length == 0){
+        if (comments.length == 0) {
             container_comments.innerHTML = `
                 <div class="not-found">
                     <h2>Not found comment</h2>
-                    <p class="text-light fs-6">Share your opinion about one of our food</p>
+                    <p class="text-light fs-6">Share your comment about one of our food</p>
                     <a href="${PAGE_MEALS}" class="cta_btn mx-auto mt-3" style="width: 200px;color: white">
                         Foods
                         <i class="fa fa-pizza-slice"></i>
@@ -2108,6 +2109,33 @@ class Dashboard extends PIZZLE {
             `
         }
 
+
+        // Notifications
+        for (let notification of notifications) {
+            let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL, ['slug', notification.meal.slug])
+            let node = `
+                <div class="notification" id="notification-${notification.id}">
+                    <div>
+                        <img src="${notification.meal.image}" alt="${notification.meal.title}"  title="${notification.meal.title}" onclick="GoToUrl('${slug}')">
+                        <a href="${slug}">${notification.meal.title_short}</a>
+                    </div>
+                    <div>
+                        <button class="btn-default" onclick="DASHBOARD.delete_notification('${notification.meal.slug}','${notification.id}')">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `
+            container_notifications.innerHTML += node
+        }
+
+        if (notifications.length == 0){
+            container_notifications.innerHTML = `
+                <div class="not-found" style="margin-top: 120px;">
+                    <h3>Not found notification</h3>
+                </div>
+            `
+        }
 
 
         active_collapses()
@@ -2248,14 +2276,14 @@ class Dashboard extends PIZZLE {
     }
 
     get_html_element_comment = function (comment) {
-        let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL,['slug',comment.meal.slug])
+        let slug = this.URL_TEMPLATE(PAGE_MEAL_DETAIL, ['slug', comment.meal.slug])
         let node_is_checked = ``
 
-        if (comment.is_checked){
+        if (comment.is_checked) {
             node_is_checked = `
                 <i class="fa fa-check-circle" title="published"></i>
             `
-        }else{
+        } else {
             node_is_checked = `
                 <i class="fa fa-clock" title="checking..."></i>
             `
@@ -2298,20 +2326,41 @@ class Dashboard extends PIZZLE {
         return node
     }
 
-    delete_comment = function(id){
+    delete_notification = function (slug, id) {
+        let element_notification = document.getElementById(`notification-${id}`)
+        let url = this.URL('food/notify')
+        this.SEND_AJAX(url, {
+                'slug': slug
+            },
+            {
+                error_message: false,
+                auth: true,
+                login_redirect: true,
+                loading_section: element_notification,
+                response: function (response) {
+                    if (response.success) {
+                        element_notification.remove()
+                        ShowNotificationMessage('Your notification deleted successfully','Success')
+                    }
+                }
+            }
+        )
+    }
+
+    delete_comment = function (id) {
         let element_comment = document.querySelector(`#comment-${id}`)
         let url = this.URL('food/comment/delete')
-        this.SEND_AJAX(url,{
-            'comment_id':id
-        },{
-            auth:true,
-            error_message:true,
-            error_redirect:false,
-            loading_section:element_comment,
-            response:function (response) {
-                if (response.success){
+        this.SEND_AJAX(url, {
+            'comment_id': id
+        }, {
+            auth: true,
+            error_message: true,
+            error_redirect: false,
+            loading_section: element_comment,
+            response: function (response) {
+                if (response.success) {
                     element_comment.remove()
-                    ShowNotificationMessage(response.message,'Success')
+                    ShowNotificationMessage(response.message, 'Success')
                 }
             }
         })
