@@ -2464,7 +2464,7 @@ class Dashboard extends PIZZLE {
 
 }
 
-class AboutUs extends PIZZLE{
+class AboutUs extends PIZZLE {
     constructor() {
         super()
         this.get_info()
@@ -2474,15 +2474,98 @@ class AboutUs extends PIZZLE{
 
     get_info = function () {
         let url = this.URL('aboutus/get')
-        this.SEND_AJAX(url,{},{
-            error_redirect:true,
-            response:function (response) {
-                if (response.success){
+        this.SEND_AJAX(url, {}, {
+            error_redirect: true,
+            response: function (response) {
+                if (response.success) {
                     document.getElementById('why-cooseus').querySelector('.content').innerHTML = response.data.why_chooseus
                     document.getElementById('story-aboutus').querySelector('.content').innerHTML = response.data.why_chooseus
                 }
             }
         })
+    }
+}
+
+class ContactUs extends PIZZLE {
+    constructor() {
+        super()
+        this.get_info()
+        new Header('contactus')
+        new Footer()
+    }
+
+    get_info = function () {
+        let url = this.URL('contactus/get')
+        this.SEND_AJAX(url, {}, {
+            error_redirect: true,
+            error_message: true,
+            response: function (response) {
+                if (response.success) {
+                    let data = response.data
+                    let container_email = document.getElementById('container-email')
+                    let container_phone = document.getElementById('container-phone')
+                    let container_location = document.getElementById('container-location')
+                    let location_image = document.getElementById('location-image')
+
+                    // Email
+                    for (let email of data.emails) {
+                        container_email.innerHTML += `
+                            <p>${email.email}</p>
+                        `
+                    }
+                    // Phone
+                    for (let phone of data.phones) {
+                        container_phone.innerHTML += `
+                            <p>${phone.phone}</p>
+                        `
+                    }
+                    // Location
+                    for (let location of data.locations) {
+                        container_location.innerHTML += `
+                            <p>${location.location}</p>
+                        `
+                    }
+
+                    location_image.src = data.location_image
+                }
+            }
+        })
+    }
+
+    send_feedback = function () {
+        let email = document.getElementById('email')
+        let name = document.getElementById('name')
+        let subject = document.getElementById('sub')
+        let message = document.getElementById('textarea')
+
+        let email_valid = email.getAttribute('valid') || 'false'
+        let name_valid = name.getAttribute('valid') || 'false'
+        let subject_valid = subject.getAttribute('valid') || 'false'
+        let message_valid = message.getAttribute('valid') || 'false'
+
+        let container_form = document.getElementById('contact-form')
+
+        if (email_valid == 'true' && name_valid == 'true' && subject_valid == 'true' && message_valid == 'true') {
+            let url = this.URL('contactus/feedback/submit')
+            this.SEND_AJAX(url, {
+                'name': name.value,
+                'email': email.value,
+                'subject': subject.value,
+                'message': message.value
+            }, {
+                error_message: true,
+                error_redirect: true,
+                loading_section: container_form,
+                response: function (response) {
+                    if (response.success) {
+                        ShowNotificationMessage(response.message, 'Success')
+                        container_form.remove()
+                    }
+                }
+            })
+        } else {
+            ShowNotificationMessage('Please enter fields correctly', 'Error')
+        }
     }
 }
 
