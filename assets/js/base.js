@@ -1,5 +1,5 @@
 // Init
-const URL_BACKEND = 'http://127.0.0.1:8000/v1'
+const URL_BACKEND = 'http://192.168.1.142:8000/v1'
 const PAGE_LOGIN = 'login.html'
 const PAGE_HOME = 'index.html'
 const PAGE_SIGNUP = 'signup.html'
@@ -1874,7 +1874,6 @@ class Dashboard extends PIZZLE {
             response: function (response) {
                 let status = response.status
                 if (status == 200) {
-                    console.log(response)
                     This.set_info(response.data)
                 }
                 This.COUNTER_TRY_GET_INFO -= 1
@@ -1887,6 +1886,12 @@ class Dashboard extends PIZZLE {
 
     set_info = function (data) {
         let This = this
+
+        this.input_name = document.getElementById('InputName')
+        this.input_family = document.getElementById('InputFamily')
+        this.input_phonenumber = document.getElementById('InputPhoneNumber')
+        this.input_email = document.getElementById('InputEmail')
+        this.input_email.disabled = true
 
         let container_visits = document.querySelector('.last-visits > div')
         let container_orders = document.querySelector('#container-orders .article-content')
@@ -2129,7 +2134,7 @@ class Dashboard extends PIZZLE {
             container_notifications.innerHTML += node
         }
 
-        if (notifications.length == 0){
+        if (notifications.length == 0) {
             container_notifications.innerHTML = `
                 <div class="not-found" style="margin-top: 120px;">
                     <h3>Not found notification</h3>
@@ -2137,10 +2142,36 @@ class Dashboard extends PIZZLE {
             `
         }
 
+        // Information
+        this.input_name.value = user.name
+        this.input_family.value = user.family
+        this.input_phonenumber.value = user.phone_number || ''
+        this.input_email.value = user.email
+
 
         active_collapses()
         CheckInputValInit()
 
+    }
+
+    submit_information = function () {
+        let url = this.URL('user/info/edit')
+        this.SEND_AJAX(url, {
+            'name': this.input_name.value,
+            'family': this.input_family.value,
+            'phonenumber': this.input_phonenumber.value,
+        }, {
+            auth: true,
+            login_redirect: true,
+            error_redirect: true,
+            error_message: true,
+            loading_section: document.querySelector('#container-information .article-content'),
+            response: function (response) {
+                if (response.success) {
+                    ShowNotificationMessage(response.message, 'Success')
+                }
+            }
+        })
     }
 
     add_address = function () {
@@ -2340,7 +2371,7 @@ class Dashboard extends PIZZLE {
                 response: function (response) {
                     if (response.success) {
                         element_notification.remove()
-                        ShowNotificationMessage('Your notification deleted successfully','Success')
+                        ShowNotificationMessage('Your notification deleted successfully', 'Success')
                     }
                 }
             }

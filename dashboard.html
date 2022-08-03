@@ -221,6 +221,8 @@
             padding: 10px;
             margin: 10px auto;
             border-radius: 12px;
+            overflow: auto;
+            white-space: nowrap;
         }
 
         .last-visit img {
@@ -324,6 +326,8 @@
         .address-item {
             padding: 10px;
             border: 1px solid #eee;
+            white-space: nowrap;
+            overflow: auto;
         }
 
         .address-item-edit {
@@ -341,6 +345,7 @@
             color: #888;
             margin: 0;
             margin-left: -10px;
+            margin-bottom: 7px;
             padding: 0;
         }
 
@@ -471,6 +476,60 @@
             width: 90px;
             height: 100%;
         }
+
+
+        @media screen and (max-width: 1200px) {
+            .main-item {
+                width: 100%;
+                margin: 10px auto;
+            }
+
+            #container-add-address h3 {
+                margin-left: 0 !important;
+            }
+        }
+
+        @media screen and (max-width: 700px) {
+
+            .article-dashboard{
+                padding-right: 0;
+                padding-left: 0;
+            }
+
+            .article-container{
+                padding-right: 0;
+                padding-left: 0;
+            }
+
+            .article-content {
+                /*width: 95%!important;*/
+            }
+            
+            .last-visit{
+                display: block;
+                padding-bottom: 5px;
+            }
+
+            .last-visit-time{
+                font-size: 80%;
+                text-align: right;
+            }
+
+            .main-comment{
+                padding: 0;
+            }
+
+            .comment-info{
+                white-space: nowrap;
+                overflow: auto;
+            }
+
+            .author-image{
+                display: none;
+            }
+
+        }
+
 
     </style>
 </head>
@@ -742,6 +801,38 @@
             </h2>
             <div class="article-content mt-5">
 
+            </div>
+        </div>
+        <div id="container-information" class="article-container">
+            <h2>
+                Information
+                <i class="fa fa-info-circle"></i>
+            </h2>
+            <div class="article-content">
+                <div class="col-12 col-md-9 mx-auto">
+                    <label for="#InputName">Name :</label>
+                    <input type="text" id="InputName" CheckInputVal Bigger="3" Less="100"
+                           oninput="CheckInputValidations(this,3,100)">
+                </div>
+                <div class="col-12 col-md-9 mx-auto">
+                    <label for="#InputFamily">Family :</label>
+                    <input type="text" id="InputFamily" CheckInputVal Bigger="3" Less="100"
+                           oninput="CheckInputValidations(this,3,100)">
+                </div>
+                <div class="col-12 col-md-9 mx-auto">
+                    <label for="#InputPhoneNumber">Phone Number :</label>
+                    <input type="text" id="InputPhoneNumber" CheckInputVal Bigger="3" Less="15" TypeVal="Number"
+                           oninput="CheckInputValidations(this,3,15,'Input','Number')">
+                </div>
+                <div class="col-12 col-md-9 mx-auto">
+                    <label for="#InputEmail">Email :</label>
+                    <input type="email" id="InputEmail">
+                </div>
+                <div class="col-12 col-md-9 mx-auto mt-4">
+                    <button class="btn-submit" onclick="DASHBOARD.submit_information()">
+                        Save
+                    </button>
+                </div>
             </div>
         </div>
     </div>
