@@ -1,5 +1,5 @@
 // Init
-const URL_BACKEND = 'http://192.168.1.142:8000/v1'
+const URL_BACKEND = 'http://127.0.0.1:8000/v1'
 const PAGE_LOGIN = 'login.html'
 const PAGE_HOME = 'index.html'
 const PAGE_SIGNUP = 'signup.html'
@@ -653,6 +653,8 @@ class Home extends PIZZLE {
     constructor() {
         super()
         this.COUNTER_TRY_GET_INFO = 3
+        new Header('home')
+        new Footer()
         let This = this
 
 
@@ -846,6 +848,8 @@ class ResetPassword extends PIZZLE {
 class Food extends PIZZLE {
     constructor() {
         super(true)
+        new Header('food')
+        new Footer()
         this.url_params = new URLSearchParams(window.location.search)
         this.container_related = document.getElementById('container-related-foods')
         this.MEAL = null
@@ -922,7 +926,6 @@ class Food extends PIZZLE {
         })
 
     }
-
 
     get_info = function (func) {
         let This = this
@@ -1158,6 +1161,8 @@ class Food extends PIZZLE {
 class Foods extends PIZZLE {
     constructor() {
         super()
+        new Header('foods')
+        new Footer()
         this.url_params = new URLSearchParams(window.location.search)
         this.container_meals = document.getElementById('container-meals')
         this.container_categories = document.getElementById('container-categories')
@@ -1406,14 +1411,14 @@ class Foods extends PIZZLE {
                 This.active_element_param_search()
             }
         })
-
     }
-
 }
 
 class Gallery extends PIZZLE {
     constructor() {
         super()
+        new Header('gallery')
+        new Footer()
         let This = this
         this.pagination = null
         let page_at_url = this.get_page_at_url()
@@ -1540,6 +1545,8 @@ class Gallery extends PIZZLE {
 class Cart extends PIZZLE {
     constructor() {
         super();
+        new Header('cart')
+        new Footer()
         GetCookieFunctionality_ShowNotification()
         let This = this
         this.COUNTER_TRY_GET_USER_CART = 2
@@ -1855,10 +1862,11 @@ class Cart extends PIZZLE {
     }
 }
 
-
 class Dashboard extends PIZZLE {
     constructor() {
         super();
+        new Header('dashboard')
+        new Footer()
         this.COUNTER_TRY_GET_INFO = 2
         this.get_info()
     }
@@ -2455,6 +2463,283 @@ class Dashboard extends PIZZLE {
 
 
 }
+
+class AboutUs extends PIZZLE{
+    constructor() {
+        super()
+        this.get_info()
+        new Header('aboutus')
+        new Footer()
+    }
+
+    get_info = function () {
+        let url = this.URL('aboutus/get')
+        this.SEND_AJAX(url,{},{
+            error_redirect:true,
+            response:function (response) {
+                if (response.success){
+                    document.getElementById('why-cooseus').querySelector('.content').innerHTML = response.data.why_chooseus
+                    document.getElementById('story-aboutus').querySelector('.content').innerHTML = response.data.why_chooseus
+                }
+            }
+        })
+    }
+}
+
+class Header extends PIZZLE {
+    constructor(type_page) {
+        super(true)
+        this.TYPE = type_page
+        this.set_node(this.USER)
+    }
+
+    set_node = function (user) {
+        let node_login = ``
+        let node_cart = ``
+
+        if (!user) {
+            node_login = `
+                 <li class="d-none d-lg-inline-block">
+                     <a href="login.html">Login</a>
+                 </li>
+                 <li class="d-lg-none">
+                    <a href="login.html">
+                        <i class="fa fa-sign-in-alt">
+                        </i>
+                    </a>
+                 </li>
+            `
+        } else {
+            node_login = `
+                <li class="d-none d-lg-inline-block">
+                    <a href="dashboard.html">
+                        <i class="far fa-user">
+                        </i>
+                    </a>
+                 </li>
+            `
+            node_cart = `
+                <li>
+                    <a class="cart_count" href="cart.html">
+                        <img src="${this.TYPE == 'home' ? 'assets/img/shopping-bag.svg' : 'assets/img/shopping-bag-black.svg'}" alt="shopping bag">
+                        <span>${user.order_count_meal}</span>
+                    </a>
+                 </li>
+            `
+        }
+
+
+        let node = `
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="header_inn d-flex align-items-center justify-content-between">
+                                <div class="header_left">
+                                    <div class="site_logo">
+                                        <a href="index.html"><img src="${this.TYPE == 'home' ? 'assets/img/logo.png' : 'assets/img/logo_black.png'}" alt="logo"></a>
+                                    </div>
+                                    <div class="mainmenu">
+                                        <nav id="menu">
+                                            <ul class="dropdown">
+                                                <li  type="home"><a href="index.html">Home</a></li>
+                                                <li class="has-submenu">
+                                                    <a href="javascript:;">Shop</a>
+                                                    <ul class="sub-menu">
+                                                        <li type="foods"><a href="foods.html">Foods</a></li>
+                                                        <li type="cart"><a href="cart.html">Cart</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li type="gallery"><a href="gallery.html">Gallery</a></li>
+                                                <li type="aboutus"><a href="about.html">About Us</a></li>
+                                                <li type="contact"><a href="contact.html">Contact</a></li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                                <div class="header_right">
+                                    <ul class="header_tools">
+                                        ${node_login}
+                                        ${node_cart}
+                                    </ul>
+                                    <div class="spinner-master">
+                                        <div id="spinner-form" class="spinner-spin">
+                                            <div class="spinner diagonal part-1"></div>
+                                            <div class="spinner horizontal"></div>
+                                            <div class="spinner diagonal part-2"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+        `
+        document.querySelector('.header_area').innerHTML = node
+        try {
+            document.getElementById('menu').querySelector(`[type="${this.TYPE}"]`).classList.add('active')
+        } catch (e) {
+
+        }
+    }
+}
+
+class Footer extends PIZZLE {
+    constructor() {
+        super()
+        this.set_node()
+    }
+
+    set_node = function () {
+        let node = `
+      
+                <div class="footer_top">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-md-12 col-lg-12 d-lg-none">
+                                <div class="footer_widget">
+                                    <div class="logo_footer">
+                                        <img src="assets/img/footer_logo.png" alt="img">
+                                    </div>
+                                    <div class="footer_desc">
+                                        <p>44 Canal Center Plaza #200, Alexandria, VA 22314, USA</p>
+                                        <p>Hotline : <span>1900 – 123 456 78</span></p>
+                                        <p>Email: <span>info@example.com</span></p>
+                                    </div>
+                                    <div class="footer_socials">
+                                        <div class="content_socials">
+                                            <ul class="socials_list">
+                                                <li>
+                                                    <a href="javascript:;">
+                                                        <i class="fab fa-facebook-f"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;">
+                                                        <i class="fab fa-instagram"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;">
+                                                        <i class="fab fa-twitter"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;">
+                                                        <i class="fab fa-pinterest-p"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="footer_widget">
+                                    <div class="footer_listitem">
+                                        <div class="listitem_inner">
+                                            <h4 class="footer_title">Customer </h4>
+                                            <ul class="listitem_list">
+                                                <li>
+                                                    <a href="dashboard.html">
+                                                        Dashboard
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="cart.html">
+                                                        Cart
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="gallery.html">
+                                                        Gallery
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="index.html">
+                                                        Home
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 d-none d-lg-block">
+                                <div class="footer_widget">
+                                    <div class="logo_footer">
+                                        <img src="assets/img/footer_logo.png" alt="img">
+                                    </div>
+                                    <div class="footer_desc">
+                                        <p>44 Canal Center Plaza #200, Alexandria<br> VA 22314, USA</p>
+                                        <p>Hotline : <span>1900 – 123 456 78</span></p>
+                                        <p>Email: <span>info.foodshop@gmail.com</span></p>
+                                    </div>
+                                    <div class="footer_socials">
+                                        <div class="content_socials">
+                                            <ul class="socials_list">
+                                                <li>
+                                                    <a href="javascript:;">
+                                                        <i class="fab fa-facebook-f"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;">
+                                                        <i class="fab fa-instagram"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;">
+                                                        <i class="fab fa-twitter"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;">
+                                                        <i class="fab fa-pinterest-p"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="footer_widget ">
+                                    <div class="footer_listitem">
+                                        <div class="listitem_inner">
+                                            <h4 class="footer_title">
+                                                Opening Hour
+                                            </h4>
+                                            <ul class="open_hours">
+                                                <li><span>Mon - Fri:</span> <span>09:00 – 23:00h</span></li>
+                                                <li><span>Saturday:</span> <span>09:00 – 16:00h</span></li>
+                                                <li><span>Sunday:</span> <span>12:00 – 18:00h</span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer_bottom">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="copyright">
+                                    <p>&copy;  2022 - <a href="https://fazelmomeni.codevar.ir" style="color: #ff9c1d;font-weight: bold">Fazel Momeni</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+  
+        `
+        document.querySelector('.footer_area').innerHTML = node
+    }
+}
+
 
 function ScrollOnElement(ID_Element, Element = null) {
     if (ID_Element == null) {
