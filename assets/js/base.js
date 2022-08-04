@@ -647,6 +647,25 @@ class PIZZLE {
         container.innerHTML += node
     }
 
+    subscribe_unsubscribe() {
+        let email = document.getElementById('input-subs-news')
+        if (CheckInputValidations(email,3,100,'None','Email')) {
+            let url = this.URL('subscribe')
+            this.SEND_AJAX(url,{
+                'email':email.value
+            },{
+                error_redirect:false,
+                error_message:true,
+                loading_section:document.querySelector('.subscribe_inn'),
+                response:function (response) {
+                    if (response.success){
+                        ShowNotificationMessage(response.message,'Success')
+                    }
+                }
+            })
+        }
+    }
+
 }
 
 class Home extends PIZZLE {
@@ -654,6 +673,7 @@ class Home extends PIZZLE {
         super()
         this.COUNTER_TRY_GET_INFO = 3
         new Header('home')
+        new SubscribeNews()
         new Footer()
         let This = this
 
@@ -849,6 +869,7 @@ class Food extends PIZZLE {
     constructor() {
         super(true)
         new Header('food')
+        new SubscribeNews()
         new Footer()
         this.url_params = new URLSearchParams(window.location.search)
         this.container_related = document.getElementById('container-related-foods')
@@ -1162,6 +1183,7 @@ class Foods extends PIZZLE {
     constructor() {
         super()
         new Header('foods')
+        new SubscribeNews()
         new Footer()
         this.url_params = new URLSearchParams(window.location.search)
         this.container_meals = document.getElementById('container-meals')
@@ -1546,6 +1568,7 @@ class Cart extends PIZZLE {
     constructor() {
         super();
         new Header('cart')
+        new SubscribeNews()
         new Footer()
         GetCookieFunctionality_ShowNotification()
         let This = this
@@ -1866,6 +1889,7 @@ class Dashboard extends PIZZLE {
     constructor() {
         super();
         new Header('dashboard')
+        new SubscribeNews()
         new Footer()
         this.COUNTER_TRY_GET_INFO = 2
         this.get_info()
@@ -2469,6 +2493,7 @@ class AboutUs extends PIZZLE {
         super()
         this.get_info()
         new Header('aboutus')
+        new SubscribeNews()
         new Footer()
     }
 
@@ -2491,6 +2516,7 @@ class ContactUs extends PIZZLE {
         super()
         this.get_info()
         new Header('contactus')
+        new SubscribeNews()
         new Footer()
     }
 
@@ -2823,6 +2849,48 @@ class Footer extends PIZZLE {
     }
 }
 
+class SubscribeNews extends PIZZLE {
+    constructor() {
+        super()
+        this.set_node()
+    }
+
+    set_node = function () {
+        let This = this
+        let node = `
+                <img src="assets/img/shape_10.png" alt="shape" class="shape_10">
+                <img src="assets/img/shape_11.png" alt="shape" class="shape_11">
+                <img src="assets/img/shape_12.png" alt="shape" class="shape_12">
+                <img src="assets/img/shape_13.png" alt="shape" class="shape_13">
+                <img src="assets/img/shape_14.png" alt="shape" class="shape_14">
+                <img src="assets/img/shape_15.png" alt="shape" class="shape_15">
+                <img src="assets/img/shape_16.png" alt="shape" class="shape_16">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="subscribe_inn">
+                                <div class="site_heading">
+                                    <h3 class="sub_title">Don’t miss</h3>
+                                    <h2 class="section_title">Subscribe To Newsletter</h2>
+                                </div>
+                                <div class="subscribe_box">
+                                    <form>
+                                        <input type="email" id="input-subs-news" placeholder="Enter your E-mail"/>
+                                        <button type="button" onclick="PIZZLE_OBJECT.subscribe_unsubscribe()">Subscribe</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        `
+        document.querySelector('.subscribe_area').innerHTML = node
+    }
+
+}
+
+
+//
 
 function ScrollOnElement(ID_Element, Element = null) {
     if (ID_Element == null) {
@@ -2975,6 +3043,9 @@ function CheckInputValidations(Input, Bigger, Less, SetIn = 'Input', Type = 'Tex
         Input.value = Value.replace(/\s+/g, '')
     }
     Input.setAttribute('Valid', State)
+    if (SetIn == 'None'){
+        Input.setAttribute('Valid-Style','no-effect')
+    }
     return State
 }
 

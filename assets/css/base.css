@@ -28,13 +28,16 @@
 
 ::-webkit-scrollbar {
     background: #eee;
-    width: 8px;
+    width: 10px;
     height: 3px;
+    border-radius: 13px;
 }
 
 ::-webkit-scrollbar-thumb {
     background-color: var(--ColorBase);
+    border-radius: 13px;
 }
+
 
 @media (pointer: none),
 (pointer: coarse) {
@@ -549,6 +552,11 @@
 [valid='false'] {
     box-shadow: none !important;
     border: 1px solid #ff8a72 !important;
+}
+
+[Valid-Style='no-effect']{
+    border: none!important;
+    box-shadow: none!important;
 }
 
 .Label {
