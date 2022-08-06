@@ -2094,3 +2094,52 @@ button:focus {
     margin-top: -15px;
     color: #09bb8f;
 }
+
+/* Banner-DJ */
+
+.banner-dj-el {
+    position: fixed;
+    text-align: center;
+    border-radius: 11px;
+    z-index: 9999999999999999;
+}
+
+.banner-dj-el > div {
+    position: relative;
+    /*border: 1px solid #f8f8f8;*/
+    border-radius: inherit;
+}
+
+.banner-dj-el button {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background: rgba(238, 238, 238, 0.7);
+    color: #ff0a00;
+    border: none;
+    width: 30px;
+    height: 30px;
+    font-size: 17px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.banner-dj-el img {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    cursor: pointer;
+}
+
+.animation-class-hide-banner-dj {
+    animation: animation-hide-banner-dj .4s linear forwards;
+}
+
+@keyframes animation-hide-banner-dj {
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
