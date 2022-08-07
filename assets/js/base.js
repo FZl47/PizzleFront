@@ -869,7 +869,7 @@ class ResetPassword extends PIZZLE {
 class Food extends PIZZLE {
     constructor() {
         super(true)
-        new Header('food')
+        new Header('food',false)
         new SubscribeNews()
         new Footer()
         this.url_params = new URLSearchParams(window.location.search)
@@ -2597,8 +2597,8 @@ class ContactUs extends PIZZLE {
 }
 
 class Header extends PIZZLE {
-    constructor(type_page) {
-        super(true)
+    constructor(type_page,get_user=true) {
+        super(get_user)
         this.TYPE = type_page
         this.set_node(this.USER)
     }

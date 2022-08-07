@@ -4410,7 +4410,7 @@ section {
 .not-found > *:not(.cta_btn,p){
     text-align: center!important;
     display: block!important;
-    color: rgb(255, 54, 28)!important;
+    color: rgb(255, 54, 28);
 }
 
 
