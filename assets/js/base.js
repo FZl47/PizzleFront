@@ -49,7 +49,7 @@ class PIZZLE {
     constructor(get_user = false) {
         let This = this
         this._details_func = {}
-        this.COUNTER_TRY_GET_TOKENS = 3
+        this.COUNTER_TRY_GET_TOKENS = 2
         this.COUNTER_TRY_ADD_TO_CART = 1
         this.COUNTER_TRY_GET_USER = 2
         this.USER = null
@@ -869,7 +869,7 @@ class ResetPassword extends PIZZLE {
 class Food extends PIZZLE {
     constructor() {
         super(true)
-        new Header('food',false)
+        new Header('food',this.USER)
         new SubscribeNews()
         new Footer()
         this.url_params = new URLSearchParams(window.location.search)
@@ -2597,10 +2597,10 @@ class ContactUs extends PIZZLE {
 }
 
 class Header extends PIZZLE {
-    constructor(type_page,get_user=true) {
-        super(get_user)
+    constructor(type_page,user=null) {
+        super(user == null ? true : false)
         this.TYPE = type_page
-        this.set_node(this.USER)
+        this.set_node(user == null ? this.USER : user)
     }
 
     set_node = function (user) {
