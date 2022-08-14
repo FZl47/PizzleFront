@@ -51,7 +51,7 @@ class PIZZLE {
         this._details_func = {}
         this.COUNTER_TRY_GET_TOKENS = 2
         this.COUNTER_TRY_ADD_TO_CART = 1
-        this.COUNTER_TRY_GET_USER = 2
+        this.COUNTER_TRY_GET_USER = 1
         this.USER = null
         if (get_user) {
             This.GET_USER()
