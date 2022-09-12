@@ -1633,7 +1633,7 @@ class Cart extends PIZZLE {
             <tr class="shop-cart-item" id="orderdetail-${order_detail.id}">
                 <td class=" cart-preview">
                     <a href="${slug}">
-                        <img src="assets/img/pizza_slide_3.png" alt="cart-1">
+                        <img src="${meal.cover_image}" alt="cart-1">
                     </a>
                 </td>
                 <td class=" cart-product">
