@@ -682,7 +682,7 @@ class Home extends PIZZLE {
         this.container_meals_discount = document.getElementById('container-meals-discount')
         this.container_meals_popular = document.getElementById('container-meals-popular')
 
-        this.get_info()
+        //this.check_api()
         this.GET_MEALS_WITH_DISCOUNT(function (response) {
             let meals_discount = response.data
             for (let meal of meals_discount) {
@@ -783,19 +783,13 @@ class Home extends PIZZLE {
         });
     }
 
-    get_info = function () {
+    check_api = function () {
         let This = this
         let url = this.URL('')
         this.SEND_AJAX(url, {}, {
             'error_message': false, 'response': function (response) {
-                if (response.status == 401) {
-                    if (This.COUNTER_TRY_GET_INFO > 0) {
-                        This.COUNTER_TRY_GET_INFO -= 1
-                        This.get_info()
-                    }
-                }
                 if (response.status == 200) {
-                    This.COUNTER_TRY_GET_INFO = 3
+                    console.log('API is Working ...')
                 }
             }
         })
